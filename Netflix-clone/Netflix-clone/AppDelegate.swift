@@ -7,6 +7,9 @@
 
 import UIKit
 
+// MARK: - (Class) AppDelegate: App의 Life Cycle을 관리하는 Class
+/// iOS 12 and earlier version에서는 AppDelegate Class 안에서 Process Lifecycle과 UI Lifecycle 모두 다루는 역할을 함.
+/// iOS 13 version부터는 Multi-Window 즉, Scene의 개념이 등장하면서 UI Lifecycle의 UI State를 SceneDelegate Class가 다루게 됨.
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
