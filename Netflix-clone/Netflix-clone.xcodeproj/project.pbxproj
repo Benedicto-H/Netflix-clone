@@ -16,6 +16,7 @@
 		E8C4B08F2A348F3B00D77F9D /* UpcomingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B08E2A348F3B00D77F9D /* UpcomingViewController.swift */; };
 		E8C4B0912A348F8800D77F9D /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0902A348F8800D77F9D /* SearchViewController.swift */; };
 		E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */; };
+		E8E573E32A35D5AE0088130C /* CollectionViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E573E22A35D5AE0088130C /* CollectionViewTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		E8C4B08E2A348F3B00D77F9D /* UpcomingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingViewController.swift; sourceTree = "<group>"; };
 		E8C4B0902A348F8800D77F9D /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewController.swift; sourceTree = "<group>"; };
+		E8E573E22A35D5AE0088130C /* CollectionViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,9 @@
 		E8C4B0762A345E4C00D77F9D /* Netflix-clone */ = {
 			isa = PBXGroup;
 			children = (
+				E8E573E02A35D4DF0088130C /* Models */,
+				E8E573DF2A35D4B40088130C /* Views */,
+				E8E573E12A35D4EF0088130C /* ViewModels */,
 				E8C4B08B2A348E8B00D77F9D /* Controllers */,
 				E8C4B0772A345E4C00D77F9D /* AppDelegate.swift */,
 				E8C4B0792A345E4C00D77F9D /* SceneDelegate.swift */,
@@ -82,6 +87,28 @@
 				E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		E8E573DF2A35D4B40088130C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E8E573E22A35D5AE0088130C /* CollectionViewTableViewCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E8E573E02A35D4DF0088130C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E8E573E12A35D4EF0088130C /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,6 +183,7 @@
 			files = (
 				E8C4B0912A348F8800D77F9D /* SearchViewController.swift in Sources */,
 				E8C4B07C2A345E4C00D77F9D /* MainTabBarViewController.swift in Sources */,
+				E8E573E32A35D5AE0088130C /* CollectionViewTableViewCell.swift in Sources */,
 				E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */,
 				E8C4B0782A345E4C00D77F9D /* AppDelegate.swift in Sources */,
 				E8C4B07A2A345E4C00D77F9D /* SceneDelegate.swift in Sources */,
@@ -228,7 +256,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -282,7 +310,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
