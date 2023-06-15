@@ -9,10 +9,11 @@ import UIKit
 
 class HomeViewController: UIViewController {
 
-    // MARK: - Computed-Prop
+    // MARK: - Custom View
     private let homeFeedTable: UITableView = {
         
         let table: UITableView = UITableView(frame: .zero, style: .grouped)
+        
         table.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)    //  Params: cellClass, forCellReuseIdentifier
         
         return table
@@ -30,7 +31,9 @@ class HomeViewController: UIViewController {
         homeFeedTable.dataSource = self
         homeFeedTable.delegate = self
         
-        homeFeedTable.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
+        let headerView: HeroHeaderUIView = HeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
+        
+        homeFeedTable.tableHeaderView = headerView
     }
     
     override func viewDidLayoutSubviews() {
@@ -51,15 +54,6 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        /*
-        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        
-        cell.textLabel?.text = "Apple"
-        cell.backgroundColor = .yellow
-        
-        return cell
-         */
         
         guard let cell: CollectionViewTableViewCell =
                 tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier,

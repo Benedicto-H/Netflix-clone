@@ -12,14 +12,16 @@ class CollectionViewTableViewCell: UITableViewCell {
     // MARK: - Stored-Prop (-> Singleton)
     static let identifier: String = "CollectionViewTableViewCell"
     
-    // MARK: - Computed-Prop
+    // MARK: - Custom Views
     private let collectionView: UICollectionView = {
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 120, height: 200)
         
         let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         
         return collectionView
@@ -37,9 +39,9 @@ class CollectionViewTableViewCell: UITableViewCell {
         collectionView.dataSource = self
     }
     
-    required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {    //  NSCoding - (Required) Method
         
-        fatalError()
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Method
@@ -64,7 +66,8 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        cell.backgroundColor = .black
+        
+        cell.backgroundColor = .yellow
         
         return cell
     }
