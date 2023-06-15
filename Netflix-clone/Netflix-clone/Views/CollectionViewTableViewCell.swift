@@ -67,7 +67,7 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         
-        cell.backgroundColor = .yellow
+        cell.backgroundColor = .black
         
         return cell
     }
