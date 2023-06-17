@@ -9,9 +9,9 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
-    private static let url: String = "https://images.ctfassets.net/4cd45et68cgf/Rx83JoRDMkYNlMC9MKzcB/2b14d5a59fc3937afd3f03191e19502d/Netflix-Symbol.png"
-    private var image: UIImage = UIImage()
-
+    // MARK: - Stored-Prop
+    let sectionTitles: [String] = ["Trending Movies", "Popular", "Trending TV", "Upcomming Movies", "Top Rated"]
+    
     // MARK: - Custom View
     private let homeFeedTable: UITableView = {
         
@@ -49,29 +49,41 @@ class HomeViewController: UIViewController {
     
     private func configureNavBar() -> Void {
         
-        fetchImage(url: HomeViewController.url) { image in
+        var image: UIImage = UIImage()
+        
+        HomeViewController.fetchNetflixSymbol { img in
             
-            self.image = image
-            self.image = self.image.withRenderingMode(.alwaysOriginal)
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: self.image, style: .done, target: self, action: nil)
+            image = img
+            image = image.withRenderingMode(.alwaysOriginal)
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
         }
+        
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .done, target: self, action: nil),
+            UIBarButtonItem(image: UIImage(systemName: "play.rectangle"), style: .done, target: self, action: nil)
+        ]
+        
+        navigationController?.navigationBar.tintColor = .white
     }
     
-    private func fetchImage(url: String, completionHandler: @escaping (UIImage) -> Void) -> Void {
+    private static func fetchNetflixSymbol(completionHandler: @escaping (UIImage) -> Void) -> Void {
         
-        guard let url: URL = URL(string: url) else { return }
+        let originURL: String = "https://images.ctfassets.net/y2ske730sjqp/4aEQ1zAUZF5pLSDtfviWjb/ba04f8d5bd01428f6e3803cc6effaf30/Netflix_N.png?w=300" //  source: https://brand.netflix.com/en/assets/logos
+        
+        guard let url: URL = URL(string: originURL) else { return }
         
         URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
             
-            guard let safeData: Data = data else { return }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
             
             do {
                 
-                let img = UIImage(data: safeData)
+                guard let safeData: Data = data else { return }
+                let logoImage: UIImage? = UIImage(data: safeData)
                 
                 DispatchQueue.main.async {
                     
-                    completionHandler(img ?? UIImage())
+                    completionHandler(logoImage ?? UIImage())
                 }
             } catch {
                 
@@ -113,6 +125,31 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         
-        return 10
+        return sectionTitles.count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        return sectionTitles[section]
+    }
+    
+    // MARK: - UITableViewDelegate - (Optional) Method
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        
+        guard let header: UITableViewHeaderFooterView = view as? UITableViewHeaderFooterView else { return }
+        
+        header.textLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        header.textLabel?.frame = CGRect(x: header.bounds.origin.x + 20, y: header.bounds.origin.y, width: 100, height: header.bounds.height)
+        header.textLabel?.textColor = .white
+        header.textLabel?.text = header.textLabel?.text?.lowercased()
+    }
+    
+    // MARK: - UIScrollViewDelegate - (Optional) Method (-> Protocol. UITableViewDelegate: UIScrollViewDelegate)
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {  //  scrollViewDidScroll(_:) - Scroll 할 때마다 계속 호출
+        
+        let defaultOffset: CGFloat = view.safeAreaInsets.top
+        let offset: CGFloat = scrollView.contentOffset.y + defaultOffset
+        
+        navigationController?.navigationBar.transform = .init(translationX: 0, y: min(0, -offset))
     }
 }
