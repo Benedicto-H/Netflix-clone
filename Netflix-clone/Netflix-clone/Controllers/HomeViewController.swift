@@ -39,6 +39,7 @@ class HomeViewController: UIViewController {
         homeFeedTable.tableHeaderView = headerView
         
         configureNavBar()
+        fetchTrendingMovies()
     }
     
     override func viewDidLayoutSubviews() {
@@ -91,6 +92,13 @@ class HomeViewController: UIViewController {
             }
         }.resume()
     }
+    
+    private func fetchTrendingMovies() -> Void {
+        
+        APICaller().fetchTrendingMovies { _ in
+            
+        }
+    }
 
 
 }
@@ -138,10 +146,23 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let header: UITableViewHeaderFooterView = view as? UITableViewHeaderFooterView else { return }
         
+        
         header.textLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         header.textLabel?.frame = CGRect(x: header.bounds.origin.x + 20, y: header.bounds.origin.y, width: 100, height: header.bounds.height)
         header.textLabel?.textColor = .white
+        //  header.textLabel?.textColor = header.traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
         header.textLabel?.text = header.textLabel?.text?.lowercased()
+         
+        /*
+        var contentConfiguration = UIListContentConfiguration.subtitleCell()
+        contentConfiguration.text = header.textLabel?.text
+        contentConfiguration.secondaryText = header.detailTextLabel?.text
+        contentConfiguration.textProperties.font = .systemFont(ofSize: 18, weight: .semibold)
+        contentConfiguration.textProperties.color = .black
+        contentConfiguration.textProperties.numberOfLines = 0
+        
+        header.contentConfiguration = contentConfiguration
+         */
     }
     
     // MARK: - UIScrollViewDelegate - (Optional) Method (-> Protocol. UITableViewDelegate: UIScrollViewDelegate)

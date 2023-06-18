@@ -17,6 +17,7 @@
 		E8C4B08F2A348F3B00D77F9D /* UpcomingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B08E2A348F3B00D77F9D /* UpcomingViewController.swift */; };
 		E8C4B0912A348F8800D77F9D /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0902A348F8800D77F9D /* SearchViewController.swift */; };
 		E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */; };
+		E8D8C83A2A3F120E002DED3F /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D8C8392A3F120E002DED3F /* APICaller.swift */; };
 		E8E573E32A35D5AE0088130C /* CollectionViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E573E22A35D5AE0088130C /* CollectionViewTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,8 @@
 		E8C4B08E2A348F3B00D77F9D /* UpcomingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingViewController.swift; sourceTree = "<group>"; };
 		E8C4B0902A348F8800D77F9D /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewController.swift; sourceTree = "<group>"; };
+		E8D8C8392A3F120E002DED3F /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
+		E8D8C83C2A3F2AF0002DED3F /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		E8E573E22A35D5AE0088130C /* CollectionViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,16 +69,18 @@
 		E8C4B0762A345E4C00D77F9D /* Netflix-clone */ = {
 			isa = PBXGroup;
 			children = (
+				E8C4B0772A345E4C00D77F9D /* AppDelegate.swift */,
+				E8C4B0792A345E4C00D77F9D /* SceneDelegate.swift */,
+				E8C4B07B2A345E4C00D77F9D /* MainTabBarViewController.swift */,
 				E8E573E02A35D4DF0088130C /* Models */,
 				E8E573DF2A35D4B40088130C /* Views */,
 				E8E573E12A35D4EF0088130C /* ViewModels */,
 				E8C4B08B2A348E8B00D77F9D /* Controllers */,
-				E8C4B0772A345E4C00D77F9D /* AppDelegate.swift */,
-				E8C4B0792A345E4C00D77F9D /* SceneDelegate.swift */,
-				E8C4B07B2A345E4C00D77F9D /* MainTabBarViewController.swift */,
+				E8D8C83B2A3F1213002DED3F /* Services */,
 				E8C4B0802A345E4D00D77F9D /* Assets.xcassets */,
 				E8C4B0822A345E4D00D77F9D /* LaunchScreen.storyboard */,
 				E8C4B0852A345E4D00D77F9D /* Info.plist */,
+				E8D8C83C2A3F2AF0002DED3F /* Secret.xcconfig */,
 			);
 			path = "Netflix-clone";
 			sourceTree = "<group>";
@@ -89,6 +94,14 @@
 				E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		E8D8C83B2A3F1213002DED3F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				E8D8C8392A3F120E002DED3F /* APICaller.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		E8E573DF2A35D4B40088130C /* Views */ = {
@@ -187,6 +200,7 @@
 				E8C4B0912A348F8800D77F9D /* SearchViewController.swift in Sources */,
 				E8C4B07C2A345E4C00D77F9D /* MainTabBarViewController.swift in Sources */,
 				E8E573E32A35D5AE0088130C /* CollectionViewTableViewCell.swift in Sources */,
+				E8D8C83A2A3F120E002DED3F /* APICaller.swift in Sources */,
 				E835B2B32A386E7D009367EF /* HeroHeaderUIView.swift in Sources */,
 				E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */,
 				E8C4B0782A345E4C00D77F9D /* AppDelegate.swift in Sources */,
@@ -326,6 +340,7 @@
 		};
 		E8C4B0892A345E4D00D77F9D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E8D8C83C2A3F2AF0002DED3F /* Secret.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
