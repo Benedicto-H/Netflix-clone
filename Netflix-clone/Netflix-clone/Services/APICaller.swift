@@ -40,7 +40,27 @@ class APICaller {
     }
      */
     
+    func fetchTrendingMovies() async throws -> Void {
+        
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return }
+        
+        do {
+            
+            let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(from: url)
+            
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
+            
+            let results: Any = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            
+            print(results)
+        } catch {
+            
+            fatalError(error.localizedDescription)
+        }
+    }
+    
     /// Used ACCESS_TOKEN
+    /*
     func fetchTrendingMovies(completionHandler: @escaping (String) -> Void) -> Void {
         
         let headers: [String : String] = [
@@ -71,4 +91,5 @@ class APICaller {
             }
         }.resume()
     }
+     */
 }
