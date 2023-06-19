@@ -13,7 +13,7 @@ class APICaller {
     static let shared: APICaller = APICaller()
     private static let baseURL: String = "https://api.themoviedb.org"
     
-    // MARK: - Method
+    // MARK: - Methods
     
     /// Used API_KEY
     /*
@@ -40,6 +40,8 @@ class APICaller {
     }
      */
     
+    /// Used API_KEY    -   Async/Await
+    /*
     func fetchTrendingMovies() async throws -> Void {
         
         guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return }
@@ -58,6 +60,7 @@ class APICaller {
             fatalError(error.localizedDescription)
         }
     }
+     */
     
     /// Used ACCESS_TOKEN
     /*
@@ -76,7 +79,7 @@ class APICaller {
         
         URLSession.shared.dataTask(with: request as URLRequest) { data, urlResponse, error in
             
-            guard (urlResponse as! HTTPURLResponse).statusCode == 200 else { return }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
             
             do {
                 
@@ -92,4 +95,33 @@ class APICaller {
         }.resume()
     }
      */
+    
+    /// Used ACCESS_TOKEN   -   Async/Await
+    func fetchTrendingMovies() async throws -> Void {
+        
+        let headers: [String : String] = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(Bundle.main.object(forInfoDictionaryKey: "ACCESS_TOKEN") as? String ?? "")"
+        ]
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: "\(APICaller.baseURL)/3/trending/movie/day?languages=en-US")! as URL,
+                                                               cachePolicy: .useProtocolCachePolicy,
+                                                               timeoutInterval: 10.0)
+        
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+        
+        do {
+            
+            let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: request as URLRequest)
+            
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
+            
+            let results: Any = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            
+            print(results)
+        } catch {
+            
+            fatalError(error.localizedDescription)
+        }
+    }
 }
