@@ -11,15 +11,15 @@ class APICaller {
     
     // MARK: - Stored-Prop (-> Singleton)
     static let shared: APICaller = APICaller()
+    private static let baseURL: String = "https://api.themoviedb.org"
     
     // MARK: - Method
+    
+    /// Used API_KEY
+    /*
     func fetchTrendingMovies(completionHandler: @escaping (String) -> Void) -> Void {
         
-        let baseURL: String = "https://api.themoviedb.org"
-        
-        guard let url: URL = URL(string: "\(baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return }
-        
-        print("url: \(url) \n")
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return } //  API_KEY 값의 경우 .xcconfig 파일로 관리
         
         URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
             
@@ -30,7 +30,41 @@ class APICaller {
                 guard let safeData: Data = data else { return }
                 let results: Any = try JSONSerialization.jsonObject(with: safeData, options: .fragmentsAllowed)
                 
-                dump(results)
+                //  dump(results)
+                print(results)
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }.resume()
+    }
+     */
+    
+    /// Used ACCESS_TOKEN
+    func fetchTrendingMovies(completionHandler: @escaping (String) -> Void) -> Void {
+        
+        let headers: [String : String] = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(Bundle.main.object(forInfoDictionaryKey: "ACCESS_TOKEN") as? String ?? "")"
+        ]   //  ACCESS_TOKEN 값의 경우 .xcconfig 파일로 분리
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: "\(APICaller.baseURL)/3/trending/movie/day?languages=en-US")! as URL,
+                                          cachePolicy: .useProtocolCachePolicy,
+                                          timeoutInterval: 10.0)
+        
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+        
+        URLSession.shared.dataTask(with: request as URLRequest) { data, urlResponse, error in
+            
+            guard (urlResponse as! HTTPURLResponse).statusCode == 200 else { return }
+            
+            do {
+                
+                guard let safeData: Data = data else { return }
+                let results: Any = try JSONSerialization.jsonObject(with: safeData, options: .fragmentsAllowed)
+                
+                //  dump(results)
+                print(results)
             } catch {
                 
                 fatalError(error.localizedDescription)
