@@ -39,8 +39,8 @@ class HomeViewController: UIViewController {
         homeFeedTable.tableHeaderView = headerView
         
         configureNavBar()
-        //  fetchTrendingMoviesWithCompletionHandler()
-        fetchTrendingMoviesWithAsyncAwait()
+        fetchTrendingMoviesWithCompletionHandler()
+        //  fetchTrendingMoviesWithAsyncAwait()
     }
     
     override func viewDidLayoutSubviews() {
@@ -94,30 +94,43 @@ class HomeViewController: UIViewController {
         }.resume()
     }
     
-    /// fetchTrendingMoviesWithCompletionHandler()   ->  (ver. completionHandler)
-    /*
+    /// Method  -   fetchTrendingMoviesWithCompletionHandler()   ->  (ver. completionHandler)
     private func fetchTrendingMoviesWithCompletionHandler() -> Void {
         
-        APICaller().fetchTrendingMovies { _ in
+        APICaller.shared.fetchTrendingMovies { results in
             
+            switch results {
+            case .success(let movies):
+                
+                print(movies)
+                break;
+                
+            case .failure(let error):
+                
+                fatalError(error.localizedDescription)
+                break;
+            }
         }
     }
-     */
     
-    /// fetchTrendingMoviesWithAsyncAwait()   ->  (ver. Async/Await)
+    /// Method  -   fetchTrendingMoviesWithAsyncAwait()   ->  (ver. Async/Await)
+    /*
     private func fetchTrendingMoviesWithAsyncAwait() -> Void {
         
         Task {
             
             do {
                 
-                try await APICaller().fetchTrendingMovies()
+                let movies: TrendingMoviesResponse? = try await APICaller.shared.fetchTrendingMovies()
+                
+                print(movies?.results)
             } catch {
                 
                 fatalError(error.localizedDescription)
             }
         }
     }
+     */
 
 
 }

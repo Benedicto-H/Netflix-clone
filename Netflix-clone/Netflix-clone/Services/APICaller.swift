@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum APIError: Error {
+    case failedFetchData
+}
+
 class APICaller {
     
     // MARK: - Stored-Prop (-> Singleton)
@@ -16,8 +20,7 @@ class APICaller {
     // MARK: - Methods
     
     /// Used API_KEY
-    /*
-    func fetchTrendingMovies(completionHandler: @escaping (String) -> Void) -> Void {
+    func fetchTrendingMovies(completionHandler: @escaping (Result<[TrendingMoviesResponse.Movie], Error>) -> Void) -> Void {
         
         guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return } //  API_KEY 값의 경우 .xcconfig 파일로 관리
         
@@ -28,33 +31,31 @@ class APICaller {
             do {
                 
                 guard let safeData: Data = data else { return }
-                let results: Any = try JSONSerialization.jsonObject(with: safeData, options: .fragmentsAllowed)
+                let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: safeData)
                 
-                //  dump(results)
-                print(results)
+                completionHandler(.success(decodedData.results))
             } catch {
                 
-                fatalError(error.localizedDescription)
+                completionHandler(.failure(error))
             }
         }.resume()
     }
-     */
     
     /// Used API_KEY    -   Async/Await
     /*
-    func fetchTrendingMovies() async throws -> Void {
+    func fetchTrendingMovies() async throws -> TrendingMoviesResponse? {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return nil }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(from: url)
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
             
-            let results: Any = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
             
-            print(results)
+            return decodedData
         } catch {
             
             fatalError(error.localizedDescription)
@@ -64,7 +65,7 @@ class APICaller {
     
     /// Used ACCESS_TOKEN
     /*
-    func fetchTrendingMovies(completionHandler: @escaping (String) -> Void) -> Void {
+    func fetchTrendingMovies(completionHandler: @escaping (Result<[TrendingMoviesResponse.Movie], Error>) -> Void) -> Void {
         
         let headers: [String : String] = [
             "accept": "application/json",
@@ -84,20 +85,20 @@ class APICaller {
             do {
                 
                 guard let safeData: Data = data else { return }
-                let results: Any = try JSONSerialization.jsonObject(with: safeData, options: .fragmentsAllowed)
+                let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: safeData)
                 
-                //  dump(results)
-                print(results)
+                completionHandler(.success(decodedData.results))
             } catch {
                 
-                fatalError(error.localizedDescription)
+                completionHandler(.failure(error))
             }
         }.resume()
     }
      */
     
     /// Used ACCESS_TOKEN   -   Async/Await
-    func fetchTrendingMovies() async throws -> Void {
+    /*
+    func fetchTrendingMovies() async throws -> TrendingMoviesResponse? {
         
         let headers: [String : String] = [
             "accept": "application/json",
@@ -114,14 +115,15 @@ class APICaller {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: request as URLRequest)
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
             
-            let results: Any = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
             
-            print(results)
+            return decodedData
         } catch {
             
             fatalError(error.localizedDescription)
         }
     }
+     */
 }
