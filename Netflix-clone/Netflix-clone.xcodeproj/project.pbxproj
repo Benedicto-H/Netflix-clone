@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		E835B2B32A386E7D009367EF /* HeroHeaderUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E835B2B22A386E7D009367EF /* HeroHeaderUIView.swift */; };
+		E845A5692A41A71500F809C6 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E845A5682A41A71500F809C6 /* String+.swift */; };
+		E845A56B2A41AE9E00F809C6 /* TVs.swift in Sources */ = {isa = PBXBuildFile; fileRef = E845A56A2A41AE9E00F809C6 /* TVs.swift */; };
 		E8885D292A407681006D9D04 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8885D282A407681006D9D04 /* Movie.swift */; };
 		E8C4B0782A345E4C00D77F9D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0772A345E4C00D77F9D /* AppDelegate.swift */; };
 		E8C4B07A2A345E4C00D77F9D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0792A345E4C00D77F9D /* SceneDelegate.swift */; };
@@ -24,6 +26,8 @@
 
 /* Begin PBXFileReference section */
 		E835B2B22A386E7D009367EF /* HeroHeaderUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroHeaderUIView.swift; sourceTree = "<group>"; };
+		E845A5682A41A71500F809C6 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
+		E845A56A2A41AE9E00F809C6 /* TVs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVs.swift; sourceTree = "<group>"; };
 		E8885D282A407681006D9D04 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 		E8C4B0742A345E4C00D77F9D /* Netflix-clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Netflix-clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8C4B0772A345E4C00D77F9D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -52,6 +56,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E845A5662A41A5F500F809C6 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E845A5672A41A6FD00F809C6 /* Extensions */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E845A5672A41A6FD00F809C6 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				E845A5682A41A71500F809C6 /* String+.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		E8C4B06B2A345E4C00D77F9D = {
 			isa = PBXGroup;
 			children = (
@@ -79,6 +99,7 @@
 				E8E573E12A35D4EF0088130C /* ViewModels */,
 				E8C4B08B2A348E8B00D77F9D /* Controllers */,
 				E8D8C83B2A3F1213002DED3F /* Services */,
+				E845A5662A41A5F500F809C6 /* Resources */,
 				E8C4B0802A345E4D00D77F9D /* Assets.xcassets */,
 				E8C4B0822A345E4D00D77F9D /* LaunchScreen.storyboard */,
 				E8C4B0852A345E4D00D77F9D /* Info.plist */,
@@ -119,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				E8885D282A407681006D9D04 /* Movie.swift */,
+				E845A56A2A41AE9E00F809C6 /* TVs.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -208,8 +230,10 @@
 				E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */,
 				E8C4B0782A345E4C00D77F9D /* AppDelegate.swift in Sources */,
 				E8C4B07A2A345E4C00D77F9D /* SceneDelegate.swift in Sources */,
+				E845A56B2A41AE9E00F809C6 /* TVs.swift in Sources */,
 				E8C4B08F2A348F3B00D77F9D /* UpcomingViewController.swift in Sources */,
 				E8885D292A407681006D9D04 /* Movie.swift in Sources */,
+				E845A5692A41A71500F809C6 /* String+.swift in Sources */,
 				E8C4B08D2A348ED800D77F9D /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,38 +1,38 @@
 //
-//  Movie.swift
+//  TVs.swift
 //  Netflix-clone
 //
-//  Created by 홍진표 on 2023/06/19.
+//  Created by 홍진표 on 2023/06/20.
 //
 
 import Foundation
 
-struct TrendingMoviesResponse: Codable {
+struct TrendingTVsResponse: Codable {
     
     // MARK: - Stored-Props
     let page: Int
-    let results: [Movie]
+    let results: [TV]
     let total_pages: Int
     let total_results: Int
     
     // MARK: - Inner Structure
-    struct Movie: Codable {
+    struct TV: Codable {
         
         // MARK: - Stored-Props
         let adult: Bool
         let backdrop_path: String?
-        let genre_ids: [Int]
         let id: Int
-        let media_type: String?
+        let name: String?
         let original_language: String?
-        let original_title: String?
+        let original_name: String?
         let overview: String?
-        let popularity: Double
         let poster_path: String?
-        let release_date: String?
-        let title: String?
-        let video: Bool
+        let media_type: String?
+        let genre_ids: [Int]
+        let popularity: Double
+        let first_air_date: String?
         let vote_average: Double
         let vote_count: Int
+        let origin_country: [String?]
     }
 }

@@ -10,7 +10,7 @@ import UIKit
 class HomeViewController: UIViewController {
     
     // MARK: - Stored-Prop
-    let sectionTitles: [String] = ["Trending Movies", "Popular", "Trending TV", "Upcomming Movies", "Top Rated"]
+    let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
     
     // MARK: - Custom View
     private let homeFeedTable: UITableView = {
@@ -102,6 +102,7 @@ class HomeViewController: UIViewController {
             switch results {
             case .success(let movies):
                 
+                print("===== Trending Movies ===== \n")
                 print(movies)
                 break;
                 
@@ -178,23 +179,11 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let header: UITableViewHeaderFooterView = view as? UITableViewHeaderFooterView else { return }
         
-        
         header.textLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         header.textLabel?.frame = CGRect(x: header.bounds.origin.x + 20, y: header.bounds.origin.y, width: 100, height: header.bounds.height)
         header.textLabel?.textColor = .white
         //  header.textLabel?.textColor = header.traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
-        header.textLabel?.text = header.textLabel?.text?.lowercased()
-         
-        /*
-        var contentConfiguration = UIListContentConfiguration.subtitleCell()
-        contentConfiguration.text = header.textLabel?.text
-        contentConfiguration.secondaryText = header.detailTextLabel?.text
-        contentConfiguration.textProperties.font = .systemFont(ofSize: 18, weight: .semibold)
-        contentConfiguration.textProperties.color = .black
-        contentConfiguration.textProperties.numberOfLines = 0
-        
-        header.contentConfiguration = contentConfiguration
-         */
+        header.textLabel?.text = header.textLabel?.text?.capitalizeFirstLetter()
     }
     
     // MARK: - UIScrollViewDelegate - (Optional) Method (-> Protocol. UITableViewDelegate: UIScrollViewDelegate)
