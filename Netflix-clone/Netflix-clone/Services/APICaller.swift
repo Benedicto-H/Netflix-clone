@@ -20,6 +20,7 @@ class APICaller {
     // MARK: - Methods
     // MARK: - Trending Movies
     /// Used API_KEY
+    /*
     func fetchTrendingMovies(completionHandler: @escaping (Result<[TrendingMoviesResponse.Movie], Error>) -> Void) -> Void {
         
         guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return } //  API_KEY 값의 경우 .xcconfig 파일로 관리
@@ -40,9 +41,9 @@ class APICaller {
             }
         }.resume()
     }
+     */
     
     /// Used API_KEY    -   Async/Await
-    /*
     func fetchTrendingMovies() async throws -> TrendingMoviesResponse? {
         
         guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return nil }
@@ -58,10 +59,9 @@ class APICaller {
             return decodedData
         } catch {
             
-            fatalError(error.localizedDescription)
+            fatalError(APIError.failedFetchData.localizedDescription)
         }
     }
-     */
     
     /// Used ACCESS_TOKEN
     /*
@@ -128,76 +128,82 @@ class APICaller {
      */
     
     // MARK: - Trending TVs
-    func fetchTrendingTVs(completionHandler: @escaping (Result<TrendingTVsResponse, Error>) -> Void) -> Void {
+    func fetchTrendingTVs() async throws -> TrendingTVsResponse? {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/tv/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return }
-        
-        URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
-            
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
-            
-            do {
-                
-                guard let safeData: Data = data else { return }
-                let decodedData: TrendingTVsResponse = try JSONDecoder().decode(TrendingTVsResponse.self, from: safeData)
-            } catch {
-                
-                fatalError(error.localizedDescription)
-            }
-        }.resume()
-    }
-    
-    // MARK: - Upcoming Movies
-    func fetchUpcomingMovies() async throws -> Void {
-        
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/upcoming?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/tv/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return nil }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
             
-            let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+            let decodedData: TrendingTVsResponse = try JSONDecoder().decode(TrendingTVsResponse.self, from: data)
+            
+            return decodedData
         } catch {
             
-            fatalError(error.localizedDescription)
+            fatalError(APIError.failedFetchData.localizedDescription)
         }
     }
     
     // MARK: - Popular
-    func fetchPopular() async throws -> Void {
+    func fetchPopular() async throws -> TrendingMoviesResponse? {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/popular?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/popular?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return nil }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
             
             let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+            
+            return decodedData
         } catch {
             
-            fatalError(error.localizedDescription)
+            fatalError(APIError.failedFetchData.localizedDescription)
+        }
+    }
+    
+    // MARK: - Upcoming Movies
+    func fetchUpcomingMovies() async throws -> TrendingMoviesResponse? {
+        
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/upcoming?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return nil }
+        
+        do {
+            
+            let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
+            
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+            
+            let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+            
+            return decodedData
+        } catch {
+            
+            fatalError(APIError.failedFetchData.localizedDescription)
         }
     }
     
     // MARK: - Top Rated
-    func fetchTopRated() async throws -> Void {
+    func fetchTopRated() async throws -> TrendingMoviesResponse? {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/top_rated?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/top_rated?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return nil }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
             
             let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+            
+            return decodedData
         } catch {
             
-            fatalError(error.localizedDescription)
+            fatalError(APIError.failedFetchData.localizedDescription)
         }
     }
 }

@@ -39,8 +39,8 @@ class HomeViewController: UIViewController {
         homeFeedTable.tableHeaderView = headerView
         
         configureNavBar()
-        fetchTrendingMoviesWithCompletionHandler()
-        //  fetchTrendingMoviesWithAsyncAwait()
+        //  fetchTrendingMoviesWithCompletionHandler()
+        fetchData()
     }
     
     override func viewDidLayoutSubviews() {
@@ -53,7 +53,7 @@ class HomeViewController: UIViewController {
         
         var image: UIImage = UIImage()
         
-        HomeViewController.fetchNetflixSymbol { img in
+        fetchNetflixSymbol { img in
             
             image = img
             image = image.withRenderingMode(.alwaysOriginal)
@@ -68,11 +68,11 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
-    private static func fetchNetflixSymbol(completionHandler: @escaping (UIImage) -> Void) -> Void {
+    private func fetchNetflixSymbol(completionHandler: @escaping (UIImage) -> Void) -> Void {
         
-        let originURL: String = "https://images.ctfassets.net/y2ske730sjqp/4aEQ1zAUZF5pLSDtfviWjb/ba04f8d5bd01428f6e3803cc6effaf30/Netflix_N.png?w=300" //  source: https://brand.netflix.com/en/assets/logos
+        let url: String = "https://images.ctfassets.net/y2ske730sjqp/4aEQ1zAUZF5pLSDtfviWjb/ba04f8d5bd01428f6e3803cc6effaf30/Netflix_N.png?w=300" //  source: https://brand.netflix.com/en/assets/logos
         
-        guard let url: URL = URL(string: originURL) else { return }
+        guard let url: URL = URL(string: url) else { return }
         
         URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
             
@@ -95,6 +95,7 @@ class HomeViewController: UIViewController {
     }
     
     /// Method  -   fetchTrendingMoviesWithCompletionHandler()   ->  (ver. completionHandler)
+    /*
     private func fetchTrendingMoviesWithCompletionHandler() -> Void {
         
         APICaller.shared.fetchTrendingMovies { results in
@@ -113,11 +114,12 @@ class HomeViewController: UIViewController {
             }
         }
     }
+     */
     
     /// Method  -   fetchTrendingMoviesWithAsyncAwait()   ->  (ver. Async/Await)
-    /*
-    private func fetchTrendingMoviesWithAsyncAwait() -> Void {
+    private func fetchData() -> Void {
         
+        /*
         Task {
             
             do {
@@ -130,8 +132,65 @@ class HomeViewController: UIViewController {
                 fatalError(error.localizedDescription)
             }
         }
+         */
+        
+        for title in sectionTitles {
+            
+            Task {
+                
+                do {
+                    
+                    switch title {
+                    case "Trending Movies":
+                        
+                        let trendingMovies: TrendingMoviesResponse? = try await APICaller.shared.fetchTrendingMovies()
+                        
+                        print("===== Trending Movies =====")
+                        print("\(trendingMovies?.results) \n")
+                        break;
+                        
+                    case "Trending TV":
+                        
+                        let tvs: TrendingTVsResponse? = try await APICaller.shared.fetchTrendingTVs()
+                        
+                        print("===== Trending TVs =====")
+                        print("\(tvs?.results) \n")
+                        break;
+                        
+                    case "Popular":
+                        
+                        let popular: TrendingMoviesResponse? = try await APICaller.shared.fetchPopular()
+                        
+                        print("===== Popular =====")
+                        print("\(popular?.results) \n")
+                        break;
+                        
+                    case "Upcoming Movies":
+                        
+                        let upcomingMovies: TrendingMoviesResponse? = try await APICaller.shared.fetchUpcomingMovies()
+                        
+                        print("===== Upcoming Movies =====")
+                        print("\(upcomingMovies?.results) \n")
+                        break;
+                        
+                    case "Top Rated":
+                        
+                        let topRated: TrendingMoviesResponse? = try await APICaller.shared.fetchTopRated()
+                        
+                        print("===== Top Rated =====")
+                        print("\(topRated?.results) \n")
+                        break;
+                        
+                    default:
+                        break;
+                    }
+                } catch {
+                    
+                    fatalError(error.localizedDescription)
+                }
+            }
+        }
     }
-     */
 
 
 }
