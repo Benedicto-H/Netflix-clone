@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TrendingMoviesResponse: Codable {
+struct MoviesResponse: Codable {
     
     // MARK: - Stored-Props
     let page: Int

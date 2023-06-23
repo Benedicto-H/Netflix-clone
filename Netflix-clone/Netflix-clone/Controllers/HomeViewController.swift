@@ -9,6 +9,14 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
+    enum Sections: Int {
+        case TrendingMovies = 0
+        case TrendingTV = 1
+        case Popular = 2
+        case UpcomingMovies = 3
+        case TopRated = 4
+    }
+    
     // MARK: - Stored-Prop
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
     
@@ -39,8 +47,6 @@ class HomeViewController: UIViewController {
         homeFeedTable.tableHeaderView = headerView
         
         configureNavBar()
-        //  fetchTrendingMoviesWithCompletionHandler()
-        fetchData()
     }
     
     override func viewDidLayoutSubviews() {
@@ -117,9 +123,9 @@ class HomeViewController: UIViewController {
      */
     
     /// Method  -   fetchTrendingMoviesWithAsyncAwait()   ->  (ver. Async/Await)
-    private func fetchData() -> Void {
+    /*
+    private func fetchTrendingMoviesWithAsyncAwait() -> Void {
         
-        /*
         Task {
             
             do {
@@ -132,67 +138,8 @@ class HomeViewController: UIViewController {
                 fatalError(error.localizedDescription)
             }
         }
-         */
-        
-        for title in sectionTitles {
-            
-            Task {
-                
-                do {
-                    
-                    switch title {
-                    case "Trending Movies":
-                        
-                        let trendingMovies: TrendingMoviesResponse? = try await APICaller.shared.fetchTrendingMovies()
-                        
-                        print("===== Trending Movies =====")
-                        print("\(trendingMovies?.results) \n")
-                        break;
-                        
-                    case "Trending TV":
-                        
-                        let tvs: TrendingTVsResponse? = try await APICaller.shared.fetchTrendingTVs()
-                        
-                        print("===== Trending TVs =====")
-                        print("\(tvs?.results) \n")
-                        break;
-                        
-                    case "Popular":
-                        
-                        let popular: TrendingMoviesResponse? = try await APICaller.shared.fetchPopular()
-                        
-                        print("===== Popular =====")
-                        print("\(popular?.results) \n")
-                        break;
-                        
-                    case "Upcoming Movies":
-                        
-                        let upcomingMovies: TrendingMoviesResponse? = try await APICaller.shared.fetchUpcomingMovies()
-                        
-                        print("===== Upcoming Movies =====")
-                        print("\(upcomingMovies?.results) \n")
-                        break;
-                        
-                    case "Top Rated":
-                        
-                        let topRated: TrendingMoviesResponse? = try await APICaller.shared.fetchTopRated()
-                        
-                        print("===== Top Rated =====")
-                        print("\(topRated?.results) \n")
-                        break;
-                        
-                    default:
-                        break;
-                    }
-                } catch {
-                    
-                    fatalError(error.localizedDescription)
-                }
-            }
-        }
     }
-
-
+     */
 }
 
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
@@ -208,6 +155,57 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell: CollectionViewTableViewCell =
                 tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier,
                                                        for: indexPath) as? CollectionViewTableViewCell else { return UITableViewCell() }
+        
+        Task {
+            
+            do {
+                
+                switch indexPath.section {
+                case Sections.TrendingMovies.rawValue:
+                    
+                    let trendingMovies: MoviesResponse = try await APICaller.shared.fetchTrendingMovies()
+                    
+                    cell.configure(withMovies: trendingMovies.results, withTVs: nil)
+                    break;
+                    
+                case Sections.TrendingTV.rawValue:
+                    
+                    let trendingTVs: TVsResponse = try await APICaller.shared.fetchTrendingTVs()
+                    
+                    cell.configure(withMovies: nil, withTVs: trendingTVs.results)
+                    break;
+                    
+                case Sections.Popular.rawValue:
+                    
+                    let popular: MoviesResponse = try await APICaller.shared.fetchPopular()
+                    
+                    cell.configure(withMovies: popular.results, withTVs: nil)
+                    break;
+                    
+                case Sections.UpcomingMovies.rawValue:
+                    
+                    let upComingMovies: MoviesResponse = try await APICaller.shared.fetchUpcomingMovies()
+                    
+                    cell.configure(withMovies: upComingMovies.results, withTVs: nil)
+                    break;
+                    
+                case Sections.TopRated.rawValue:
+                    
+                    let topRated: MoviesResponse = try await APICaller.shared.fetchTopRated()
+                    
+                    cell.configure(withMovies: topRated.results, withTVs: nil)
+                    break;
+                    
+                default:
+                    break;
+                }
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+            
+            return UITableViewCell()
+        }
         
         return cell
     }

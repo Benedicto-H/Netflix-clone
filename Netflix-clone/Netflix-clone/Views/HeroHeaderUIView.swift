@@ -14,7 +14,7 @@ class HeroHeaderUIView: UIView {
         
         let imageView: UIImageView = UIImageView()
         
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         HeroHeaderUIView.fetchHeroImage(completionHandler: { img in
             
@@ -133,5 +133,4 @@ class HeroHeaderUIView: UIView {
             }
         }.resume()
     }
-
 }

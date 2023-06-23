@@ -7,13 +7,15 @@
 
 import Foundation
 
-enum APIError: Error {
-    case failedFetchData
-}
-
 class APICaller {
     
-    // MARK: - Stored-Prop (-> Singleton)
+    enum APIError: Error {
+        case invalidURL
+        case failedResponse
+        case failedFetchData
+    }
+    
+    // MARK: - Stored-Prop  (-> Singleton)
     static let shared: APICaller = APICaller()
     private static let baseURL: String = "https://api.themoviedb.org"
     
@@ -44,17 +46,17 @@ class APICaller {
      */
     
     /// Used API_KEY    -   Async/Await
-    func fetchTrendingMovies() async throws -> TrendingMoviesResponse? {
+    func fetchTrendingMovies() async throws -> MoviesResponse {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return nil }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { throw APIError.invalidURL }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(from: url)
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { throw APIError.failedResponse }
             
-            let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+            let decodedData: MoviesResponse = try JSONDecoder().decode(MoviesResponse.self, from: data)
             
             return decodedData
         } catch {
@@ -128,17 +130,17 @@ class APICaller {
      */
     
     // MARK: - Trending TVs
-    func fetchTrendingTVs() async throws -> TrendingTVsResponse? {
+    func fetchTrendingTVs() async throws -> TVsResponse {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/tv/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return nil }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/tv/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { throw APIError.invalidURL }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { throw APIError.failedResponse }
             
-            let decodedData: TrendingTVsResponse = try JSONDecoder().decode(TrendingTVsResponse.self, from: data)
+            let decodedData: TVsResponse = try JSONDecoder().decode(TVsResponse.self, from: data)
             
             return decodedData
         } catch {
@@ -148,17 +150,17 @@ class APICaller {
     }
     
     // MARK: - Popular
-    func fetchPopular() async throws -> TrendingMoviesResponse? {
+    func fetchPopular() async throws -> MoviesResponse {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/popular?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return nil }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/popular?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { throw APIError.invalidURL }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { throw APIError.failedResponse }
             
-            let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+            let decodedData: MoviesResponse = try JSONDecoder().decode(MoviesResponse.self, from: data)
             
             return decodedData
         } catch {
@@ -168,17 +170,17 @@ class APICaller {
     }
     
     // MARK: - Upcoming Movies
-    func fetchUpcomingMovies() async throws -> TrendingMoviesResponse? {
+    func fetchUpcomingMovies() async throws -> MoviesResponse {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/upcoming?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return nil }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/upcoming?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { throw APIError.invalidURL }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { throw APIError.failedResponse }
             
-            let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+            let decodedData: MoviesResponse = try JSONDecoder().decode(MoviesResponse.self, from: data)
             
             return decodedData
         } catch {
@@ -188,17 +190,17 @@ class APICaller {
     }
     
     // MARK: - Top Rated
-    func fetchTopRated() async throws -> TrendingMoviesResponse? {
+    func fetchTopRated() async throws -> MoviesResponse {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/top_rated?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { return nil }
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/top_rated?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { throw APIError.invalidURL }
         
         do {
             
             let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
             
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { throw APIError.failedResponse }
             
-            let decodedData: TrendingMoviesResponse = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+            let decodedData: MoviesResponse = try JSONDecoder().decode(MoviesResponse.self, from: data)
             
             return decodedData
         } catch {

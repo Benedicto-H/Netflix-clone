@@ -16,7 +16,4 @@ class UpcomingViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
     }
-    
-
-
 }

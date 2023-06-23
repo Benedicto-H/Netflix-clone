@@ -47,7 +47,5 @@ class MainTabBarViewController: UITabBarController {
         
         setViewControllers([homeVC, upcomingVC, searchVC, downloadsVC], animated: true)
     }
-
-
 }
 

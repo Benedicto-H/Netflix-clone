@@ -1,5 +1,5 @@
 //
-//  TVs.swift
+//  TV.swift
 //  Netflix-clone
 //
 //  Created by 홍진표 on 2023/06/20.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TrendingTVsResponse: Codable {
+struct TVsResponse: Codable {
     
     // MARK: - Stored-Props
     let page: Int
