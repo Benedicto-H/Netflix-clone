@@ -21,13 +21,13 @@ class HomeViewController: UIViewController {
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
     
     // MARK: - Custom View
-    private let homeFeedTable: UITableView = {
+    private let homeFeedTableView: UITableView = {
         
-        let table: UITableView = UITableView(frame: .zero, style: .grouped)
+        let tableView: UITableView = UITableView(frame: .zero, style: .grouped)
         
-        table.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)    //  Params: cellClass, forCellReuseIdentifier
+        tableView.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)    //  Params: cellClass, forCellReuseIdentifier
         
-        return table
+        return tableView
     }()
     
     // MARK: - Methods
@@ -37,14 +37,14 @@ class HomeViewController: UIViewController {
         // Do any additional setup after loading the view.
         
         view.backgroundColor = .systemBackground
-        view.addSubview(homeFeedTable)
+        view.addSubview(homeFeedTableView)
         
-        homeFeedTable.dataSource = self
-        homeFeedTable.delegate = self
+        homeFeedTableView.dataSource = self
+        homeFeedTableView.delegate = self
         
         let headerView: HeroHeaderUIView = HeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
         
-        homeFeedTable.tableHeaderView = headerView
+        homeFeedTableView.tableHeaderView = headerView
         
         configureNavBar()
     }
@@ -52,7 +52,7 @@ class HomeViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        homeFeedTable.frame = view.bounds
+        homeFeedTableView.frame = view.bounds
     }
     
     private func configureNavBar() -> Void {
