@@ -45,12 +45,10 @@ class TitleCollectionViewCell: UICollectionViewCell {
     
     public func configure(with model: String) -> Void {
         
-        /*
-        guard let url: URL = URL(string: model) else { return }
+        let imageURLPath: String = "https://image.tmdb.org/t/p/w500"
         
-        posterImageView.sd_setImage(with: url, completed: nil)
-         */
+        guard let url: URL = URL(string: "\(imageURLPath)\(model)") else { return }
         
-        print("model: \(model)")
+        posterImageView.sd_setImage(with: url)
     }
 }
