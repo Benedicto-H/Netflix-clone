@@ -55,6 +55,7 @@ class CollectionViewTableViewCell: UITableViewCell {
         collectionView.frame = contentView.bounds
     }
     
+    
     public func configure(withMovies movies: [MoviesResponse.Movie]?, withTVs tvs: [TVsResponse.TV]?) -> Void {
         
         self.movies = movies ?? []
@@ -80,25 +81,14 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
         
         guard let cell: TitleCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: TitleCollectionViewCell.identifier, for: indexPath) as? TitleCollectionViewCell else { return UICollectionViewCell() }
         
+        cell.backgroundColor = .black
         
-        
-        func getRandomColor() -> UIColor {
-            let randomRed = CGFloat.random(in: 0...1)
-            let randomGreen = CGFloat.random(in: 0...1)
-            let randomBlue = CGFloat.random(in: 0...1)
-            
-            return UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
-        }
-        
-        
-        cell.backgroundColor = getRandomColor()
-        
-        if indexPath.row < movies.count {
+        if (indexPath.row < movies.count) {
             
             cell.configure(with: movies[indexPath.row].poster_path ?? "")
         }
         
-        if indexPath.row < tvs.count {
+        if (indexPath.row < tvs.count) {
             
             cell.configure(with: tvs[indexPath.row].poster_path ?? "")
         }
