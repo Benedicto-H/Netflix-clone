@@ -25,7 +25,7 @@ class HomeViewController: UIViewController {
         
         let tableView: UITableView = UITableView(frame: .zero, style: .grouped)
         
-        tableView.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)    //  Params: cellClass, forCellReuseIdentifier
+        tableView.register(HVCollectionViewTableViewCell.self, forCellReuseIdentifier: HVCollectionViewTableViewCell.identifier)    //  Params: cellClass, forCellReuseIdentifier
         
         return tableView
     }()
@@ -42,9 +42,9 @@ class HomeViewController: UIViewController {
         homeFeedTableView.dataSource = self
         homeFeedTableView.delegate = self
         
-        let headerView: HeroHeaderUIView = HeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
+        let heroHeaderView: HVHeroHeaderUIView = HVHeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
         
-        homeFeedTableView.tableHeaderView = headerView
+        homeFeedTableView.tableHeaderView = heroHeaderView
         
         configureNavBar()
     }
@@ -152,9 +152,9 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell: CollectionViewTableViewCell =
-                tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier,
-                                                       for: indexPath) as? CollectionViewTableViewCell else { return UITableViewCell() }
+        guard let cell: HVCollectionViewTableViewCell =
+                tableView.dequeueReusableCell(withIdentifier: HVCollectionViewTableViewCell.identifier,
+                                                       for: indexPath) as? HVCollectionViewTableViewCell else { return UITableViewCell() }
         
         Task {
             

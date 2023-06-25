@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HeroHeaderUIView: UIView {
+class HVHeroHeaderUIView: UIView {
 
     // MARK: - Custom Views
     private let heroImageView: UIImageView = {
@@ -16,7 +16,7 @@ class HeroHeaderUIView: UIView {
         
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
-        HeroHeaderUIView.fetchHeroImage(completionHandler: { img in
+        HVHeroHeaderUIView.fetchHeroImage(completionHandler: { img in
             
             imageView.image = img
         })

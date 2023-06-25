@@ -8,10 +8,10 @@
 import UIKit
 import SDWebImage
 
-class TitleCollectionViewCell: UICollectionViewCell {
+class HVCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Stored-Prop  (-> Singleton)
-    static let identifier: String = "TitleCollectionViewCell"
+    static let identifier: String = "HVCollectionViewCell"
     
     // MARK: - Custom View
     private let posterImageView: UIImageView = {
@@ -45,9 +45,9 @@ class TitleCollectionViewCell: UICollectionViewCell {
     
     public func configure(with model: String) -> Void {
         
-        let imageURLPath: String = "https://image.tmdb.org/t/p/w500"
+        let baseImageURL: String = "https://image.tmdb.org/t/p/w500"
         
-        guard let url: URL = URL(string: "\(imageURLPath)\(model)") else { return }
+        guard let url: URL = URL(string: "\(baseImageURL)\(model)") else { return }
         
         posterImageView.sd_setImage(with: url)
     }

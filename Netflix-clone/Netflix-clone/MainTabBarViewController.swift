@@ -39,7 +39,7 @@ class MainTabBarViewController: UITabBarController {
         downloadsVC.tabBarItem.selectedImage = UIImage(systemName: "arrow.down.circle.fill")
         
         homeVC.title = "Home"
-        upcomingVC.title = "NEW & HOT"
+        upcomingVC.title = "Upcoming"
         searchVC.title = "Search"
         downloadsVC.title = "Downloads"
         

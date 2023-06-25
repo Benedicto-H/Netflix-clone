@@ -7,15 +7,15 @@
 
 import UIKit
 
-class CollectionViewTableViewCell: UITableViewCell {
+class HVCollectionViewTableViewCell: UITableViewCell {
 
     // MARK: - Stored-Props
-    static let identifier: String = "CollectionViewTableViewCell"   //  -> Singleton
+    static let identifier: String = "HVCollectionViewTableViewCell"   //  -> Singleton
     
     private var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
     private var tvs: [TVsResponse.TV] = [TVsResponse.TV]()
     
-    // MARK: - Custom Views
+    // MARK: - Custom View
     private let collectionView: UICollectionView = {
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -25,7 +25,7 @@ class CollectionViewTableViewCell: UITableViewCell {
         
         let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
-        collectionView.register(TitleCollectionViewCell.self, forCellWithReuseIdentifier: TitleCollectionViewCell.identifier)
+        collectionView.register(HVCollectionViewCell.self, forCellWithReuseIdentifier: HVCollectionViewCell.identifier)
         
         return collectionView
     }()
@@ -68,18 +68,17 @@ class CollectionViewTableViewCell: UITableViewCell {
     }
 }
 
-extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+extension HVCollectionViewTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     // MARK: - UICollectionViewDataSource - (Required) Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         
         return max(movies.count, tvs.count)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell: TitleCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: TitleCollectionViewCell.identifier, for: indexPath) as? TitleCollectionViewCell else { return UICollectionViewCell() }
+        guard let cell: HVCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: HVCollectionViewCell.identifier, for: indexPath) as? HVCollectionViewCell else { return UICollectionViewCell() }
         
         cell.backgroundColor = .black
         
