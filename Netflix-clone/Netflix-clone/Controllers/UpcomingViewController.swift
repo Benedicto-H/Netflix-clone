@@ -17,7 +17,7 @@ class UpcomingViewController: UIViewController {
         
         let tableView: UITableView = UITableView()
         
-        tableView.register(UVTableViewCell.self, forCellReuseIdentifier: UVTableViewCell.identifier)
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
         
         return tableView
     }()
@@ -49,6 +49,7 @@ class UpcomingViewController: UIViewController {
         upcomingTableView.frame = view.bounds
     }
     
+    @MainActor
     private func fetchUpcomingMoviesData() -> Void {
         
         Task {
@@ -56,8 +57,6 @@ class UpcomingViewController: UIViewController {
             do {
                 
                 movies = try await APICaller.shared.fetchUpcomingMovies().results
-                
-                print(Thread.isMainThread)
                 
                 self.upcomingTableView.reloadData()
             } catch {
@@ -78,7 +77,7 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell: UVTableViewCell = tableView.dequeueReusableCell(withIdentifier: UVTableViewCell.identifier, for: indexPath) as? UVTableViewCell else { return UITableViewCell() }
+        guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
         cell.configure(with: MovieViewModel(
             titleName: movies[indexPath.row].original_title ?? "UNKOWN original_title",

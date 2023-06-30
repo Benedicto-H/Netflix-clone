@@ -1,5 +1,5 @@
 //
-//  TitleTableViewCell.swift
+//  TableViewCell.swift
 //  Netflix-clone
 //
 //  Created by 홍진표 on 2023/06/25.
@@ -8,10 +8,10 @@
 import UIKit
 import SDWebImage
 
-class UVTableViewCell: UITableViewCell {
+class TableViewCell: UITableViewCell {
 
     // MARK: - Stored-Prop
-    static let identifier: String = "UVTableViewCell"    //  -> Singleton
+    static let identifier: String = "TableViewCell"    //  -> Singleton
     
     // MARK: - Custom Views
     private let posterImageView: UIImageView = {
@@ -30,6 +30,8 @@ class UVTableViewCell: UITableViewCell {
         let label: UILabel = UILabel()
         
         label.translatesAutoresizingMaskIntoConstraints = false
+        //  label.lineBreakMode = .byWordWrapping
+        //  label.numberOfLines = 0
         
         return label
     }()

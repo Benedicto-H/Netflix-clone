@@ -15,8 +15,8 @@ class APICaller {
         case failedFetchData
     }
     
-    // MARK: - Stored-Prop  (-> Singleton)
-    static let shared: APICaller = APICaller()
+    // MARK: - Stored-Props
+    static let shared: APICaller = APICaller()  //  -> Singleton Object
     private static let baseURL: String = "https://api.themoviedb.org"
     
     // MARK: - Methods
@@ -193,6 +193,26 @@ class APICaller {
     func fetchTopRated() async throws -> MoviesResponse {
         
         guard let url: URL = URL(string: "\(APICaller.baseURL)/3/movie/top_rated?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&language=en-US&page=1") else { throw APIError.invalidURL }
+        
+        do {
+            
+            let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
+            
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { throw APIError.failedResponse }
+            
+            let decodedData: MoviesResponse = try JSONDecoder().decode(MoviesResponse.self, from: data)
+            
+            return decodedData
+        } catch {
+            
+            fatalError(APIError.failedFetchData.localizedDescription)
+        }
+    }
+    
+    // MARK: - Discover Movie
+    func fetchDiscoverMovies() async throws -> MoviesResponse {
+        
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/discover/movie?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc") else { throw APIError.invalidURL }
         
         do {
             

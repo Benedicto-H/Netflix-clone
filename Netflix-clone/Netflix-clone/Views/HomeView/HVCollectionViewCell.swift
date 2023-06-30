@@ -1,5 +1,5 @@
 //
-//  TitleCollectionViewCell.swift
+//  HVCollectionViewCell.swift
 //  Netflix-clone
 //
 //  Created by 홍진표 on 2023/06/21.
