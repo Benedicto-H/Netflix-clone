@@ -21,7 +21,7 @@ class HVCollectionViewTableViewCell: UITableViewCell {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         
         layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: 120, height: 200)
+        //  layout.itemSize = CGSize(width: 120, height: 200)   //  Line 71~77
         
         let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
@@ -65,6 +65,14 @@ class HVCollectionViewTableViewCell: UITableViewCell {
             
             self.collectionView.reloadData()
         }
+    }
+}
+
+extension HVCollectionViewTableViewCell: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        return CGSize(width: (contentView.frame.size.width) / 3, height: contentView.frame.size.height)
     }
 }
 

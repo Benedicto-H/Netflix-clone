@@ -7,7 +7,7 @@
 
 import Foundation
 
-class APICaller {
+final class APICaller {
     
     enum APIError: Error {
         case invalidURL

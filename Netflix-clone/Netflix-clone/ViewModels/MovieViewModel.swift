@@ -9,7 +9,7 @@ import Foundation
 
 struct MovieViewModel {
     
-    // MARK: - Stored-Prop
+    // MARK: - Stored-Props
     let titleName: String
     let posterURL: String
 }

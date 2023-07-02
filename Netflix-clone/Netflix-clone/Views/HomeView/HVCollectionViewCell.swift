@@ -10,8 +10,8 @@ import SDWebImage
 
 class HVCollectionViewCell: UICollectionViewCell {
     
-    // MARK: - Stored-Prop  (-> Singleton)
-    static let identifier: String = "HVCollectionViewCell"
+    // MARK: - Stored-Prop
+    static let identifier: String = "HVCollectionViewCell"  //  ->  Singleton
     
     // MARK: - Custom View
     private let posterImageView: UIImageView = {
