@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 class HomeViewController: UIViewController {
     
@@ -17,8 +18,9 @@ class HomeViewController: UIViewController {
         case TopRated = 4
     }
     
-    // MARK: - Stored-Prop
+    // MARK: - Stored-Props
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Custom View
     private let homeFeedTableView: UITableView = {
@@ -57,14 +59,32 @@ class HomeViewController: UIViewController {
     
     private func configureNavBar() -> Void {
         
-        var image: UIImage = UIImage()
+        var image: UIImage?
         
-        fetchNetflixSymbol { img in
+        /// fetchNetflixSymbol()    ->  ver. completionHandler
+        /*
+        APICaller.shared.fetchNetflixSymbol { symbolImage in
             
-            image = img
+            image = symbolImage
             image = image.withRenderingMode(.alwaysOriginal)
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
         }
+         */
+        
+        APICaller.shared.fetchNetflixSymbolWithCombine()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                
+                if case let .failure(error) = completion {
+                    
+                    print("Fetch Error: \(error.localizedDescription)")
+                }
+            }, receiveValue: { [weak self] logoImage in
+                
+                image = logoImage
+                image = image?.withRenderingMode(.alwaysOriginal)
+                self?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
+            }).store(in: &cancellables)
         
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .done, target: self, action: nil),
@@ -72,32 +92,6 @@ class HomeViewController: UIViewController {
         ]
         
         navigationController?.navigationBar.tintColor = .white
-    }
-    
-    private func fetchNetflixSymbol(completionHandler: @escaping (UIImage) -> Void) -> Void {
-        
-        let url: String = "https://images.ctfassets.net/y2ske730sjqp/4aEQ1zAUZF5pLSDtfviWjb/ba04f8d5bd01428f6e3803cc6effaf30/Netflix_N.png?w=300" //  source: https://brand.netflix.com/en/assets/logos
-        
-        guard let url: URL = URL(string: url) else { return }
-        
-        URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
-            
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
-            
-            do {
-                
-                guard let safeData: Data = data else { return }
-                let logoImage: UIImage? = UIImage(data: safeData)
-                
-                DispatchQueue.main.async {
-                    
-                    completionHandler(logoImage ?? UIImage())
-                }
-            } catch {
-                
-                fatalError(error.localizedDescription)
-            }
-        }.resume()
     }
     
     /// Method  -   fetchTrendingMoviesWithCompletionHandler()   ->  (ver. completionHandler)

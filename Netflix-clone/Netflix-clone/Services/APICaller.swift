@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import Combine
 
 final class APICaller {
     
@@ -20,6 +22,60 @@ final class APICaller {
     private static let baseURL: String = "https://api.themoviedb.org"
     
     // MARK: - Methods
+    // MARK: - Fetch Netflix Symbol
+    func fetchNetflixSymbol(completionHandler: @escaping (UIImage) -> Void) -> Void {
+        
+        let url: String = "https://images.ctfassets.net/y2ske730sjqp/4aEQ1zAUZF5pLSDtfviWjb/ba04f8d5bd01428f6e3803cc6effaf30/Netflix_N.png?w=300" //  source: https://brand.netflix.com/en/assets/logos
+        
+        guard let url: URL = URL(string: url) else { return }
+        
+        URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
+            
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
+            
+            do {
+                
+                guard let safeData: Data = data else { return }
+                let logoImage: UIImage? = UIImage(data: safeData)
+                
+                DispatchQueue.main.async {
+                    
+                    completionHandler(logoImage ?? UIImage())
+                }
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }.resume()
+    }
+    
+    // MARK: - (Temp) Fetch HeroHeaderImage
+    func fetchHeroImage(completionHandler: @escaping (UIImage) -> Void) -> Void {
+        
+        let url: String = "https://occ-0-988-1360.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABX4VbDY-FqCITdF33xEJcP7vZQxu0MLlvhkOTyuEsU4yqZK7NRYb91sHwxmjtXlgxX11NuDB9DgHW0pOLfToPms_n75E6VkDOv3Y.jpg?r=9e3"   //  source: https://www.netflix.com/kr/title/81005126
+        
+        guard let url: URL = URL(string: url) else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            
+            guard (response as? HTTPURLResponse)?.statusCode == 200 else { return }
+            
+            do {
+                
+                guard let safeData: Data = data else { return }
+                
+                let heroHeaderImage: UIImage? = UIImage(data: safeData)
+                
+                DispatchQueue.main.async {
+                    
+                    completionHandler(heroHeaderImage ?? UIImage())
+                }
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }.resume()
+    }
     // MARK: - Trending Movies
     /// Used API_KEY
     /*
@@ -63,6 +119,23 @@ final class APICaller {
             
             fatalError(APIError.failedFetchData.localizedDescription)
         }
+    }
+    
+    //
+    func fetchMovies() -> AnyPublisher<[MoviesResponse.Movie], Error> {
+        
+        /*
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
+         */
+        
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return Fail(error: URLError(.badURL)).eraseToAnyPublisher() }
+        
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .receive(on: DispatchQueue.main)
+            .compactMap({ $0.data })
+            .decode(type: MoviesResponse.self, decoder: JSONDecoder())
+            .map({ $0.results })
+            .eraseToAnyPublisher()
     }
     
     /// Used ACCESS_TOKEN
@@ -227,5 +300,32 @@ final class APICaller {
             
             fatalError(APIError.failedFetchData.localizedDescription)
         }
+    }
+}
+
+extension APICaller {
+    
+    // MARK: - Fetch Netflix Symbol (-> with. Combine Framework)
+    func fetchNetflixSymbolWithCombine() -> AnyPublisher<UIImage, Error> {
+        
+        let url: String = "https://images.ctfassets.net/y2ske730sjqp/4aEQ1zAUZF5pLSDtfviWjb/ba04f8d5bd01428f6e3803cc6effaf30/Netflix_N.png?w=300"   //  source: https://brand.netflix.com/en/assets/logos
+        
+        guard let url: URL = URL(string: url) else { return Fail(error: URLError(.badURL)).eraseToAnyPublisher() }
+        
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .tryMap { data, response in
+                
+                guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+                    
+                    throw URLError(.badServerResponse)
+                }
+                
+                return UIImage(data: data) ?? UIImage()
+            }
+            .mapError({ error -> Error in
+                
+                return error
+            })
+            .eraseToAnyPublisher()
     }
 }
