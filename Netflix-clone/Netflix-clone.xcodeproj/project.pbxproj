@@ -26,6 +26,9 @@
 		E8C4B0912A348F8800D77F9D /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0902A348F8800D77F9D /* SearchViewController.swift */; };
 		E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */; };
 		E8D8C83A2A3F120E002DED3F /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D8C8392A3F120E002DED3F /* APICaller.swift */; };
+		E8DCC53C2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */; };
+		E8DCC53E2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DCC53D2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift */; };
+		E8DCC5402A56D6F5004E85C5 /* FetchDataWithCombine+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DCC53F2A56D6F5004E85C5 /* FetchDataWithCombine+.swift */; };
 		E8E573E32A35D5AE0088130C /* HVCollectionViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E573E22A35D5AE0088130C /* HVCollectionViewTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +53,9 @@
 		E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewController.swift; sourceTree = "<group>"; };
 		E8D8C8392A3F120E002DED3F /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		E8D8C83C2A3F2AF0002DED3F /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
+		E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchDataWithCompletionHandler+.swift"; sourceTree = "<group>"; };
+		E8DCC53D2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchDataWithConcurrency+.swift"; sourceTree = "<group>"; };
+		E8DCC53F2A56D6F5004E85C5 /* FetchDataWithCombine+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchDataWithCombine+.swift"; sourceTree = "<group>"; };
 		E8E573E22A35D5AE0088130C /* HVCollectionViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HVCollectionViewTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,6 +102,9 @@
 			isa = PBXGroup;
 			children = (
 				E845A5682A41A71500F809C6 /* String+.swift */,
+				E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */,
+				E8DCC53D2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift */,
+				E8DCC53F2A56D6F5004E85C5 /* FetchDataWithCombine+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -272,8 +281,11 @@
 				E827D25B2A482E43002E8E6D /* MovieViewModel.swift in Sources */,
 				E8C4B08F2A348F3B00D77F9D /* UpcomingViewController.swift in Sources */,
 				E8885D292A407681006D9D04 /* Movie.swift in Sources */,
+				E8DCC53E2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift in Sources */,
+				E8DCC53C2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift in Sources */,
 				E845A5692A41A71500F809C6 /* String+.swift in Sources */,
 				E8C4B08D2A348ED800D77F9D /* HomeViewController.swift in Sources */,
+				E8DCC5402A56D6F5004E85C5 /* FetchDataWithCombine+.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

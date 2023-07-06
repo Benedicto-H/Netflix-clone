@@ -6,10 +6,22 @@
 //
 
 import Foundation
+import Combine
 
 struct MovieViewModel {
     
     // MARK: - Stored-Props
     let titleName: String
     let posterURL: String
+}
+
+class ViewModel {
+    
+    let movies: CurrentValueSubject<MoviesResponse?, Error> = .init(nil)
+    let tvs: CurrentValueSubject<TVsResponse?, Error> = .init(nil)
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    
+    init() {
+        
+    }
 }

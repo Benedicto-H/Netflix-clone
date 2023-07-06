@@ -59,10 +59,10 @@ class HomeViewController: UIViewController {
     
     private func configureNavBar() -> Void {
         
-        var image: UIImage?
-        
-        /// fetchNetflixSymbol()    ->  ver. completionHandler
+        /// fetchNetflixSymbol()    ->  (ver. completionHandler)
         /*
+        var image: UIImage
+        
         APICaller.shared.fetchNetflixSymbol { symbolImage in
             
             image = symbolImage
@@ -71,17 +71,21 @@ class HomeViewController: UIViewController {
         }
          */
         
+        /// fetchNetflixSymbolWithCombine() ->  (ver. combine)
+        var image: UIImage?
+        
         APICaller.shared.fetchNetflixSymbolWithCombine()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 
+                //  Error Handling...
                 if case let .failure(error) = completion {
                     
                     print("Fetch Error: \(error.localizedDescription)")
                 }
-            }, receiveValue: { [weak self] logoImage in
+            }, receiveValue: { [weak self] symbolImage in
                 
-                image = logoImage
+                image = symbolImage
                 image = image?.withRenderingMode(.alwaysOriginal)
                 self?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
             }).store(in: &cancellables)
@@ -93,47 +97,6 @@ class HomeViewController: UIViewController {
         
         navigationController?.navigationBar.tintColor = .white
     }
-    
-    /// Method  -   fetchTrendingMoviesWithCompletionHandler()   ->  (ver. completionHandler)
-    /*
-    private func fetchTrendingMoviesWithCompletionHandler() -> Void {
-        
-        APICaller.shared.fetchTrendingMovies { results in
-            
-            switch results {
-            case .success(let movies):
-                
-                print("===== Trending Movies ===== \n")
-                print(movies)
-                break;
-                
-            case .failure(let error):
-                
-                fatalError(error.localizedDescription)
-                break;
-            }
-        }
-    }
-     */
-    
-    /// Method  -   fetchTrendingMoviesWithAsyncAwait()   ->  (ver. Async/Await)
-    /*
-    private func fetchTrendingMoviesWithAsyncAwait() -> Void {
-        
-        Task {
-            
-            do {
-                
-                let movies: TrendingMoviesResponse? = try await APICaller.shared.fetchTrendingMovies()
-                
-                print(movies?.results)
-            } catch {
-                
-                fatalError(error.localizedDescription)
-            }
-        }
-    }
-     */
 }
 
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
