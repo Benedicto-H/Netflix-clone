@@ -12,7 +12,7 @@ class SearchViewController: UIViewController {
     // MARK: - Stored-Prop
     private var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
     
-    // MARK: - Custom View
+    // MARK: - Custom Views
     private let searchTableView: UITableView = {
        
         let tableView: UITableView = UITableView()
@@ -20,6 +20,16 @@ class SearchViewController: UIViewController {
         tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
         
         return tableView
+    }()
+    
+    private let searchController: UISearchController = {
+       
+        let controller: UISearchController = UISearchController(searchResultsController: SearchResultsViewController())
+        
+        controller.searchBar.placeholder = "Search for a Movie or a TV show"
+        controller.searchBar.searchBarStyle = .minimal
+        
+        return controller
     }()
     
     // MARK: - Methods
@@ -40,6 +50,9 @@ class SearchViewController: UIViewController {
         searchTableView.delegate = self
         
         fetchDiscoverMovies()
+        
+        navigationItem.searchController = searchController
+        navigationController?.navigationBar.tintColor = .white
     }
     
     override func viewDidLayoutSubviews() {

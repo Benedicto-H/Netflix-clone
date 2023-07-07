@@ -1,5 +1,5 @@
 //
-//  HVCollectionViewCell.swift
+//  CollectionViewCell.swift
 //  Netflix-clone
 //
 //  Created by 홍진표 on 2023/06/21.
@@ -8,10 +8,10 @@
 import UIKit
 import SDWebImage
 
-class HVCollectionViewCell: UICollectionViewCell {
+class CollectionViewCell: UICollectionViewCell {
     
     // MARK: - Stored-Prop
-    static let identifier: String = "HVCollectionViewCell"  //  ->  Singleton
+    static let identifier: String = "CollectionViewCell"  //  ->  Singleton
     
     // MARK: - Custom View
     private let posterImageView: UIImageView = {

@@ -47,12 +47,4 @@ final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency,
     // MARK: - Stored-Props
     static let shared: APICaller = APICaller()  //  -> Singleton Object
     public static let baseURL: String = "https://api.themoviedb.org"
-    
-    // MARK: - Methods
-    // MARK: - Trending Movies
-    // MARK: - Trending TVs
-    // MARK: - Popular
-    // MARK: - Upcoming Movies
-    // MARK: - Top Rated
-    // MARK: - Discover Movie
 }

@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class HVHeroHeaderUIView: UIView {
+class HeroHeaderUIView: UIView {
     
     // MARK: - Stored-Prop
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
@@ -16,8 +16,6 @@ class HVHeroHeaderUIView: UIView {
     // MARK: - Custom Views
     private lazy var heroImageView: UIImageView = {
         
-        /// fetchHeroImage()    ->  (ver. completionHandler)
-        /*
         let imageView: UIImageView = UIImageView()
         
         imageView.contentMode = .scaleAspectFit
@@ -29,18 +27,21 @@ class HVHeroHeaderUIView: UIView {
         }
         
         return imageView
-         */
-        
-        /// fetchHeroImageWithCombine() ->  (ver. combine)
+    }()
+    
+    private lazy var heroImageViewCombine: UIImageView = {
+       
         let imageView: UIImageView = UIImageView()
         
         APICaller.shared.fetchHeroImageWithCombine()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 
+                //  Error Handling
                 if case let .failure(error) = completion {
                     
-                    print("Fetch Error: \(error)")
+                    APICaller.APIError.failedFetchData
+                    print("Fetch Error: \(error.localizedDescription)")
                 }
             } receiveValue: { [weak imageView] heroImage in
                 

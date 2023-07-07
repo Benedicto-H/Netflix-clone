@@ -27,7 +27,7 @@ class HomeViewController: UIViewController {
         
         let tableView: UITableView = UITableView(frame: .zero, style: .grouped)
         
-        tableView.register(HVCollectionViewTableViewCell.self, forCellReuseIdentifier: HVCollectionViewTableViewCell.identifier)    //  Params: cellClass, forCellReuseIdentifier
+        tableView.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)    //  Params: cellClass, forCellReuseIdentifier
         
         return tableView
     }()
@@ -44,11 +44,11 @@ class HomeViewController: UIViewController {
         homeFeedTableView.dataSource = self
         homeFeedTableView.delegate = self
         
-        let heroHeaderView: HVHeroHeaderUIView = HVHeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
+        let heroHeaderView: HeroHeaderUIView = HeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
         
         homeFeedTableView.tableHeaderView = heroHeaderView
         
-        configureNavBar()
+        configureNavBar()   //  ->  Pr fetchDataWithCompletionHandler
     }
     
     override func viewDidLayoutSubviews() {
@@ -59,9 +59,7 @@ class HomeViewController: UIViewController {
     
     private func configureNavBar() -> Void {
         
-        /// fetchNetflixSymbol()    ->  (ver. completionHandler)
-        /*
-        var image: UIImage
+        var image: UIImage = UIImage()
         
         APICaller.shared.fetchNetflixSymbol { symbolImage in
             
@@ -69,26 +67,6 @@ class HomeViewController: UIViewController {
             image = image.withRenderingMode(.alwaysOriginal)
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
         }
-         */
-        
-        /// fetchNetflixSymbolWithCombine() ->  (ver. combine)
-        var image: UIImage?
-        
-        APICaller.shared.fetchNetflixSymbolWithCombine()
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] completion in
-                
-                //  Error Handling...
-                if case let .failure(error) = completion {
-                    
-                    print("Fetch Error: \(error.localizedDescription)")
-                }
-            }, receiveValue: { [weak self] symbolImage in
-                
-                image = symbolImage
-                image = image?.withRenderingMode(.alwaysOriginal)
-                self?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
-            }).store(in: &cancellables)
         
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .done, target: self, action: nil),
@@ -96,6 +74,36 @@ class HomeViewController: UIViewController {
         ]
         
         navigationController?.navigationBar.tintColor = .white
+    }
+    
+    private func configureNavBarCombine() -> Void {
+        
+        var image: UIImage?
+        
+        APICaller.shared.fetchNetflixSymbolWithCombine()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                
+                //  Error Handling
+                if case let .failure(error) = completion {
+                    
+                    APICaller.APIError.failedFetchData
+                    print("Fetch Error: \(error.localizedDescription)")
+                }
+            } receiveValue: { [weak self] symbolImage in
+                
+                image = symbolImage
+                image = image?.withRenderingMode(.alwaysOriginal)
+                self?.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
+            }.store(in: &cancellables)
+        
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .done, target: self, action: nil),
+            UIBarButtonItem(image: UIImage(systemName: "play.rectangle"), style: .done, target: self, action: nil)
+        ]
+        
+        navigationController?.navigationBar.tintColor = .white
+
     }
 }
 
@@ -109,9 +117,9 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell: HVCollectionViewTableViewCell =
-                tableView.dequeueReusableCell(withIdentifier: HVCollectionViewTableViewCell.identifier,
-                                                       for: indexPath) as? HVCollectionViewTableViewCell else { return UITableViewCell() }
+        guard let cell: CollectionViewTableViewCell =
+                tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier,
+                                                       for: indexPath) as? CollectionViewTableViewCell else { return UITableViewCell() }
         
         Task {
             

@@ -1,5 +1,5 @@
 //
-//  HVCollectionViewTableViewCell.swift
+//  CollectionViewTableViewCell.swift
 //  Netflix-clone
 //
 //  Created by 홍진표 on 2023/06/11.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-class HVCollectionViewTableViewCell: UITableViewCell {
+class CollectionViewTableViewCell: UITableViewCell {
 
     // MARK: - Stored-Props
-    static let identifier: String = "HVCollectionViewTableViewCell"   //  -> Singleton
+    static let identifier: String = "CollectionViewTableViewCell"   //  -> Singleton
     
     private var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
     private var tvs: [TVsResponse.TV] = [TVsResponse.TV]()
@@ -25,7 +25,7 @@ class HVCollectionViewTableViewCell: UITableViewCell {
         
         let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
-        collectionView.register(HVCollectionViewCell.self, forCellWithReuseIdentifier: HVCollectionViewCell.identifier)
+        collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.identifier)
         
         return collectionView
     }()
@@ -68,15 +68,13 @@ class HVCollectionViewTableViewCell: UITableViewCell {
     }
 }
 
-extension HVCollectionViewTableViewCell: UICollectionViewDelegateFlowLayout {
+extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
+    // MARK: - UICollectionViewDelegateFlowLayout = (optional) Method
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: (contentView.frame.size.width) / 3, height: contentView.frame.size.height)
     }
-}
-
-extension HVCollectionViewTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     // MARK: - UICollectionViewDataSource - (Required) Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -86,9 +84,9 @@ extension HVCollectionViewTableViewCell: UICollectionViewDelegate, UICollectionV
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell: HVCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: HVCollectionViewCell.identifier, for: indexPath) as? HVCollectionViewCell else { return UICollectionViewCell() }
+        guard let cell: CollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.identifier, for: indexPath) as? CollectionViewCell else { return UICollectionViewCell() }
         
-        cell.backgroundColor = .black
+        //  cell.backgroundColor = .black
         
         if (indexPath.row < movies.count) {
             
