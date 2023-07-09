@@ -10,11 +10,11 @@ import UIKit
 class SearchResultsViewController: UIViewController {
     
     // MARK: - Stored-Props
-    private var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
+    public var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
     private var tvs: [TVsResponse.TV] = [TVsResponse.TV]()
 
     // MARK: - Custom View
-    private let searchResultsCollectionView: UICollectionView = {
+    public let searchResultsCollectionView: UICollectionView = {
        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         
@@ -50,7 +50,7 @@ class SearchResultsViewController: UIViewController {
 
 extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICollectionViewDelegate, UICollectionViewDataSource {
     
-    // MARK: - UICollectionViewDelegateFlowLayout = (optional) Method
+    // MARK: - UICollectionViewDelegateFlowLayout - (optional) Method
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: (UIScreen.main.bounds.width / 3) - 10, height: 200)
@@ -59,14 +59,16 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
     // MARK: - UICollectionViewDataSource - (Required) Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return 10
+        return max(movies.count, tvs.count)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell: CollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.identifier, for: indexPath) as? CollectionViewCell else { return UICollectionViewCell() }
         
-        cell.backgroundColor = .black
+        //  cell.backgroundColor = .systemBackground
+        
+        cell.configure(with: movies[indexPath.row].poster_path ?? "")
         
         return cell
     }

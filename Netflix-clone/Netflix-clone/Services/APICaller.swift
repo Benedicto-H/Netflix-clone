@@ -39,6 +39,7 @@ protocol fetchDataWithCombine {
 final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency, fetchDataWithCombine {
     
     enum APIError: Error {
+        case invalidQueryEncoding
         case invalidURL
         case failedResponse
         case failedFetchData

@@ -53,6 +53,8 @@ class SearchViewController: UIViewController {
         
         navigationItem.searchController = searchController
         navigationController?.navigationBar.tintColor = .white
+        
+        searchController.searchResultsUpdater = self
     }
     
     override func viewDidLayoutSubviews() {
@@ -80,7 +82,7 @@ class SearchViewController: UIViewController {
     }
 }
 
-extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
+extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
     
     // MARK: - UITableViewDataSource - (Required) Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -103,5 +105,29 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return 120
+    }
+    
+    // MARK: - UISearchResultsUpdating - (Required) Method
+    func updateSearchResults(for searchController: UISearchController) {
+        
+        let searchBar: UISearchBar = searchController.searchBar
+        
+        guard let query = searchBar.text,
+        !query.trimmingCharacters(in: .whitespaces).isEmpty,
+        query.trimmingCharacters(in: .whitespaces).count >= 3,
+        let resultsController: SearchResultsViewController = searchController.searchResultsController as? SearchResultsViewController else { return }
+        
+        Task {
+            
+            do {
+                
+                resultsController.movies = try await APICaller.shared.search(with: query).results
+                
+                resultsController.searchResultsCollectionView.reloadData()
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }
     }
 }

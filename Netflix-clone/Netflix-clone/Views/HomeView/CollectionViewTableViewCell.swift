@@ -86,7 +86,7 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         
         guard let cell: CollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.identifier, for: indexPath) as? CollectionViewCell else { return UICollectionViewCell() }
         
-        //  cell.backgroundColor = .black
+        cell.backgroundColor = .systemBackground
         
         if (indexPath.row < movies.count) {
             

@@ -140,10 +140,32 @@ extension fetchDataWithConcurrency {
         }
     }
     
-    // MARK: - Discover Movie
+    // MARK: - Discover Movies
     func fetchDiscoverMovies() async throws -> MoviesResponse {
         
         guard let url: URL = URL(string: "\(APICaller.baseURL)/3/discover/movie?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")&include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc") else { throw APICaller.APIError.invalidURL }
+        
+        do {
+            
+            let (data, urlResponse): (Data, URLResponse) = try await URLSession.shared.data(for: URLRequest(url: url))
+            
+            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { throw APICaller.APIError.failedResponse }
+            
+            let decodedData: MoviesResponse = try JSONDecoder().decode(MoviesResponse.self, from: data)
+            
+            return decodedData
+        } catch {
+            
+            fatalError(APICaller.APIError.failedFetchData.localizedDescription)
+        }
+    }
+    
+    // MARK: - Search & Query For Details
+    func search(with query: String) async throws -> MoviesResponse {
+        
+        guard let query: String = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else { throw APICaller.APIError.invalidQueryEncoding }
+        
+        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/search/movie?query=\(query)&api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { throw APICaller.APIError.invalidURL }
         
         do {
             

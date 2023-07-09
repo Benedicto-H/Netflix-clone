@@ -19,7 +19,7 @@ class MainTabBarViewController: UITabBarController {
     
     private func settingTabBarUI() -> Void {
         
-        view.backgroundColor = .black
+        view.backgroundColor = .systemBackground
         
         let homeVC: UINavigationController = UINavigationController(rootViewController: HomeViewController())
         let upcomingVC: UINavigationController = UINavigationController(rootViewController: UpcomingViewController())
