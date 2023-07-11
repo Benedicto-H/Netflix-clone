@@ -10,7 +10,7 @@ import UIKit
 class SearchViewController: UIViewController {
     
     // MARK: - Stored-Prop
-    private var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
+    private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     
     // MARK: - Custom Views
     private let searchTableView: UITableView = {
@@ -64,6 +64,25 @@ class SearchViewController: UIViewController {
         searchTableView.frame = view.bounds
     }
     
+    /*
+    @MainActor
+    private func fetchDiscoverMovies() -> Void {
+
+        Task {
+
+            do {
+
+                tmdbMovies = try await APICaller.shared.fetchDiscoverMovies().results
+
+                self.searchTableView.reloadData()
+            } catch {
+
+                fatalError(error.localizedDescription)
+            }
+        }
+    }
+     */
+    
     @MainActor
     private func fetchDiscoverMovies() -> Void {
         
@@ -71,9 +90,13 @@ class SearchViewController: UIViewController {
             
             do {
                 
-                movies = try await APICaller.shared.fetchDiscoverMovies().results
-                
-                self.searchTableView.reloadData()
+                tmdbMovies = try await APICaller.shared.fetchDiscoverMovies().results
+                await MainActor.run { [weak self] in
+                    
+                    print(Thread.isMainThread)
+                    
+                    self?.searchTableView.reloadData()
+                }
             } catch {
                 
                 fatalError(error.localizedDescription)
@@ -87,7 +110,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
     // MARK: - UITableViewDataSource - (Required) Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return movies.count
+        return tmdbMovies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -95,8 +118,8 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
         cell.configure(with: MovieViewModel(
-            titleName: movies[indexPath.row].original_title ?? "UNKOWN original_title",
-             posterURL: movies[indexPath.row].poster_path ?? "UNKOWN poster_path"))
+            titleName: tmdbMovies[indexPath.row].original_title ?? "UNKOWN original_title",
+             posterURL: tmdbMovies[indexPath.row].poster_path ?? "UNKOWN poster_path"))
         
         return cell
     }
@@ -121,7 +144,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
             
             do {
                 
-                resultsController.movies = try await APICaller.shared.search(with: query).results
+                resultsController.tmdbMovies = try await APICaller.shared.search(with: query).results
                 
                 resultsController.searchResultsCollectionView.reloadData()
             } catch {

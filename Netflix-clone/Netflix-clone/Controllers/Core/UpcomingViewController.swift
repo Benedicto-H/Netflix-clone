@@ -10,7 +10,7 @@ import UIKit
 class UpcomingViewController: UIViewController {
     
     // MARK: - Stored-Prop
-    private var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
+    private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     
     // MARK: - Custom View
     private let upcomingTableView: UITableView = {
@@ -56,7 +56,7 @@ class UpcomingViewController: UIViewController {
             
             do {
                 
-                movies = try await APICaller.shared.fetchUpcomingMovies().results
+                tmdbMovies = try await APICaller.shared.fetchUpcomingMovies().results
                 
                 self.upcomingTableView.reloadData()
             } catch {
@@ -72,7 +72,7 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
     // MARK: - UITableViewDataSource - (Required) Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return movies.count
+        return tmdbMovies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -80,8 +80,8 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
         cell.configure(with: MovieViewModel(
-            titleName: movies[indexPath.row].original_title ?? "UNKOWN original_title",
-             posterURL: movies[indexPath.row].poster_path ?? "UNKOWN poster_path"))
+            titleName: tmdbMovies[indexPath.row].original_title ?? "UNKOWN original_title",
+             posterURL: tmdbMovies[indexPath.row].poster_path ?? "UNKOWN poster_path"))
         
         return cell
     }

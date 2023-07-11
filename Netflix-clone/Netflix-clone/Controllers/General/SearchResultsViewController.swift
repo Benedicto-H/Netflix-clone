@@ -10,8 +10,8 @@ import UIKit
 class SearchResultsViewController: UIViewController {
     
     // MARK: - Stored-Props
-    public var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
-    private var tvs: [TVsResponse.TV] = [TVsResponse.TV]()
+    public var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
+    private var tmdbTvs: [TMDBTVsResponse.TMDBTV] = [TMDBTVsResponse.TMDBTV]()
 
     // MARK: - Custom View
     public let searchResultsCollectionView: UICollectionView = {
@@ -59,7 +59,7 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
     // MARK: - UICollectionViewDataSource - (Required) Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return max(movies.count, tvs.count)
+        return max(tmdbMovies.count, tmdbTvs.count)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -68,7 +68,7 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
         
         //  cell.backgroundColor = .systemBackground
         
-        cell.configure(with: movies[indexPath.row].poster_path ?? "")
+        cell.configure(with: tmdbMovies[indexPath.row].poster_path ?? "")
         
         return cell
     }

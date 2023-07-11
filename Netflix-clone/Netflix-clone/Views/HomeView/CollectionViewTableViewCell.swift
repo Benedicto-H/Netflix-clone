@@ -12,8 +12,8 @@ class CollectionViewTableViewCell: UITableViewCell {
     // MARK: - Stored-Props
     static let identifier: String = "CollectionViewTableViewCell"   //  -> Singleton
     
-    private var movies: [MoviesResponse.Movie] = [MoviesResponse.Movie]()
-    private var tvs: [TVsResponse.TV] = [TVsResponse.TV]()
+    private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
+    private var tmdbTvs: [TMDBTVsResponse.TMDBTV] = [TMDBTVsResponse.TMDBTV]()
     
     // MARK: - Custom View
     private let collectionView: UICollectionView = {
@@ -21,7 +21,9 @@ class CollectionViewTableViewCell: UITableViewCell {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         
         layout.scrollDirection = .horizontal
-        //  layout.itemSize = CGSize(width: 120, height: 200)   //  Line 71~77
+        //  layout.itemSize = CGSize(width: 120, height: 200)
+        /// UICollectionViewDelegateFlowLayout - (optional) Method
+        /// func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
         
         let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
@@ -56,10 +58,10 @@ class CollectionViewTableViewCell: UITableViewCell {
     }
     
     
-    public func configure(withMovies movies: [MoviesResponse.Movie]?, withTVs tvs: [TVsResponse.TV]?) -> Void {
+    public func configure(withTMDBMovies movies: [TMDBMoviesResponse.TMDBMovie]?, withTMDBTVs tvs: [TMDBTVsResponse.TMDBTV]?) -> Void {
         
-        self.movies = movies ?? []
-        self.tvs = tvs ?? []
+        self.tmdbMovies = movies ?? []
+        self.tmdbTvs = tvs ?? []
         
         DispatchQueue.main.async {
             
@@ -70,16 +72,36 @@ class CollectionViewTableViewCell: UITableViewCell {
 
 extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
-    // MARK: - UICollectionViewDelegateFlowLayout = (optional) Method
+    // MARK: - UICollectionViewDelegateFlowLayout - (optional) Method
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: (contentView.frame.size.width) / 3, height: contentView.frame.size.height)
     }
     
+    // MARK: - UICollectionViewDelegate - (Optional) Method
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        collectionView.deselectItem(at: indexPath, animated: true)
+        
+        guard let tmdbMovieName: String = tmdbMovies[indexPath.row].original_title else { return }
+        
+        Task {
+            do {
+                
+                let responseData: YouTubeDataResponse = try await APICaller.shared.fetchMovieFromYouTube(with: tmdbMovieName + " trailer")
+                
+                print("responseData: \(responseData.items[0].id)")
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }
+    }
+    
     // MARK: - UICollectionViewDataSource - (Required) Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return max(movies.count, tvs.count)
+        return max(tmdbMovies.count, tmdbTvs.count)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -88,14 +110,14 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         
         cell.backgroundColor = .systemBackground
         
-        if (indexPath.row < movies.count) {
+        if (indexPath.row < tmdbMovies.count) {
             
-            cell.configure(with: movies[indexPath.row].poster_path ?? "")
+            cell.configure(with: tmdbMovies[indexPath.row].poster_path ?? "")
         }
         
-        if (indexPath.row < tvs.count) {
+        if (indexPath.row < tmdbTvs.count) {
             
-            cell.configure(with: tvs[indexPath.row].poster_path ?? "")
+            cell.configure(with: tmdbTvs[indexPath.row].poster_path ?? "")
         }
         
         return cell

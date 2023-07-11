@@ -128,37 +128,37 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
                 switch indexPath.section {
                 case Sections.TrendingMovies.rawValue:
                     
-                    let trendingMovies: MoviesResponse = try await APICaller.shared.fetchTrendingMovies()
+                    let trendingMovies: TMDBMoviesResponse = try await APICaller.shared.fetchTrendingMovies()
                     
-                    cell.configure(withMovies: trendingMovies.results, withTVs: nil)
+                    cell.configure(withTMDBMovies: trendingMovies.results, withTMDBTVs: nil)
                     break;
                     
                 case Sections.TrendingTV.rawValue:
                     
-                    let trendingTVs: TVsResponse = try await APICaller.shared.fetchTrendingTVs()
+                    let trendingTVs: TMDBTVsResponse = try await APICaller.shared.fetchTrendingTVs()
                     
-                    cell.configure(withMovies: nil, withTVs: trendingTVs.results)
+                    cell.configure(withTMDBMovies: nil, withTMDBTVs: trendingTVs.results)
                     break;
                     
                 case Sections.Popular.rawValue:
                     
-                    let popular: MoviesResponse = try await APICaller.shared.fetchPopular()
+                    let popular: TMDBMoviesResponse = try await APICaller.shared.fetchPopular()
                     
-                    cell.configure(withMovies: popular.results, withTVs: nil)
+                    cell.configure(withTMDBMovies: popular.results, withTMDBTVs: nil)
                     break;
                     
                 case Sections.UpcomingMovies.rawValue:
                     
-                    let upComingMovies: MoviesResponse = try await APICaller.shared.fetchUpcomingMovies()
+                    let upComingMovies: TMDBMoviesResponse = try await APICaller.shared.fetchUpcomingMovies()
                     
-                    cell.configure(withMovies: upComingMovies.results, withTVs: nil)
+                    cell.configure(withTMDBMovies: upComingMovies.results, withTMDBTVs: nil)
                     break;
                     
                 case Sections.TopRated.rawValue:
                     
-                    let topRated: MoviesResponse = try await APICaller.shared.fetchTopRated()
+                    let topRated: TMDBMoviesResponse = try await APICaller.shared.fetchTopRated()
                     
-                    cell.configure(withMovies: topRated.results, withTVs: nil)
+                    cell.configure(withTMDBMovies: topRated.results, withTMDBTVs: nil)
                     break;
                     
                 default:

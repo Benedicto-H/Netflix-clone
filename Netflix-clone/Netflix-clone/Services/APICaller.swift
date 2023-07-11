@@ -14,20 +14,20 @@ protocol fetchDataWithCompletionHandler {
     // MARK: - Function ProtoType
     func fetchNetflixSymbol(completionHandler: @escaping (UIImage) -> Void) -> Void
     func fetchHeroImage(completionHandler: @escaping (UIImage) -> Void) -> Void
-    func fetchTrendingMovies(completionHandler: @escaping (Result<[MoviesResponse.Movie], Error>) -> Void) -> Void
-    func fetchTrendingMoviesWithToken(completionHandler: @escaping (Result<[MoviesResponse.Movie], Error>) -> Void) -> Void
+    func fetchTrendingMovies(completionHandler: @escaping (Result<[TMDBMoviesResponse.TMDBMovie], Error>) -> Void) -> Void
+    func fetchTrendingMoviesWithToken(completionHandler: @escaping (Result<[TMDBMoviesResponse.TMDBMovie], Error>) -> Void) -> Void
 }
 
 protocol fetchDataWithConcurrency {
     
     // MARK: - Function ProtoType
-    func fetchTrendingMovies() async throws -> MoviesResponse
-    func fetchTrendingMoviesWithToken() async throws -> MoviesResponse
-    func fetchTrendingTVs() async throws -> TVsResponse
-    func fetchPopular() async throws -> MoviesResponse
-    func fetchUpcomingMovies() async throws -> MoviesResponse
-    func fetchTopRated() async throws -> MoviesResponse
-    func fetchDiscoverMovies() async throws -> MoviesResponse
+    func fetchTrendingMovies() async throws -> TMDBMoviesResponse
+    func fetchTrendingMoviesWithToken() async throws -> TMDBMoviesResponse
+    func fetchTrendingTVs() async throws -> TMDBTVsResponse
+    func fetchPopular() async throws -> TMDBMoviesResponse
+    func fetchUpcomingMovies() async throws -> TMDBMoviesResponse
+    func fetchTopRated() async throws -> TMDBMoviesResponse
+    func fetchDiscoverMovies() async throws -> TMDBMoviesResponse
 }
 
 protocol fetchDataWithCombine {
@@ -38,14 +38,15 @@ protocol fetchDataWithCombine {
 
 final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency, fetchDataWithCombine {
     
-    enum APIError: Error {
-        case invalidQueryEncoding
-        case invalidURL
-        case failedResponse
-        case failedFetchData
+    enum APIError: String, Error {
+        case invalidQueryEncoding = "INVALID QUERY ENCODING ERROR"
+        case invalidURL = "INVALID URL ERROR"
+        case failedResponse = "FAILED RESPONSE ERROR"
+        case failedFetchData = "FAILED FETCH DATA ERROR"
     }
     
     // MARK: - Stored-Props
     static let shared: APICaller = APICaller()  //  -> Singleton Object
-    public static let baseURL: String = "https://api.themoviedb.org"
+    public static let tmdb_baseURL: String = "https://api.themoviedb.org"
+    public static let youtube_baseURL: String = "https://www.googleapis.com/youtube/v3/search?"
 }

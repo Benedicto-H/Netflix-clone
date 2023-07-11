@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ACCESS_TOKEN</key>
+	<key>TMDB_ACCESS_TOKEN</key>
 	<string>$(THE_MOVIE_DB_ACCESS_TOKEN)</string>
-	<key>API_KEY</key>
+	<key>TMDB_API_KEY</key>
 	<string>$(THE_MOVIE_DB_API_KEY)</string>
+	<key>GOOGLE_DEVELOPER_API_KEY</key>
+	<string>$(GOOGLE_DEVELOPER_API_KEY)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

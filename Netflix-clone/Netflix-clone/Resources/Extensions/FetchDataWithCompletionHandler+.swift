@@ -67,9 +67,9 @@ extension fetchDataWithCompletionHandler {
     
     // MARK: - Trending Movies
     /// ver. Used API_KEY
-    func fetchTrendingMovies(completionHandler: @escaping (Result<[MoviesResponse.Movie], Error>) -> Void) -> Void {
+    func fetchTrendingMovies(completionHandler: @escaping (Result<[TMDBMoviesResponse.TMDBMovie], Error>) -> Void) -> Void {
         
-        guard let url: URL = URL(string: "\(APICaller.baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? "")") else { return } //  API_KEY 값의 경우 .xcconfig 파일로 관리
+        guard let url: URL = URL(string: "\(APICaller.tmdb_baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "TMDB_API_KEY") as? String ?? "")") else { return } //  API_KEY 값의 경우 .xcconfig 파일로 관리
         
         URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
             
@@ -78,7 +78,7 @@ extension fetchDataWithCompletionHandler {
             do {
                 
                 guard let safeData: Data = data else { return }
-                let decodedData: MoviesResponse = try JSONDecoder().decode(MoviesResponse.self, from: safeData)
+                let decodedData: TMDBMoviesResponse = try JSONDecoder().decode(TMDBMoviesResponse.self, from: safeData)
                 
                 completionHandler(.success(decodedData.results))
             } catch {
@@ -89,13 +89,13 @@ extension fetchDataWithCompletionHandler {
     }
     
     /// ver. Used ACCESS_TOKEN
-    func fetchTrendingMoviesWithToken(completionHandler: @escaping (Result<[MoviesResponse.Movie], Error>) -> Void) -> Void {
+    func fetchTrendingMoviesWithToken(completionHandler: @escaping (Result<[TMDBMoviesResponse.TMDBMovie], Error>) -> Void) -> Void {
         
         let headers: [String : String] = [
             "accept": "application/json",
-            "Authorization": "Bearer \(Bundle.main.object(forInfoDictionaryKey: "ACCESS_TOKEN") as? String ?? "")"
+            "Authorization": "Bearer \(Bundle.main.object(forInfoDictionaryKey: "TMDB_ACCESS_TOKEN") as? String ?? "")"
         ]   //  ACCESS_TOKEN 값의 경우 .xcconfig 파일로 분리
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: "\(APICaller.baseURL)/3/trending/movie/day?languages=en-US")! as URL,
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: "\(APICaller.tmdb_baseURL)/3/trending/movie/day?languages=en-US")! as URL,
                                           cachePolicy: .useProtocolCachePolicy,
                                           timeoutInterval: 10.0)
         
@@ -109,7 +109,7 @@ extension fetchDataWithCompletionHandler {
             do {
                 
                 guard let safeData: Data = data else { return }
-                let decodedData: MoviesResponse = try JSONDecoder().decode(MoviesResponse.self, from: safeData)
+                let decodedData: TMDBMoviesResponse = try JSONDecoder().decode(TMDBMoviesResponse.self, from: safeData)
                 
                 completionHandler(.success(decodedData.results))
             } catch {
