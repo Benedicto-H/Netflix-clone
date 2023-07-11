@@ -187,14 +187,14 @@ extension fetchDataWithConcurrency {
     }
     
     // MARK: - Fetch Movie
-    func fetchMovieFromYouTube(with query: String) async throws -> YouTubeDataResponse {
+    func fetchVideoFromYouTube(with query: String) async throws -> YouTubeDataResponse {
         
         //  For example..
-        print("Before query value: \(query)")   //  Avengers Endgame
+        print("Before query value: \(query)")   //  ex) Avengers Endgame
         
         guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { throw APICaller.APIError.invalidQueryEncoding }
         
-        print("After query value: \(query) \n")    //  Avengers%20Endgame
+        print("After query value: \(query) \n")    //  ex) Avengers%20Endgame
         
         guard let url: URL = URL(string: "\(APICaller.youtube_baseURL)q=\(query)&key=\(Bundle.main.object(forInfoDictionaryKey: "GOOGLE_DEVELOPER_API_KEY") as? String ?? "")") else { throw APICaller.APIError.invalidURL }
         

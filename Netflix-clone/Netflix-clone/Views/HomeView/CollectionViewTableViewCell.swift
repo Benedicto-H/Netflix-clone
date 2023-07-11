@@ -83,17 +83,41 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         
         collectionView.deselectItem(at: indexPath, animated: true)
         
-        guard let tmdbMovieName: String = tmdbMovies[indexPath.row].original_title else { return }
+        //  Movies
+        if (indexPath.row < tmdbMovies.count) {
+            
+            guard let tmdbMovieName: String = tmdbMovies[indexPath.row].original_title else { return }
+            
+            Task {
+                
+                do {
+                    
+                    let responseMovieData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovieName + " trailer")
+                    
+                    print("responseMovieData: \(responseMovieData.items[0].id) \n")
+                } catch {
+                    
+                    fatalError(error.localizedDescription)
+                }
+            }
+        }
         
-        Task {
-            do {
+        //  TVs
+        if (indexPath.row < tmdbTvs.count) {
+            
+            guard let tmdbTVName: String = tmdbTvs[indexPath.row].original_name else { return }
+            
+            Task {
                 
-                let responseData: YouTubeDataResponse = try await APICaller.shared.fetchMovieFromYouTube(with: tmdbMovieName + " trailer")
-                
-                print("responseData: \(responseData.items[0].id)")
-            } catch {
-                
-                fatalError(error.localizedDescription)
+                do {
+                    
+                    let responseTVData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbTVName + " trailer")
+                    
+                    print("responseTVData: \(responseTVData.items[0].id) \n")
+                } catch {
+                    
+                    fatalError(error.localizedDescription)
+                }
             }
         }
     }
