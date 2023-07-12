@@ -21,6 +21,8 @@ class HomeViewController: UIViewController {
     // MARK: - Stored-Props
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    private var randomTrendingMovie: TMDBMoviesResponse.TMDBMovie?
+    private var heroHeaderView: HeroHeaderUIView?
     
     // MARK: - Custom View
     private let homeFeedTableView: UITableView = {
@@ -44,11 +46,12 @@ class HomeViewController: UIViewController {
         homeFeedTableView.dataSource = self
         homeFeedTableView.delegate = self
         
-        let heroHeaderView: HeroHeaderUIView = HeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
+        heroHeaderView = HeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
         
         homeFeedTableView.tableHeaderView = heroHeaderView
         
         configureNavBar()   //  ->  Pr fetchDataWithCompletionHandler
+        configureHeroHeaderView()
     }
     
     override func viewDidLayoutSubviews() {
@@ -103,7 +106,23 @@ class HomeViewController: UIViewController {
         ]
         
         navigationController?.navigationBar.tintColor = .white
-
+    }
+    
+    private func configureHeroHeaderView() -> Void {
+        
+        Task {
+            
+            do {
+                
+                let movies: [TMDBMoviesResponse.TMDBMovie] = try await APICaller.shared.fetchTrendingMovies().results
+                
+                self.randomTrendingMovie = movies.randomElement()
+                self.heroHeaderView?.configure(with: MovieViewModel(titleName: movies.randomElement()?.original_title ?? "", posterURL: movies.randomElement()?.poster_path ?? ""))
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }
     }
 }
 

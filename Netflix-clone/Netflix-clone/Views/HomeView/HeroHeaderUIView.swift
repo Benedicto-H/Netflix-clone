@@ -137,4 +137,13 @@ class HeroHeaderUIView: UIView {
         NSLayoutConstraint.activate(playButtonConstraints)
         NSLayoutConstraint.activate(downloadButtonConstraints)
     }
+    
+    public func configure(with model: MovieViewModel) -> Void {
+        
+        let baseImageURL: String = "https://image.tmdb.org/t/p/w500"
+        
+        guard let url: URL = URL(string: "\(baseImageURL)\(model.posterURL)") else { return }
+        
+        heroImageView.sd_setImage(with: url)
+    }
 }
