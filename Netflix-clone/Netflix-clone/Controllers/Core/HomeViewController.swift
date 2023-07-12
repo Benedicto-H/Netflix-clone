@@ -107,7 +107,7 @@ class HomeViewController: UIViewController {
     }
 }
 
-extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
+extension HomeViewController: UITableViewDataSource, UITableViewDelegate, CollectionViewTableViewCellDelegate {
     
     // MARK: - UITableViewDataSource - (Required) Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -120,6 +120,8 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell: CollectionViewTableViewCell =
                 tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier,
                                                        for: indexPath) as? CollectionViewTableViewCell else { return UITableViewCell() }
+        
+        cell.delegate = self
         
         Task {
             
@@ -215,5 +217,15 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
         let offset: CGFloat = scrollView.contentOffset.y + defaultOffset
         
         navigationController?.navigationBar.transform = .init(translationX: 0, y: min(0, -offset))
+    }
+    
+    // MARK: - CollectionViewTableViewCellDelegate - (Required) Method -> Implementation
+    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: PreviewViewModel) {
+        
+        let vc: PreviewViewController = PreviewViewController()
+        
+        vc.configure(with: viewModel)
+        
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }

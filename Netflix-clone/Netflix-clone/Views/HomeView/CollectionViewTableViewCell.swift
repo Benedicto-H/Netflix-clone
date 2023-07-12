@@ -7,10 +7,17 @@
 
 import UIKit
 
+protocol CollectionViewTableViewCellDelegate: AnyObject {
+    
+    // MARK: - Function ProtoType
+    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: PreviewViewModel) -> Void
+}
+
 class CollectionViewTableViewCell: UITableViewCell {
 
     // MARK: - Stored-Props
     static let identifier: String = "CollectionViewTableViewCell"   //  -> Singleton
+    weak var delegate: CollectionViewTableViewCellDelegate? //  -> Dependency Injection?
     
     private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     private var tmdbTvs: [TMDBTVsResponse.TMDBTV] = [TMDBTVsResponse.TMDBTV]()
@@ -37,7 +44,7 @@ class CollectionViewTableViewCell: UITableViewCell {
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        contentView.backgroundColor = .systemBackground
+        //  contentView.backgroundColor = .systemBackground
         contentView.addSubview(collectionView)
         
         collectionView.delegate = self
@@ -63,9 +70,9 @@ class CollectionViewTableViewCell: UITableViewCell {
         self.tmdbMovies = movies ?? []
         self.tmdbTvs = tvs ?? []
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
             
-            self.collectionView.reloadData()
+            self?.collectionView.reloadData()
         }
     }
 }
@@ -92,9 +99,12 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
                 
                 do {
                     
-                    let responseMovieData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovieName + " trailer")
+                    let responseData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovieName + " trailer")
                     
-                    print("responseMovieData: \(responseMovieData.items[0].id) \n")
+                    print("responseData: \(responseData) \n")
+                    print("responseData.items[0].id: \(responseData.items[0].id)")
+                    
+                    delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbMovieName ?? "", youTubeView: responseData.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
                 } catch {
                     
                     fatalError(error.localizedDescription)
@@ -111,9 +121,13 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
                 
                 do {
                     
-                    let responseTVData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbTVName + " trailer")
+                    let responseData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbTVName + " trailer")
                     
-                    print("responseTVData: \(responseTVData.items[0].id) \n")
+                    print("responseData: \(responseData.items[0].id) \n")
+                    
+                    delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbTVName ?? "", youTubeView: responseData.items[0], overview: tmdbTvs[indexPath.row].overview ?? ""))
+                    
+                    
                 } catch {
                     
                     fatalError(error.localizedDescription)

@@ -16,6 +16,7 @@
 		E845A5692A41A71500F809C6 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E845A5682A41A71500F809C6 /* String+.swift */; };
 		E845A56B2A41AE9E00F809C6 /* TMDBTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E845A56A2A41AE9E00F809C6 /* TMDBTV.swift */; };
 		E84BA9C02A5D50C50013A962 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84BA9BF2A5D50C50013A962 /* PreviewViewController.swift */; };
+		E84BA9C22A5D6CEC0013A962 /* PreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84BA9C12A5D6CEC0013A962 /* PreviewViewModel.swift */; };
 		E84FEA022A5C068B00F74205 /* YouTubeDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84FEA012A5C068B00F74205 /* YouTubeDataResponse.swift */; };
 		E858C91B2A5801E800BA0EF8 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E858C91A2A5801E800BA0EF8 /* SearchResultsViewController.swift */; };
 		E8885D292A407681006D9D04 /* TMDBMovie.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8885D282A407681006D9D04 /* TMDBMovie.swift */; };
@@ -43,6 +44,7 @@
 		E845A5682A41A71500F809C6 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		E845A56A2A41AE9E00F809C6 /* TMDBTV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBTV.swift; sourceTree = "<group>"; };
 		E84BA9BF2A5D50C50013A962 /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
+		E84BA9C12A5D6CEC0013A962 /* PreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewModel.swift; sourceTree = "<group>"; };
 		E84FEA012A5C068B00F74205 /* YouTubeDataResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeDataResponse.swift; sourceTree = "<group>"; };
 		E858C91A2A5801E800BA0EF8 /* SearchResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
 		E8885D282A407681006D9D04 /* TMDBMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBMovie.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				E827D25A2A482E43002E8E6D /* MovieViewModel.swift */,
+				E84BA9C12A5D6CEC0013A962 /* PreviewViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -310,6 +313,7 @@
 				E84BA9C02A5D50C50013A962 /* PreviewViewController.swift in Sources */,
 				E8885D292A407681006D9D04 /* TMDBMovie.swift in Sources */,
 				E8DCC53E2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift in Sources */,
+				E84BA9C22A5D6CEC0013A962 /* PreviewViewModel.swift in Sources */,
 				E8DCC53C2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift in Sources */,
 				E845A5692A41A71500F809C6 /* String+.swift in Sources */,
 				E8C4B08D2A348ED800D77F9D /* HomeViewController.swift in Sources */,

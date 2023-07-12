@@ -14,7 +14,7 @@ class HeroHeaderUIView: UIView {
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
 
     // MARK: - Custom Views
-    private lazy var heroImageView: UIImageView = {
+    private let heroImageView: UIImageView = {
         
         let imageView: UIImageView = UIImageView()
         
@@ -101,6 +101,8 @@ class HeroHeaderUIView: UIView {
     override func layoutSubviews() {
         
         super.layoutSubviews()
+        
+        //  이 시점에서 Safe Area의 영향을 받음.
         
         heroImageView.frame = bounds
     }
