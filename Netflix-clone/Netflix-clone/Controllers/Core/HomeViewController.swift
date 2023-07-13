@@ -238,7 +238,7 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         navigationController?.navigationBar.transform = .init(translationX: 0, y: min(0, -offset))
     }
     
-    // MARK: - CollectionViewTableViewCellDelegate - (Required) Method -> Implementation
+    // MARK: - CollectionViewTableViewCellDelegate - (Required) Method  ->  Implementation
     func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: PreviewViewModel) {
         
         let vc: PreviewViewController = PreviewViewController()

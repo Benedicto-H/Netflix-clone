@@ -7,11 +7,18 @@
 
 import UIKit
 
+protocol SearchResultsViewControllerDelegate: AnyObject {
+    
+    // MARK: - Function ProtoType
+    func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel)
+}
+
 class SearchResultsViewController: UIViewController {
     
     // MARK: - Stored-Props
     public var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     private var tmdbTvs: [TMDBTVsResponse.TMDBTV] = [TMDBTVsResponse.TMDBTV]()
+    public weak var delegate: SearchResultsViewControllerDelegate?
 
     // MARK: - Custom View
     public let searchResultsCollectionView: UICollectionView = {
@@ -54,6 +61,33 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: (UIScreen.main.bounds.width / 3) - 10, height: 200)
+    }
+    
+    // MARK: - UICollectionViewDelegate - (Optional) Method
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        collectionView.deselectItem(at: indexPath, animated: true)
+        
+        Task {
+            
+            do {
+                
+                let videoResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovies[indexPath.row].original_title ?? "")
+                
+                /*
+                let vc: PreviewViewController = PreviewViewController()
+                
+                vc.configure(with: PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+                 */
+                
+                self.delegate?.searchResultsViewControllerDidTapItem(PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }
     }
     
     // MARK: - UICollectionViewDataSource - (Required) Methods

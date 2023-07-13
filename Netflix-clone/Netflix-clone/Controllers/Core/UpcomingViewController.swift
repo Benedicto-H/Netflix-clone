@@ -85,9 +85,35 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         return cell
     }
-    // MARK: - UITableViewDelegate - (Optional) Method
+    // MARK: - UITableViewDelegate - (Optional) Methods
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return 120
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let movie: TMDBMoviesResponse.TMDBMovie = tmdbMovies[indexPath.row]
+        
+        guard let movieName: String = movie.original_title else { return }
+        
+        Task {
+            
+            do {
+                
+                let videoElement: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                
+                let vc: PreviewViewController = PreviewViewController()
+                
+                vc.configure(with: PreviewViewModel(title: movieName, youTubeView: videoElement.items[0], overview: movie.overview ?? ""))
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }
     }
 }

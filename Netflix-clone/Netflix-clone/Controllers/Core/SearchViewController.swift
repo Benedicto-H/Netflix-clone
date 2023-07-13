@@ -105,7 +105,7 @@ class SearchViewController: UIViewController {
     }
 }
 
-extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
+extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating, SearchResultsViewControllerDelegate {
     
     // MARK: - UITableViewDataSource - (Required) Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -140,6 +140,8 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         query.trimmingCharacters(in: .whitespaces).count >= 3,
         let resultsController: SearchResultsViewController = searchController.searchResultsController as? SearchResultsViewController else { return }
         
+        resultsController.delegate = self
+        
         Task {
             
             do {
@@ -152,5 +154,42 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
                 fatalError(error.localizedDescription)
             }
         }
+    }
+    
+    // MARK: - UITableViewDelegate - (Optional) Method
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let movie: TMDBMoviesResponse.TMDBMovie = tmdbMovies[indexPath.row]
+        
+        guard let movieName: String = movie.original_title else { return }
+        
+        Task {
+            
+            do {
+                
+                let videoResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                
+                let vc: PreviewViewController = PreviewViewController()
+                
+                vc.configure(with: PreviewViewModel(title: movieName, youTubeView: videoResponse.items[0], overview: movie.overview ?? ""))
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }
+    }
+    
+    // MARK: - SearchResultsViewControllerDelegate - (required) Method  ->  Implementation
+    func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel) {
+        
+        let vc: PreviewViewController = PreviewViewController()
+        
+        vc.configure(with: viewModel)
+        
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

@@ -17,7 +17,7 @@ class CollectionViewTableViewCell: UITableViewCell {
 
     // MARK: - Stored-Props
     static let identifier: String = "CollectionViewTableViewCell"   //  -> Singleton
-    weak var delegate: CollectionViewTableViewCellDelegate? //  -> Dependency Injection?
+    weak var delegate: CollectionViewTableViewCellDelegate? //  -> Dependency Injection
     
     private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     private var tmdbTvs: [TMDBTVsResponse.TMDBTV] = [TMDBTVsResponse.TMDBTV]()
@@ -75,6 +75,17 @@ class CollectionViewTableViewCell: UITableViewCell {
             self?.collectionView.reloadData()
         }
     }
+    
+    private func downloadMovieAt(indexPaths: [IndexPath]) -> Void {
+        
+        for indexPath in indexPaths {
+            
+            let row: Int = indexPath.row
+            
+            print("Downloading \(tmdbMovies[row].original_title ?? "")")
+            print(row)
+        }
+    }
 }
 
 extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
@@ -85,7 +96,7 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         return CGSize(width: (contentView.frame.size.width) / 3, height: contentView.frame.size.height)
     }
     
-    // MARK: - UICollectionViewDelegate - (Optional) Method
+    // MARK: - UICollectionViewDelegate - (Optional) Methods
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         collectionView.deselectItem(at: indexPath, animated: true)
@@ -104,7 +115,7 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
                     print("responseData: \(responseData) \n")
                     print("responseData.items[0].id: \(responseData.items[0].id)")
                     
-                    delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbMovieName ?? "", youTubeView: responseData.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
+                    self.delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbMovieName, youTubeView: responseData.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
                 } catch {
                     
                     fatalError(error.localizedDescription)
@@ -125,7 +136,7 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
                     
                     print("responseData: \(responseData.items[0].id) \n")
                     
-                    delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbTVName ?? "", youTubeView: responseData.items[0], overview: tmdbTvs[indexPath.row].overview ?? ""))
+                    delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbTVName, youTubeView: responseData.items[0], overview: tmdbTvs[indexPath.row].overview ?? ""))
                     
                     
                 } catch {
@@ -134,6 +145,32 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
                 }
             }
         }
+    }
+    
+    //  iOS 13.0–16.0 Deprecated
+    /// optional func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration?
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let config: UIContextMenuConfiguration = UIContextMenuConfiguration(identifier: nil,
+                                                previewProvider: nil) { _ in
+            
+            let downloadAction = UIAction(
+                title: "Download",
+                subtitle: nil,
+                image: nil,
+                identifier: nil,
+                discoverabilityTitle: nil,
+                state: .off) { [weak self] _ in
+                    
+                    print("Download tapped")
+                    
+                    self?.downloadMovieAt(indexPaths: indexPaths)
+                }
+            
+            return UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [downloadAction])
+        }
+        
+        return config
     }
     
     // MARK: - UICollectionViewDataSource - (Required) Methods
