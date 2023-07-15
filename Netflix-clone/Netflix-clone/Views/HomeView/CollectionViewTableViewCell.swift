@@ -80,10 +80,26 @@ class CollectionViewTableViewCell: UITableViewCell {
         
         for indexPath in indexPaths {
             
-            let row: Int = indexPath.row
+            print("Downloading \(tmdbMovies[indexPath.row].original_title ?? "")")
             
-            print("Downloading \(tmdbMovies[row].original_title ?? "")")
-            print(row)
+            DataPersistenceManager.shared.downloadMovieWith(model: tmdbMovies[indexPath.row]) { result in
+                
+                switch result {
+                case .success():
+                    
+                    print("Downloaded To Database")
+                    break;
+                    
+                case .failure(let error):
+                    
+                    print("error: \(error.localizedDescription)")
+                    fatalError(error.localizedDescription)
+                    break;
+                    
+                default:
+                    break;
+                }
+            }
         }
     }
 }
