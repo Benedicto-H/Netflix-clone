@@ -40,6 +40,11 @@ class DownloadsViewController: UIViewController {
         downloadedTableView.delegate = self
         
         fetchMovieForDownload()
+        
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("Downloaded"), object: nil, queue: nil) { _ in
+            
+            self.fetchMovieForDownload()
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -124,5 +129,31 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return 120
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let movie: TMDBMovieItem = tmdbMovieItems[indexPath.row]
+        
+        guard let movieName: String = movie.original_title else { return }
+        
+        Task {
+            
+            do {
+                
+                let videoElement: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                
+                let vc: PreviewViewController = PreviewViewController()
+                
+                vc.configure(with: PreviewViewModel(title: movieName, youTubeView: videoElement.items[0], overview: movie.overview ?? ""))
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+            } catch {
+                
+                fatalError(error.localizedDescription)
+            }
+        }
     }
 }

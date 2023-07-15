@@ -88,6 +88,8 @@ class CollectionViewTableViewCell: UITableViewCell {
                 case .success():
                     
                     print("Downloaded To Database")
+                    
+                    NotificationCenter.default.post(name: NSNotification.Name("Downloaded"), object: nil)
                     break;
                     
                 case .failure(let error):
