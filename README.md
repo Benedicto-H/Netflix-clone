@@ -19,7 +19,7 @@
 ```
 # Clone this project
 
-$ git clone -b develop https://github.com/jphong1005/Netflix-clone.git
+$ git clone https://github.com/jphong1005/Netflix-clone.git
 ```
 
 > ⚠️ Target은 `iOS 15.0+`이며, 다크모드 환경에서 앱을 이용해주세요.
