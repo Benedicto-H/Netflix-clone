@@ -7,7 +7,15 @@
 
 import UIKit
 
+// MARK: - (Class) SceneDelegate: UI의 Life Cycle을 관리하는 Class
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    
+    // MARK: - UI Structure
+    /// UIScreen (Hardware-based Display) -> UIWindowScene -> UIWindow -> UIView
+    ///
+    /// ** ! Notice **
+    /// (Sub-Class) UIWindow: (Super-Class) UIView
+    /// (Sub-Class) UIWindowScene: (Super-Class) UIScene
 
     var window: UIWindow?
 
@@ -16,7 +24,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene: UIWindowScene = (scene as? UIWindowScene) else { return }    //  UIWindowScene 타입으로 Downcasting
+        
+        window = UIWindow(frame: windowScene.coordinateSpace.bounds)    //  UIWindow의 크기와 위치를 scene과 일치
+        window?.windowScene = windowScene   //  UIWindow와 UIWindowScene을 연결
+        window?.rootViewController = MainTabBarViewController()   //  ViewContoller를 App이 실행될 때 표시되는 최상위 VC로 설정
+        window?.makeKeyAndVisible() //  keyWindow로 설정
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
