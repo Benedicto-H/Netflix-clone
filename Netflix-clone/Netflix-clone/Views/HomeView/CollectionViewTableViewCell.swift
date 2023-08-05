@@ -52,7 +52,6 @@ class CollectionViewTableViewCell: UITableViewCell {
     }
     
     required init?(coder: NSCoder) {    //  NSCoding - (Required) Method
-        
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -71,7 +70,6 @@ class CollectionViewTableViewCell: UITableViewCell {
         self.tmdbTvs = tvs ?? []
         
         DispatchQueue.main.async { [weak self] in
-            
             self?.collectionView.reloadData()
         }
     }
@@ -79,7 +77,6 @@ class CollectionViewTableViewCell: UITableViewCell {
     private func downloadMovieAt(indexPaths: [IndexPath]) -> Void {
         
         for indexPath in indexPaths {
-            
             print("Downloading \(tmdbMovies[indexPath.row].original_title ?? "")")
             
             DataPersistenceManager.shared.downloadMovieWith(model: tmdbMovies[indexPath.row]) { result in
@@ -121,21 +118,14 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         
         //  Movies
         if (indexPath.row < tmdbMovies.count) {
-            
             guard let tmdbMovieName: String = tmdbMovies[indexPath.row].original_title else { return }
             
             Task {
-                
                 do {
-                    
                     let responseData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovieName + " trailer")
-                    
-                    print("responseData: \(responseData) \n")
-                    print("responseData.items[0].id: \(responseData.items[0].id)")
                     
                     self.delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbMovieName, youTubeView: responseData.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
                 } catch {
-                    
                     fatalError(error.localizedDescription)
                 }
             }
@@ -143,22 +133,16 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         
         //  TVs
         if (indexPath.row < tmdbTvs.count) {
-            
             guard let tmdbTVName: String = tmdbTvs[indexPath.row].original_name else { return }
             
             Task {
-                
                 do {
-                    
                     let responseData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbTVName + " trailer")
                     
                     print("responseData: \(responseData.items[0].id) \n")
                     
                     delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbTVName, youTubeView: responseData.items[0], overview: tmdbTvs[indexPath.row].overview ?? ""))
-                    
-                    
                 } catch {
-                    
                     fatalError(error.localizedDescription)
                 }
             }
@@ -171,7 +155,6 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         
         let config: UIContextMenuConfiguration = UIContextMenuConfiguration(identifier: nil,
                                                 previewProvider: nil) { _ in
-            
             let downloadAction = UIAction(
                 title: "Download",
                 subtitle: nil,
@@ -179,7 +162,6 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
                 identifier: nil,
                 discoverabilityTitle: nil,
                 state: .off) { [weak self] _ in
-                    
                     print("Download tapped")
                     
                     self?.downloadMovieAt(indexPaths: indexPaths)
@@ -204,12 +186,10 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         cell.backgroundColor = .systemBackground
         
         if (indexPath.row < tmdbMovies.count) {
-            
             cell.configure(with: tmdbMovies[indexPath.row].poster_path ?? "")
         }
         
         if (indexPath.row < tmdbTvs.count) {
-            
             cell.configure(with: tmdbTvs[indexPath.row].poster_path ?? "")
         }
         

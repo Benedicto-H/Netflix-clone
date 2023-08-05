@@ -79,47 +79,15 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
-    private func configureNavBarCombine() -> Void {
-        
-        var image: UIImage?
-        
-        APICaller.shared.fetchNetflixSymbolWithCombine()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                
-                //  Error Handling
-                if case let .failure(error) = completion {
-                    
-                    APICaller.APIError.failedFetchData
-                    print("Fetch Error: \(error.localizedDescription)")
-                }
-            } receiveValue: { [weak self] symbolImage in
-                
-                image = symbolImage
-                image = image?.withRenderingMode(.alwaysOriginal)
-                self?.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
-            }.store(in: &cancellables)
-        
-        navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .done, target: self, action: nil),
-            UIBarButtonItem(image: UIImage(systemName: "play.rectangle"), style: .done, target: self, action: nil)
-        ]
-        
-        navigationController?.navigationBar.tintColor = .white
-    }
-    
     private func configureHeroHeaderView() -> Void {
         
         Task {
-            
             do {
-                
                 let movies: [TMDBMoviesResponse.TMDBMovie] = try await APICaller.shared.fetchTrendingMovies().results
                 
                 self.randomTrendingMovie = movies.randomElement()
                 self.heroHeaderView?.configure(with: MovieViewModel(titleName: movies.randomElement()?.original_title ?? "", posterURL: movies.randomElement()?.poster_path ?? ""))
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }
@@ -143,9 +111,7 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         cell.delegate = self
         
         Task {
-            
             do {
-                
                 switch indexPath.section {
                 case Sections.TrendingMovies.rawValue:
                     
@@ -186,7 +152,6 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
                     break;
                 }
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
             
@@ -241,10 +206,10 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
     // MARK: - CollectionViewTableViewCellDelegate - (Required) Method  ->  Implementation
     func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: PreviewViewModel) {
         
-        let vc: PreviewViewController = PreviewViewController()
+        let previewVC: PreviewViewController = PreviewViewController()
         
-        vc.configure(with: viewModel)
+        previewVC.configure(with: viewModel)
         
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.navigationController?.pushViewController(previewVC, animated: true)
     }
 }

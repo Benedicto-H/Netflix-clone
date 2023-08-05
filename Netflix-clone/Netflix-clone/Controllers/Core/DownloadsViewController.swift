@@ -42,7 +42,6 @@ class DownloadsViewController: UIViewController {
         fetchMovieForDownload()
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name("Downloaded"), object: nil, queue: nil) { _ in
-            
             self.fetchMovieForDownload()
         }
     }
@@ -63,7 +62,6 @@ class DownloadsViewController: UIViewController {
                 self?.tmdbMovieItems = movies
                 
                 DispatchQueue.main.async {
-                    
                     self?.downloadedTableView.reloadData()
                 }
                 
@@ -103,7 +101,6 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
         case .delete:
             
             DataPersistenceManager.shared.deleteMovieWith(model: tmdbMovieItems[indexPath.row]) { [weak self] result in
-                
                 switch result {
                 case .success(()):
                     
@@ -114,12 +111,15 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
                     
                     print("error: \(error.localizedDescription)")
                     fatalError(error.localizedDescription)
+                    
                 default:
                     break;
                 }
+                
                 self?.tmdbMovieItems.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             }
+            
         default:
             break;
         }
@@ -140,18 +140,14 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
         guard let movieName: String = movie.original_title else { return }
         
         Task {
-            
             do {
+                let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                let previewVC: PreviewViewController = PreviewViewController()
                 
-                let videoElement: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
                 
-                let vc: PreviewViewController = PreviewViewController()
-                
-                vc.configure(with: PreviewViewModel(title: movieName, youTubeView: videoElement.items[0], overview: movie.overview ?? ""))
-                
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.navigationController?.pushViewController(previewVC, animated: true)
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }

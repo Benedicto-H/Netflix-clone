@@ -69,14 +69,11 @@ class SearchViewController: UIViewController {
     private func fetchDiscoverMovies() -> Void {
 
         Task {
-
             do {
-
                 tmdbMovies = try await APICaller.shared.fetchDiscoverMovies().results
 
                 self.searchTableView.reloadData()
             } catch {
-
                 fatalError(error.localizedDescription)
             }
         }
@@ -87,18 +84,14 @@ class SearchViewController: UIViewController {
     private func fetchDiscoverMovies() -> Void {
         
         Task {
-            
             do {
-                
                 tmdbMovies = try await APICaller.shared.fetchDiscoverMovies().results
                 await MainActor.run { [weak self] in
-                    
                     print(Thread.isMainThread)
                     
                     self?.searchTableView.reloadData()
                 }
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }
@@ -143,14 +136,10 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         resultsController.delegate = self
         
         Task {
-            
             do {
-                
                 resultsController.tmdbMovies = try await APICaller.shared.search(with: query).results
-                
                 resultsController.searchResultsCollectionView.reloadData()
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }
@@ -166,16 +155,13 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         guard let movieName: String = movie.original_title else { return }
         
         Task {
-            
             do {
+                let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                let previewVC: PreviewViewController = PreviewViewController()
                 
-                let videoResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
                 
-                let vc: PreviewViewController = PreviewViewController()
-                
-                vc.configure(with: PreviewViewModel(title: movieName, youTubeView: videoResponse.items[0], overview: movie.overview ?? ""))
-                
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.navigationController?.pushViewController(previewVC, animated: true)
             } catch {
                 
                 fatalError(error.localizedDescription)
@@ -186,10 +172,10 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
     // MARK: - SearchResultsViewControllerDelegate - (required) Method  ->  Implementation
     func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel) {
         
-        let vc: PreviewViewController = PreviewViewController()
+        let previewVC: PreviewViewController = PreviewViewController()
         
-        vc.configure(with: viewModel)
+        previewVC.configure(with: viewModel)
         
-        navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(previewVC, animated: true)
     }
 }

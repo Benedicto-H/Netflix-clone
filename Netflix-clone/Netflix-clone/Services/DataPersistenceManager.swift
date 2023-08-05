@@ -62,12 +62,10 @@ class DataPersistenceManager {
         item.vote_count = Int64(model.vote_count)
         
         do {
-            
             try context.save()
             
             completionHandler(.success(()))
         } catch {
-            
             print("error: \(error.localizedDescription)")
             fatalError(error.localizedDescription)
             
@@ -78,12 +76,10 @@ class DataPersistenceManager {
     func fetchMovieFromContext(completionHandler: @escaping (Result<[TMDBMovieItem], Error>) -> Void) -> Void {
         
         do {
-            
             let movies: [TMDBMovieItem] = try context.fetch(request)
             
             completionHandler(.success(movies))
         } catch {
-            
             print("error: \(error.localizedDescription)")
             fatalError(error.localizedDescription)
             
@@ -96,12 +92,10 @@ class DataPersistenceManager {
         context.delete(model)
         
         do {
-            
             try context.save()
             
             completionHandler(.success(()))
         } catch {
-            
             print("error: \(error.localizedDescription)")
             fatalError(error.localizedDescription)
             

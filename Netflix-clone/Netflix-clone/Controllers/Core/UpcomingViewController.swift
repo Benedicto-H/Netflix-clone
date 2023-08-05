@@ -53,14 +53,11 @@ class UpcomingViewController: UIViewController {
     private func fetchUpcomingMoviesData() -> Void {
         
         Task {
-            
             do {
-                
                 tmdbMovies = try await APICaller.shared.fetchUpcomingMovies().results
                 
                 self.upcomingTableView.reloadData()
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }
@@ -100,18 +97,14 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         guard let movieName: String = movie.original_title else { return }
         
         Task {
-            
             do {
+                let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                let previewVC: PreviewViewController = PreviewViewController()
                 
-                let videoElement: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
+                previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
                 
-                let vc: PreviewViewController = PreviewViewController()
-                
-                vc.configure(with: PreviewViewModel(title: movieName, youTubeView: videoElement.items[0], overview: movie.overview ?? ""))
-                
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.navigationController?.pushViewController(previewVC, animated: true)
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }

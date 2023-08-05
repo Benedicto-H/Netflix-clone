@@ -75,7 +75,8 @@ class PreviewViewController: UIViewController {
     private func applyConstraints() -> Void {
         
         let webViewConstraints: [NSLayoutConstraint] = [
-            webView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            //  webView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor), 
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             webView.heightAnchor.constraint(equalToConstant: 300)

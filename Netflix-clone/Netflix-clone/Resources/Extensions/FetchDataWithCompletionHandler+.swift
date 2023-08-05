@@ -22,16 +22,13 @@ extension fetchDataWithCompletionHandler {
             guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
             
             do {
-                
                 guard let safeData: Data = data else { return }
                 let logoImage: UIImage? = UIImage(data: safeData)
                 
                 DispatchQueue.main.async {
-                    
                     completionHandler(logoImage ?? UIImage())
                 }
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }.resume()
@@ -49,17 +46,13 @@ extension fetchDataWithCompletionHandler {
             guard (response as? HTTPURLResponse)?.statusCode == 200 else { return }
             
             do {
-                
                 guard let safeData: Data = data else { return }
-                
                 let heroHeaderImage: UIImage? = UIImage(data: safeData)
                 
                 DispatchQueue.main.async {
-                    
                     completionHandler(heroHeaderImage ?? UIImage())
                 }
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }.resume()
@@ -76,44 +69,11 @@ extension fetchDataWithCompletionHandler {
             guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
             
             do {
-                
                 guard let safeData: Data = data else { return }
                 let decodedData: TMDBMoviesResponse = try JSONDecoder().decode(TMDBMoviesResponse.self, from: safeData)
                 
                 completionHandler(.success(decodedData.results))
             } catch {
-                
-                completionHandler(.failure(error))
-            }
-        }.resume()
-    }
-    
-    /// ver. Used ACCESS_TOKEN
-    func fetchTrendingMoviesWithToken(completionHandler: @escaping (Result<[TMDBMoviesResponse.TMDBMovie], Error>) -> Void) -> Void {
-        
-        let headers: [String : String] = [
-            "accept": "application/json",
-            "Authorization": "Bearer \(Bundle.main.object(forInfoDictionaryKey: "TMDB_ACCESS_TOKEN") as? String ?? "")"
-        ]   //  ACCESS_TOKEN 값의 경우 .xcconfig 파일로 분리
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: "\(APICaller.tmdb_baseURL)/3/trending/movie/day?languages=en-US")! as URL,
-                                          cachePolicy: .useProtocolCachePolicy,
-                                          timeoutInterval: 10.0)
-        
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = headers
-        
-        URLSession.shared.dataTask(with: request as URLRequest) { data, urlResponse, error in
-            
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
-            
-            do {
-                
-                guard let safeData: Data = data else { return }
-                let decodedData: TMDBMoviesResponse = try JSONDecoder().decode(TMDBMoviesResponse.self, from: safeData)
-                
-                completionHandler(.success(decodedData.results))
-            } catch {
-                
                 completionHandler(.failure(error))
             }
         }.resume()

@@ -11,18 +11,15 @@ import Combine
 
 protocol fetchDataWithCompletionHandler {
     
-    // MARK: - Function ProtoType
+    // MARK: - Function ProtoTypes
     func fetchNetflixSymbol(completionHandler: @escaping (UIImage) -> Void) -> Void
     func fetchHeroImage(completionHandler: @escaping (UIImage) -> Void) -> Void
-    func fetchTrendingMovies(completionHandler: @escaping (Result<[TMDBMoviesResponse.TMDBMovie], Error>) -> Void) -> Void
-    func fetchTrendingMoviesWithToken(completionHandler: @escaping (Result<[TMDBMoviesResponse.TMDBMovie], Error>) -> Void) -> Void
 }
 
 protocol fetchDataWithConcurrency {
     
-    // MARK: - Function ProtoType
+    // MARK: - Function ProtoTypes
     func fetchTrendingMovies() async throws -> TMDBMoviesResponse
-    func fetchTrendingMoviesWithToken() async throws -> TMDBMoviesResponse
     func fetchTrendingTVs() async throws -> TMDBTVsResponse
     func fetchPopular() async throws -> TMDBMoviesResponse
     func fetchUpcomingMovies() async throws -> TMDBMoviesResponse
@@ -30,13 +27,7 @@ protocol fetchDataWithConcurrency {
     func fetchDiscoverMovies() async throws -> TMDBMoviesResponse
 }
 
-protocol fetchDataWithCombine {
-    
-    // MARK: - Function ProtoType
-    func fetchNetflixSymbolWithCombine() -> AnyPublisher<UIImage, Error>
-}
-
-final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency, fetchDataWithCombine {
+final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency {
     
     enum APIError: String, Error {
         case invalidQueryEncoding = "INVALID QUERY ENCODING ERROR"

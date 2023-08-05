@@ -69,9 +69,7 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
         collectionView.deselectItem(at: indexPath, animated: true)
         
         Task {
-            
             do {
-                
                 let videoResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovies[indexPath.row].original_title ?? "")
                 
                 /*
@@ -84,7 +82,6 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
                 
                 self.delegate?.searchResultsViewControllerDidTapItem(PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
             } catch {
-                
                 fatalError(error.localizedDescription)
             }
         }

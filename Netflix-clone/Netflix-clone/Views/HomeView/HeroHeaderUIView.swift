@@ -22,33 +22,8 @@ class HeroHeaderUIView: UIView {
         imageView.clipsToBounds = true
         
         APICaller.shared.fetchHeroImage { heroImage in
-            
             imageView.image = heroImage
         }
-        
-        return imageView
-    }()
-    
-    private lazy var heroImageViewCombine: UIImageView = {
-       
-        let imageView: UIImageView = UIImageView()
-        
-        APICaller.shared.fetchHeroImageWithCombine()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                
-                //  Error Handling
-                if case let .failure(error) = completion {
-                    
-                    APICaller.APIError.failedFetchData
-                    print("Fetch Error: \(error.localizedDescription)")
-                }
-            } receiveValue: { [weak imageView] heroImage in
-                
-                imageView?.image = heroImage
-                imageView?.contentMode = .scaleAspectFit
-                imageView?.clipsToBounds = true
-            }.store(in: &cancellables)
         
         return imageView
     }()
@@ -93,7 +68,6 @@ class HeroHeaderUIView: UIView {
     }
     
     required init?(coder: NSCoder) {    //  NSCoding - (Required) Method
-        
         fatalError("init(coder:) has not been implemented")
     }
     
