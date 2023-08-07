@@ -26,11 +26,6 @@ $ git clone https://github.com/jphong1005/Netflix-clone.git
 
 `API_KEY 및 ACCESS_TOKEN 등 민감한 정보는 별도의 .xcconfig파일로 분리시켰으나 .gitignore 파일에 저장해두었기에 따로 올리지는 않습니다.`
 
-Combine Framework를 사용한 버전은 아래 명령어를 이용해주세요
-```
-$ git clone -b develop_Combine https://github.com/jphong1005/Netflix-clone.git
-```
-
 <br>
 
 ## 📱 Results
