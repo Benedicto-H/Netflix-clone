@@ -6,12 +6,8 @@
 //
 
 import UIKit
-import Combine
 
 class HeroHeaderUIView: UIView {
-    
-    // MARK: - Stored-Prop
-    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
 
     // MARK: - Custom Views
     private let heroImageView: UIImageView = {
