@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Combine
 
 class HomeViewController: UIViewController {
     
@@ -20,7 +19,6 @@ class HomeViewController: UIViewController {
     
     // MARK: - Stored-Props
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
-    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     private var randomTrendingMovie: TMDBMoviesResponse.TMDBMovie?
     private var heroHeaderView: HeroHeaderUIView?
     
