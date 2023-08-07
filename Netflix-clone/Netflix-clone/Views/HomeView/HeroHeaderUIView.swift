@@ -6,20 +6,23 @@
 //
 
 import UIKit
+import Combine
 
 class HeroHeaderUIView: UIView {
 
     // MARK: - Custom Views
-    private let heroImageView: UIImageView = {
+    private let heroHeaderImageView: UIImageView = {
         
         let imageView: UIImageView = UIImageView()
         
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         
+        /*
         APICaller.shared.fetchHeroImage { heroImage in
             imageView.image = heroImage
         }
+         */
         
         return imageView
     }()
@@ -55,7 +58,7 @@ class HeroHeaderUIView: UIView {
         
         super.init(frame: frame)
         
-        addSubview(heroImageView)
+        addSubview(heroHeaderImageView)
         addGradient()
         
         addSubview(playButton)
@@ -63,7 +66,8 @@ class HeroHeaderUIView: UIView {
         applyConstraints()
     }
     
-    required init?(coder: NSCoder) {    //  NSCoding - (Required) Method
+    // MARK: - NSCoding - (Required) Method
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -72,9 +76,9 @@ class HeroHeaderUIView: UIView {
         
         super.layoutSubviews()
         
-        //  이 시점에서 Safe Area의 영향을 받음.
+        //  이 시점에서 Safe Area의 영향을 받음
         
-        heroImageView.frame = bounds
+        heroHeaderImageView.frame = bounds
     }
     
     private func addGradient() -> Void {
@@ -108,12 +112,13 @@ class HeroHeaderUIView: UIView {
         NSLayoutConstraint.activate(downloadButtonConstraints)
     }
     
-    public func configure(with model: MovieViewModel) -> Void {
+    public func configureHeroHeaderImageView(with posterPath: String) -> Void {
         
         let baseImageURL: String = "https://image.tmdb.org/t/p/w500"
         
-        guard let url: URL = URL(string: "\(baseImageURL)\(model.posterURL)") else { return }
+        guard let url: URL = URL(string: "\(baseImageURL)\(posterPath)") else { return }
         
-        heroImageView.sd_setImage(with: url)
+        heroHeaderImageView.sd_setImage(with: url)
     }
 }
+

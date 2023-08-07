@@ -6,11 +6,15 @@
 //
 
 import UIKit
+import Combine
 
 class DownloadsViewController: UIViewController {
     
-    // MARK: - Stored-Prop
+    // MARK: - Stored-Props
     private var tmdbMovieItems: [TMDBMovieItem] = [TMDBMovieItem]()
+    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
 
     // MARK: - Custom View
     private let downloadedTableView: UITableView = {
@@ -58,17 +62,13 @@ class DownloadsViewController: UIViewController {
             
             switch result {
             case .success(let movies):
-                
                 self?.tmdbMovieItems = movies
-                
                 DispatchQueue.main.async {
                     self?.downloadedTableView.reloadData()
                 }
-                
                 break;
                 
             case .failure(let error):
-                
                 print("error: \(error.localizedDescription)")
                 fatalError(error.localizedDescription)
                 break;
@@ -89,7 +89,23 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
-        cell.configure(with: MovieViewModel(titleName: tmdbMovieItems[indexPath.row].original_title ?? "UNKOWN original_title", posterURL: tmdbMovieItems[indexPath.row].poster_path ?? "UNKOWN poster_path"))
+        let movieItem: TMDBMovieItem = tmdbMovieItems[indexPath.row]
+        
+        cell.configureTableViewCell(with: TMDBMoviesResponse.TMDBMovie(adult: movieItem.adult,
+                                                                       backdrop_path: movieItem.backdrop_path,
+                                                                       genre_ids: movieItem.genre_ids ?? [],
+                                                                       id: Int(movieItem.id),
+                                                                       media_type: movieItem.media_type,
+                                                                       original_language: movieItem.media_type,
+                                                                       original_title: movieItem.original_title,
+                                                                       overview: movieItem.overview,
+                                                                       popularity: movieItem.popularity,
+                                                                       poster_path: movieItem.poster_path,
+                                                                       release_date: movieItem.release_date,
+                                                                       title: movieItem.title,
+                                                                       video: movieItem.video,
+                                                                       vote_average: movieItem.vote_average,
+                                                                       vote_count: Int(movieItem.vote_count)))
         
         return cell
     }
@@ -103,14 +119,13 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
             DataPersistenceManager.shared.deleteMovieWith(model: tmdbMovieItems[indexPath.row]) { [weak self] result in
                 switch result {
                 case .success(()):
-                    
                     print("Deleted from the Context")
                     break;
                     
                 case .failure(let error):
-                    
                     print("error: \(error.localizedDescription)")
                     fatalError(error.localizedDescription)
+                    break;
                     
                 default:
                     break;
@@ -139,17 +154,30 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let movieName: String = movie.original_title else { return }
         
-        Task {
-            do {
-                let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
-                let previewVC: PreviewViewController = PreviewViewController()
-                
-                previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
-                
-                self.navigationController?.pushViewController(previewVC, animated: true)
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        let previewVC: PreviewViewController = PreviewViewController()
+        
+        addSubscriptionToYouTubeVMProp(value: movieName)
+        
+        self.youTubeViewModel.youTubeView
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] video in
+                previewVC.configurePreview(with: movie, video: video)
+            }.store(in: &cancellables)
+        
+        self.navigationController?.pushViewController(previewVC, animated: true)
+    }
+    
+    // MARK: - Add Subscription To PassthroughSubject (-> YouTubeViewModel Prop)
+    private func addSubscriptionToYouTubeVMProp(value: String) -> Void {
+        
+        APICaller.shared.fetchVideoFromYouTubeWithCombine(with: value)
+            .sink { completion in
+                switch completion {
+                case .finished: break;
+                case .failure(let error): print("error: \(error.localizedDescription)"); break;
+                }
+            } receiveValue: { [weak self] youTubeDataResponse in
+                self?.youTubeViewModel.youTubeView.send(youTubeDataResponse.items[0])
+            }.store(in: &cancellables)
     }
 }

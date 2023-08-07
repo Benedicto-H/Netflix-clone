@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import Combine
 
 protocol SearchResultsViewControllerDelegate: AnyObject {
     
     // MARK: - Function ProtoType
-    func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel)
+    func searchResultsViewControllerDidTapItem(_ viewModel: Any, title: String?) -> Void
 }
 
 class SearchResultsViewController: UIViewController {
@@ -18,6 +19,10 @@ class SearchResultsViewController: UIViewController {
     // MARK: - Stored-Props
     public var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     private var tmdbTvs: [TMDBTVsResponse.TMDBTV] = [TMDBTVsResponse.TMDBTV]()
+    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    
     public weak var delegate: SearchResultsViewControllerDelegate?
 
     // MARK: - Custom View
@@ -45,6 +50,8 @@ class SearchResultsViewController: UIViewController {
         
         searchResultsCollectionView.delegate = self
         searchResultsCollectionView.dataSource = self
+        
+        bind()
     }
     
     override func viewDidLayoutSubviews() {
@@ -52,6 +59,16 @@ class SearchResultsViewController: UIViewController {
         super.viewDidLayoutSubviews()
         
         searchResultsCollectionView.frame = view.bounds
+    }
+    
+    // MARK: - Subscribe
+    private func bind() -> Void {
+        
+        self.tmdbViewModel.searchMovies
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movies in
+                self?.tmdbMovies = movies
+            }.store(in: &cancellables)
     }
 }
 
@@ -68,29 +85,17 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
         
         collectionView.deselectItem(at: indexPath, animated: true)
         
-        Task {
-            do {
-                let videoResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovies[indexPath.row].original_title ?? "")
-                
-                /*
-                let vc: PreviewViewController = PreviewViewController()
-                
-                vc.configure(with: PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
-                
-                self.navigationController?.pushViewController(vc, animated: true)
-                 */
-                
-                self.delegate?.searchResultsViewControllerDidTapItem(PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        let previewVC: PreviewViewController = PreviewViewController()
+        
+        self.navigationController?.pushViewController(previewVC, animated: true)
+        
+        self.delegate?.searchResultsViewControllerDidTapItem(tmdbMovies[indexPath.row], title: tmdbMovies[indexPath.row].original_title ?? "")
     }
     
     // MARK: - UICollectionViewDataSource - (Required) Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return max(tmdbMovies.count, tmdbTvs.count)
+        return tmdbMovies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -99,7 +104,7 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
         
         //  cell.backgroundColor = .systemBackground
         
-        cell.configure(with: tmdbMovies[indexPath.row].poster_path ?? "")
+        cell.configureCollectionViewCell(with: tmdbMovies[indexPath.row].poster_path ?? "")
         
         return cell
     }

@@ -6,11 +6,15 @@
 //
 
 import UIKit
+import Combine
 
 class UpcomingViewController: UIViewController {
     
-    // MARK: - Stored-Prop
+    // MARK: - Stored-Props
     private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
+    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Custom View
     private let upcomingTableView: UITableView = {
@@ -39,7 +43,7 @@ class UpcomingViewController: UIViewController {
         upcomingTableView.dataSource = self
         upcomingTableView.delegate = self
         
-        fetchUpcomingMoviesData()
+        bind()
     }
     
     override func viewDidLayoutSubviews() {
@@ -49,18 +53,15 @@ class UpcomingViewController: UIViewController {
         upcomingTableView.frame = view.bounds
     }
     
-    @MainActor
-    private func fetchUpcomingMoviesData() -> Void {
+    // MARK: - Subscribe
+    private func bind() -> Void {
         
-        Task {
-            do {
-                tmdbMovies = try await APICaller.shared.fetchUpcomingMovies().results
-                
-                self.upcomingTableView.reloadData()
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        self.tmdbViewModel.upcomingMovies
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movies in
+                self?.tmdbMovies = movies
+                self?.upcomingTableView.reloadData()
+            }.store(in: &cancellables)
     }
 }
 
@@ -76,9 +77,7 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
-        cell.configure(with: MovieViewModel(
-            titleName: tmdbMovies[indexPath.row].original_title ?? "UNKOWN original_title",
-             posterURL: tmdbMovies[indexPath.row].poster_path ?? "UNKOWN poster_path"))
+        cell.configureTableViewCell(with: tmdbMovies[indexPath.row])
         
         return cell
     }
@@ -96,17 +95,30 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let movieName: String = movie.original_title else { return }
         
-        Task {
-            do {
-                let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
-                let previewVC: PreviewViewController = PreviewViewController()
-                
-                previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
-                
-                self.navigationController?.pushViewController(previewVC, animated: true)
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        let previewVC: PreviewViewController =  PreviewViewController()
+        
+        addSubscriptionToYouTubeVMProp(value: movieName)
+        
+        self.youTubeViewModel.youTubeView
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] video in
+                previewVC.configurePreview(with: movie, video: video)
+            }.store(in: &cancellables)
+        
+        self.navigationController?.pushViewController(previewVC, animated: true)
+    }
+    
+    // MARK: - Add Subscription To PassthroughSubject (-> YouTubeViewModel Prop)
+    private func addSubscriptionToYouTubeVMProp(value: String) -> Void {
+        
+        APICaller.shared.fetchVideoFromYouTubeWithCombine(with: value)
+            .sink { completion in
+                switch completion {
+                case .finished: break;
+                case .failure(let error): print("error: \(error.localizedDescription)"); break;
+                }
+            } receiveValue: { [weak self] youTubeDataResponse in
+                self?.youTubeViewModel.youTubeView.send(youTubeDataResponse.items[0])
+            }.store(in: &cancellables)
     }
 }

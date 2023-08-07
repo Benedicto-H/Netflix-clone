@@ -6,12 +6,13 @@
 //
 
 import UIKit
+import Combine
 
 class HomeViewController: UIViewController {
     
     enum Sections: Int {
         case TrendingMovies = 0
-        case TrendingTV = 1
+        case TrendingTVs = 1
         case Popular = 2
         case UpcomingMovies = 3
         case TopRated = 4
@@ -19,7 +20,12 @@ class HomeViewController: UIViewController {
     
     // MARK: - Stored-Props
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
-    private var randomTrendingMovie: TMDBMoviesResponse.TMDBMovie?
+    
+    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
+    private var randomTrendingMovie: AnyPublisher<TMDBMoviesResponse.TMDBMovie?, Never>.Output = nil
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    
     private var heroHeaderView: HeroHeaderUIView?
     
     // MARK: - Custom View
@@ -50,6 +56,8 @@ class HomeViewController: UIViewController {
         
         configureNavBar()   //  ->  Pr fetchDataWithCompletionHandler
         configureHeroHeaderView()
+        
+        bind()
     }
     
     override func viewDidLayoutSubviews() {
@@ -79,16 +87,48 @@ class HomeViewController: UIViewController {
     
     private func configureHeroHeaderView() -> Void {
         
-        Task {
-            do {
-                let movies: [TMDBMoviesResponse.TMDBMovie] = try await APICaller.shared.fetchTrendingMovies().results
-                
-                self.randomTrendingMovie = movies.randomElement()
-                self.heroHeaderView?.configure(with: MovieViewModel(titleName: movies.randomElement()?.original_title ?? "", posterURL: movies.randomElement()?.poster_path ?? ""))
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        self.tmdbViewModel.trendingMovies
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movies in
+            self?.randomTrendingMovie = movies.randomElement()
+                if let posterPath: String = self?.randomTrendingMovie?.poster_path {
+                    self?.heroHeaderView?.configureHeroHeaderImageView(with: posterPath)
+                }
+        }.store(in: &cancellables)
+    }
+    
+    // MARK: - Subscribe
+    private func bind() -> Void {
+        
+        self.tmdbViewModel.trendingMovies
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movies in
+                self?.homeFeedTableView.reloadData()    //  CurrentValueSubject타입의 trendingMovies 변수가 APICaller에 의해 값 변경이 생기면 그 데이터를 통해 새로운 tableView UI를 fetch
+            }.store(in: &cancellables)
+        
+        self.tmdbViewModel.trendingTVs
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] tvs in
+                self?.homeFeedTableView.reloadData()
+            }.store(in: &cancellables)
+        
+        self.tmdbViewModel.popular
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movies in
+                self?.homeFeedTableView.reloadData()
+            }.store(in: &cancellables)
+        
+        self.tmdbViewModel.upcomingMovies
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movies in
+                self?.homeFeedTableView.reloadData()
+            }.store(in: &cancellables)
+        
+        self.tmdbViewModel.topRated
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movies in
+                self?.homeFeedTableView.reloadData()
+            }.store(in: &cancellables)
     }
 }
 
@@ -108,52 +148,33 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         
         cell.delegate = self
         
-        Task {
-            do {
-                switch indexPath.section {
-                case Sections.TrendingMovies.rawValue:
-                    
-                    let trendingMovies: TMDBMoviesResponse = try await APICaller.shared.fetchTrendingMovies()
-                    
-                    cell.configure(withTMDBMovies: trendingMovies.results, withTMDBTVs: nil)
-                    break;
-                    
-                case Sections.TrendingTV.rawValue:
-                    
-                    let trendingTVs: TMDBTVsResponse = try await APICaller.shared.fetchTrendingTVs()
-                    
-                    cell.configure(withTMDBMovies: nil, withTMDBTVs: trendingTVs.results)
-                    break;
-                    
-                case Sections.Popular.rawValue:
-                    
-                    let popular: TMDBMoviesResponse = try await APICaller.shared.fetchPopular()
-                    
-                    cell.configure(withTMDBMovies: popular.results, withTMDBTVs: nil)
-                    break;
-                    
-                case Sections.UpcomingMovies.rawValue:
-                    
-                    let upComingMovies: TMDBMoviesResponse = try await APICaller.shared.fetchUpcomingMovies()
-                    
-                    cell.configure(withTMDBMovies: upComingMovies.results, withTMDBTVs: nil)
-                    break;
-                    
-                case Sections.TopRated.rawValue:
-                    
-                    let topRated: TMDBMoviesResponse = try await APICaller.shared.fetchTopRated()
-                    
-                    cell.configure(withTMDBMovies: topRated.results, withTMDBTVs: nil)
-                    break;
-                    
-                default:
-                    break;
-                }
-            } catch {
-                fatalError(error.localizedDescription)
-            }
+        switch indexPath.section {
+        case Sections.TrendingMovies.rawValue:
+            cell.configureCollectionViewTableViewCell(withTMDBMovies: tmdbViewModel.trendingMovies.value,
+                           withTMDBTVs: nil)
+            break;
             
-            return UITableViewCell()
+        case Sections.TrendingTVs.rawValue:
+            cell.configureCollectionViewTableViewCell(withTMDBMovies: nil,
+                           withTMDBTVs: tmdbViewModel.trendingTVs.value)
+            break;
+            
+        case Sections.Popular.rawValue:
+            cell.configureCollectionViewTableViewCell(withTMDBMovies: tmdbViewModel.popular.value,
+                           withTMDBTVs: nil)
+            break;
+            
+        case Sections.UpcomingMovies.rawValue:
+            cell.configureCollectionViewTableViewCell(withTMDBMovies: tmdbViewModel.upcomingMovies.value,
+                           withTMDBTVs: nil)
+            break;
+            
+        case Sections.TopRated.rawValue:
+            cell.configureCollectionViewTableViewCell(withTMDBMovies: tmdbViewModel.topRated.value,
+                           withTMDBTVs: nil)
+            break;
+        default:
+            break;
         }
         
         return cell
@@ -202,12 +223,37 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
     }
     
     // MARK: - CollectionViewTableViewCellDelegate - (Required) Method  ->  Implementation
-    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: PreviewViewModel) {
+    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: Any, title: String?) -> Void {
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        previewVC.configure(with: viewModel)
+        addSubscriptionToYouTubeVMProp(value: title ?? "")
+        
+        self.youTubeViewModel.youTubeView
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                switch completion {
+                case .finished: break;
+                case .failure(let error): print("error: \(error.localizedDescription)"); break;
+                }
+            } receiveValue: { [weak self] video in
+                previewVC.configurePreview(with: viewModel, video: video)
+            }.store(in: &cancellables)
         
         self.navigationController?.pushViewController(previewVC, animated: true)
+    }
+    
+    // MARK: - Add Subscription To PassthroughSubject (-> YouTubeViewModel Prop)
+    private func addSubscriptionToYouTubeVMProp(value: String) -> Void {
+        
+        APICaller.shared.fetchVideoFromYouTubeWithCombine(with: value)
+            .sink { completion in
+                switch completion {
+                case .finished: break;
+                case .failure(let error): print("error: \(error.localizedDescription)"); break;
+                }
+            } receiveValue: { [weak self] youTubeDataResponse in
+                self?.youTubeViewModel.youTubeView.send(youTubeDataResponse.items[0])
+            }.store(in: &cancellables)
     }
 }

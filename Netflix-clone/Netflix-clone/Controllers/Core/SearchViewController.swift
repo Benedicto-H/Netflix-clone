@@ -6,11 +6,15 @@
 //
 
 import UIKit
+import Combine
 
 class SearchViewController: UIViewController {
     
-    // MARK: - Stored-Prop
+    // MARK: - Stored-Props
     private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
+    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Custom Views
     private let searchTableView: UITableView = {
@@ -49,7 +53,7 @@ class SearchViewController: UIViewController {
         searchTableView.dataSource = self
         searchTableView.delegate = self
         
-        fetchDiscoverMovies()
+        bind()
         
         navigationItem.searchController = searchController
         navigationController?.navigationBar.tintColor = .white
@@ -64,37 +68,15 @@ class SearchViewController: UIViewController {
         searchTableView.frame = view.bounds
     }
     
-    /*
-    @MainActor
-    private func fetchDiscoverMovies() -> Void {
-
-        Task {
-            do {
-                tmdbMovies = try await APICaller.shared.fetchDiscoverMovies().results
-
-                self.searchTableView.reloadData()
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
-    }
-     */
-    
-    @MainActor
-    private func fetchDiscoverMovies() -> Void {
+    // MARK: - Subscribe
+    private func bind() -> Void {
         
-        Task {
-            do {
-                tmdbMovies = try await APICaller.shared.fetchDiscoverMovies().results
-                await MainActor.run { [weak self] in
-                    print(Thread.isMainThread)
-                    
-                    self?.searchTableView.reloadData()
-                }
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        self.tmdbViewModel.discoverMovies
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movie in
+                self?.tmdbMovies = movie
+                self?.searchTableView.reloadData()
+            }.store(in: &cancellables)
     }
 }
 
@@ -110,9 +92,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
-        cell.configure(with: MovieViewModel(
-            titleName: tmdbMovies[indexPath.row].original_title ?? "UNKOWN original_title",
-             posterURL: tmdbMovies[indexPath.row].poster_path ?? "UNKOWN poster_path"))
+        cell.configureTableViewCell(with: tmdbMovies[indexPath.row])
         
         return cell
     }
@@ -128,21 +108,21 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         
         let searchBar: UISearchBar = searchController.searchBar
         
-        guard let query = searchBar.text,
+        guard let query: String = searchBar.text,
         !query.trimmingCharacters(in: .whitespaces).isEmpty,
         query.trimmingCharacters(in: .whitespaces).count >= 3,
         let resultsController: SearchResultsViewController = searchController.searchResultsController as? SearchResultsViewController else { return }
         
         resultsController.delegate = self
         
-        Task {
-            do {
-                resultsController.tmdbMovies = try await APICaller.shared.search(with: query).results
+        addSubscriptionToTMDBVMProp(with: query)
+        
+        self.tmdbViewModel.searchMovies
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] movies in
+                resultsController.tmdbMovies = movies
                 resultsController.searchResultsCollectionView.reloadData()
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+            }.store(in: &cancellables)
     }
     
     // MARK: - UITableViewDelegate - (Optional) Method
@@ -154,28 +134,62 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         
         guard let movieName: String = movie.original_title else { return }
         
-        Task {
-            do {
-                let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
-                let previewVC: PreviewViewController = PreviewViewController()
-                
-                previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
-                
-                self.navigationController?.pushViewController(previewVC, animated: true)
-            } catch {
-                
-                fatalError(error.localizedDescription)
-            }
-        }
+        let previewVC: PreviewViewController = PreviewViewController()
+        
+        addSubscriptionToYouTubeVMProp(with: movieName)
+        
+        self.youTubeViewModel.youTubeView
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] video in
+                previewVC.configurePreview(with: movie, video: video)
+            }.store(in: &cancellables)
+        
+        self.navigationController?.pushViewController(previewVC, animated: true)
     }
     
     // MARK: - SearchResultsViewControllerDelegate - (required) Method  ->  Implementation
-    func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel) {
+    func searchResultsViewControllerDidTapItem(_ viewModel: Any, title: String?) -> Void {
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        previewVC.configure(with: viewModel)
+        addSubscriptionToYouTubeVMProp(with: title ?? "")
+        
+        self.youTubeViewModel.youTubeView
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] video in
+                previewVC.configurePreview(with: viewModel, video: video)
+            }.store(in: &cancellables)
+        
+        previewVC.configurePreview(with: viewModel, video: nil)
         
         navigationController?.pushViewController(previewVC, animated: true)
+    }
+    
+    // MARK: - Add Subscription To PassthroughSubject (-> TMDBViewModel Prop)
+    private func addSubscriptionToTMDBVMProp(with value: String) -> Void {
+        
+        APICaller.shared.searchWithCombine(with: value)
+            .sink { completion in
+                switch completion {
+                case .finished: break;
+                case .failure(let error): print("error: \(error.localizedDescription)"); break;
+                }
+            } receiveValue: { [weak self] tmdbMovieResponse in
+                self?.tmdbViewModel.searchMovies.send(tmdbMovieResponse.results)
+            }.store(in: &cancellables)
+    }
+    
+    // MARK: - Add Subscription To PassthroughSubject (-> YouTubeViewModel Prop)
+    private func addSubscriptionToYouTubeVMProp(with value: String) -> Void {
+        
+        APICaller.shared.fetchVideoFromYouTubeWithCombine(with: value)
+            .sink { completion in
+                switch completion {
+                case .finished: break;
+                case .failure(let error): print("error: \(error.localizedDescription)"); break;
+                }
+            } receiveValue: { [weak self] youTubeDataResponse in
+                self?.youTubeViewModel.youTubeView.send(youTubeDataResponse.items[0])
+            }.store(in: &cancellables)
     }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Combine
 
 protocol fetchDataWithCompletionHandler {
     
@@ -26,7 +27,20 @@ protocol fetchDataWithConcurrency {
     func fetchDiscoverMovies() async throws -> TMDBMoviesResponse
 }
 
-final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency {
+protocol fetchDataWithCombine {
+    
+    // MARK: - Function ProtoTypes
+    func fetchTrendingMoviesWithCombine() -> AnyPublisher<TMDBMoviesResponse, Error>
+    func fetchTrendingTVsWithCombine() -> AnyPublisher<TMDBTVsResponse, Error>
+    func fetchPopularWithCombine() -> AnyPublisher<TMDBMoviesResponse, Error>
+    func fetchUpcomingMoviesWithCombine() -> AnyPublisher<TMDBMoviesResponse, Error>
+    func fetchTopRatedWithCombine() -> AnyPublisher<TMDBMoviesResponse, Error>
+    func fetchDiscoverMoviesWithCombine() -> AnyPublisher<TMDBMoviesResponse, Error>
+    func searchWithCombine(with query: String) -> AnyPublisher<TMDBMoviesResponse, Error>
+    func fetchVideoFromYouTubeWithCombine(with query: String) -> AnyPublisher<YouTubeDataResponse, Error>
+}
+
+final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency, fetchDataWithCombine {
     
     enum APIError: String, Error {
         case invalidQueryEncoding = "INVALID QUERY ENCODING ERROR"

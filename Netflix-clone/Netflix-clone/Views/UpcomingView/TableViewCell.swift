@@ -90,13 +90,13 @@ class TableViewCell: UITableViewCell {
         NSLayoutConstraint.activate(playButtonConstraints)
     }
     
-    public func configure(with model: MovieViewModel) -> Void {
+    public func configureTableViewCell(with model: TMDBMoviesResponse.TMDBMovie) -> Void {
         
         let baseImageURL: String = "https://image.tmdb.org/t/p/w500"
         
-        guard let url: URL = URL(string: "\(baseImageURL)\(model.posterURL)") else { return }
+        guard let url: URL = URL(string: "\(baseImageURL)\(model.poster_path ?? "")") else { return }
         
         posterImageView.sd_setImage(with: url)
-        titleLabel.text = model.titleName
+        titleLabel.text = model.original_title ?? ""
     }
 }

@@ -9,7 +9,7 @@
 - Swift (version 5.8.1)
 - Xcode (version 14.3.1)
 - UIKit Framework
-- Swift Concurrency
+- Combine Framework
 - Core Data Framework
 - TMDB API
 - YouTube Data API
@@ -21,7 +21,11 @@
 ```
 # Clone this project
 
+# Swift Concurrency version (-> main branch)
 $ git clone https://github.com/jphong1005/Netflix-clone.git
+
+# Combine Framework version (-> develop_Combine)
+$ git clone -b develop_Combine https://github.com/jphong1005/Netflix-clone.git 
 ```
 
 > ⚠️ Target은 `iOS 15.0+`이며, 다크모드 환경에서 앱을 이용해주세요.

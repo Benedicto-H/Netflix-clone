@@ -7,8 +7,12 @@
 
 import UIKit
 import WebKit
+import Combine
 
 class PreviewViewController: UIViewController {
+    
+    // MARK: - Stored-Prop
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
 
     // MARK: - Custom Views
     private let webView: WKWebView = {
@@ -72,11 +76,16 @@ class PreviewViewController: UIViewController {
         applyConstraints()
     }
     
+    private func bind() -> Void {
+        
+        self.youTubeViewModel.youTubeView
+            .receive(on: DispatchQueue.main)
+    }
+    
     private func applyConstraints() -> Void {
         
         let webViewConstraints: [NSLayoutConstraint] = [
-            //  webView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor), 
+            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             webView.heightAnchor.constraint(equalToConstant: 300)
@@ -106,15 +115,25 @@ class PreviewViewController: UIViewController {
         NSLayoutConstraint.activate(downloadButtonConstraints)
     }
     
-    func configure(with model: PreviewViewModel) -> Void {
-        
-        titleLabel.text = model.title
-        overviewLabel.text = model.overview
+    func configurePreview(with model: Any, video: Any?) -> Void {
         
         let baseURL: String = "https://www.youtube.com/embed/"
-
-        guard let url: URL = URL(string: "\(baseURL)\(model.youTubeView.id.videoId ?? "")") else { return }
         
-        webView.load(URLRequest(url: url))
+        if let movie: TMDBMoviesResponse.TMDBMovie = model as? TMDBMoviesResponse.TMDBMovie {
+            titleLabel.text = movie.original_title ?? "Default Title"
+            overviewLabel.text = movie.overview ?? "Default Overview"
+        } else if let tv: TMDBTVsResponse.TMDBTV = model as? TMDBTVsResponse.TMDBTV {
+            titleLabel.text = tv.original_name ?? "Default Name"
+            overviewLabel.text = tv.overview ?? "Default Overview"
+        } else if let movieItem: TMDBMovieItem = model as? TMDBMovieItem {
+            titleLabel.text = movieItem.title ?? "Default Title"
+            overviewLabel.text = movieItem.overview ?? "Default Overview"
+        }
+        
+        if let videoElement: YouTubeDataResponse.VideoElement = video as? YouTubeDataResponse.VideoElement {
+            guard let url: URL = URL(string: "\(baseURL)\(videoElement.id.videoId ?? "")") else { return }
+            
+            webView.load(URLRequest(url: url))
+        }
     }
 }
