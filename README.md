@@ -9,9 +9,11 @@
 - Swift (version 5.8.1)
 - Xcode (version 14.3.1)
 - UIKit Framework
+- Swift Concurrency
 - Core Data Framework
 - TMDB API
 - YouTube Data API
+- SDWebImage Library (version 5.16.0)
 
 <br>
 
