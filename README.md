@@ -30,6 +30,7 @@ $ git clone https://github.com/jphong1005/Netflix-clone.git
 
 - `main`: Swift Concurrency 사용 버전
 - `develop_Combine`: Combine Framework 사용 버전
+- `develop_CocoaPods`: Cocoa Pods의 3rd-party Library 사용 버전
 
 <br>
 
