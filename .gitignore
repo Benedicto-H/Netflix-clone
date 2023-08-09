@@ -92,3 +92,5 @@ iOSInjectionProject/
 # ETC.
 **/.DS_Store
 *.xcconfig
+Pods/
+Netflix-clone/Podfile.lock
