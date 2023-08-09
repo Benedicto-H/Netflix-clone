@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct YouTubeDataResponse: Codable {   //  YoutubeSearchResponse
+struct YouTubeDataResponse: Codable {
     
     // MARK: - Stored-Props
     let etag: String?
     let items: [VideoElement]
     
     // MARK: - Inner Structure
-    struct VideoElement: Codable {  //  VideoElement
+    struct VideoElement: Codable {
         
         // MARK: - Stored-Props
         let etag: String?
@@ -22,7 +22,7 @@ struct YouTubeDataResponse: Codable {   //  YoutubeSearchResponse
         let kind: String?
         
         // MARK: - Inner Structure
-        struct Element: Codable {    //  IdVideoElement
+        struct Element: Codable {
             
             // MARK: - Stored-Props
             let kind: String?

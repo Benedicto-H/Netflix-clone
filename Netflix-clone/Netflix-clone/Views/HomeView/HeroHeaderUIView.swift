@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class HeroHeaderUIView: UIView {
 
@@ -24,7 +25,7 @@ class HeroHeaderUIView: UIView {
         return imageView
     }()
     
-    private let playButton: UIButton = {
+    private lazy var playButton: UIButton = {
         
         let button: UIButton = UIButton()
         
@@ -32,12 +33,11 @@ class HeroHeaderUIView: UIView {
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 5
-        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    private let downloadButton: UIButton = {
+    private lazy var downloadButton: UIButton = {
         
         let button: UIButton = UIButton()
         
@@ -45,7 +45,6 @@ class HeroHeaderUIView: UIView {
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 5
-        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -92,20 +91,19 @@ class HeroHeaderUIView: UIView {
     
     private func applyConstraints() -> Void {
         
-        let playButtonConstraints: [NSLayoutConstraint] = [
-            playButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 70),
-            playButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
-            playButton.widthAnchor.constraint(equalToConstant: 100)
-        ]
+        playButton.snp.makeConstraints { make in
+            make.width.equalTo(100)
+            make.leading.equalToSuperview().inset(70)
+            make.bottom.equalToSuperview().inset(50)
+            /// .inset(_ amount:)   =>  상대적 위치
+            /// .offset(_ amount:)  =>  절대적 위치
+        }
         
-        let downloadButtonConstraints: [NSLayoutConstraint] = [
-            downloadButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -70),
-            downloadButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
-            downloadButton.widthAnchor.constraint(equalToConstant: 100)
-        ]
-        
-        NSLayoutConstraint.activate(playButtonConstraints)
-        NSLayoutConstraint.activate(downloadButtonConstraints)
+        downloadButton.snp.makeConstraints { make in
+            make.width.height.equalTo(playButton)
+            make.trailing.equalToSuperview().inset(70)
+            make.bottom.equalTo(playButton.snp.bottom)
+        }
     }
     
     public func configure(with model: MovieViewModel) -> Void {

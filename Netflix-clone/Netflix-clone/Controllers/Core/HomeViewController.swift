@@ -211,3 +211,36 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         self.navigationController?.pushViewController(previewVC, animated: true)
     }
 }
+
+// MARK: - Live Preview
+#if DEBUG
+import SwiftUI
+
+struct HomeViewControllerRepresentable: UIViewControllerRepresentable {
+    
+    // MARK: - UIViewControllerRepresentable - (Required) Methods
+    @available(iOS 15.0, *)
+    func makeUIViewController(context: Context) -> some UIViewController {
+        
+        HomeViewController()
+    }
+    
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+        
+    }
+}
+
+struct HomeViewControllerRepresentable_PreviewProvider: PreviewProvider {
+    
+    static var previews: some View {
+        
+        Group {
+            HomeViewControllerRepresentable()
+                .ignoresSafeArea()
+                .previewDisplayName("Preview")
+                .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
+                .preferredColorScheme(.dark)
+        }
+    }
+}
+#endif
