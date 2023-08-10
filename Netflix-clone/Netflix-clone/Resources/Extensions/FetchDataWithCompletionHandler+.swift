@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Alamofire
 
 extension fetchDataWithCompletionHandler {
     
@@ -15,23 +16,22 @@ extension fetchDataWithCompletionHandler {
         
         let url: String = "https://images.ctfassets.net/y2ske730sjqp/4aEQ1zAUZF5pLSDtfviWjb/ba04f8d5bd01428f6e3803cc6effaf30/Netflix_N.png?w=300" //  source: https://brand.netflix.com/en/assets/logos
         
-        guard let url: URL = URL(string: url) else { return }
-        
-        URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
-            
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
-            
-            do {
-                guard let safeData: Data = data else { return }
-                let logoImage: UIImage? = UIImage(data: safeData)
-                
-                DispatchQueue.main.async {
-                    completionHandler(logoImage ?? UIImage())
+        AF.request(url)
+            .validate(statusCode: 200 ..< 300)
+            .response { afDataResponse in
+                switch afDataResponse.result {
+                case .success(let data):
+                    if let safeData: Data = data {
+                        let symbolImage: UIImage? = UIImage(data: safeData)
+
+                        DispatchQueue.main.async {
+                            completionHandler(symbolImage ?? UIImage())
+                        }
+                    }
+                    break;
+                case .failure(let error): fatalError(error.localizedDescription); break;
                 }
-            } catch {
-                fatalError(error.localizedDescription)
             }
-        }.resume()
     }
     
     // MARK: - (Temp) Fetch HeroHeaderImage
