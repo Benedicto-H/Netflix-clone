@@ -32,6 +32,8 @@
 		E8C4B08F2A348F3B00D77F9D /* UpcomingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B08E2A348F3B00D77F9D /* UpcomingViewController.swift */; };
 		E8C4B0912A348F8800D77F9D /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0902A348F8800D77F9D /* SearchViewController.swift */; };
 		E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */; };
+		E8C9746D2A84DCCA00486EC1 /* FetchDataWithAF_RX+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C9746C2A84DCCA00486EC1 /* FetchDataWithAF_RX+.swift */; };
+		E8D46EF52A862D0900DA00A1 /* TMDBViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D46EF42A862D0900DA00A1 /* TMDBViewModel.swift */; };
 		E8D8C83A2A3F120E002DED3F /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D8C8392A3F120E002DED3F /* APICaller.swift */; };
 		E8DCC53C2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */; };
 		E8DCC53E2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DCC53D2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift */; };
@@ -65,6 +67,8 @@
 		E8C4B08E2A348F3B00D77F9D /* UpcomingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingViewController.swift; sourceTree = "<group>"; };
 		E8C4B0902A348F8800D77F9D /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewController.swift; sourceTree = "<group>"; };
+		E8C9746C2A84DCCA00486EC1 /* FetchDataWithAF_RX+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchDataWithAF_RX+.swift"; sourceTree = "<group>"; };
+		E8D46EF42A862D0900DA00A1 /* TMDBViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBViewModel.swift; sourceTree = "<group>"; };
 		E8D8C8392A3F120E002DED3F /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		E8D8C83C2A3F2AF0002DED3F /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchDataWithCompletionHandler+.swift"; sourceTree = "<group>"; };
@@ -127,6 +131,7 @@
 				E845A5682A41A71500F809C6 /* String+.swift */,
 				E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */,
 				E8DCC53D2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift */,
+				E8C9746C2A84DCCA00486EC1 /* FetchDataWithAF_RX+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -232,6 +237,7 @@
 			children = (
 				E827D25A2A482E43002E8E6D /* MovieViewModel.swift */,
 				E84BA9C12A5D6CEC0013A962 /* PreviewViewModel.swift */,
+				E8D46EF42A862D0900DA00A1 /* TMDBViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -242,7 +248,6 @@
 				C9455BEBAE226A42807F768A /* Pods-Netflix-clone.debug.xcconfig */,
 				FA0F1C22A94C4EB0C2179E06 /* Pods-Netflix-clone.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -297,7 +302,7 @@
 			);
 			mainGroup = E8C4B06B2A345E4C00D77F9D;
 			packageReferences = (
-				E80325622A430263006AE4C5 /* XCRemoteSwiftPackageReference "SDWebImage.git" */,
+				E80325622A430263006AE4C5 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 			);
 			productRefGroup = E8C4B0752A345E4C00D77F9D /* Products */;
 			projectDirPath = "";
@@ -367,6 +372,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8C9746D2A84DCCA00486EC1 /* FetchDataWithAF_RX+.swift in Sources */,
 				E8C4B0912A348F8800D77F9D /* SearchViewController.swift in Sources */,
 				E8C4B07C2A345E4C00D77F9D /* MainTabBarViewController.swift in Sources */,
 				E8E573E32A35D5AE0088130C /* CollectionViewTableViewCell.swift in Sources */,
@@ -375,6 +381,7 @@
 				E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */,
 				E8C4B0782A345E4C00D77F9D /* AppDelegate.swift in Sources */,
 				E80325612A42FD51006AE4C5 /* CollectionViewCell.swift in Sources */,
+				E8D46EF52A862D0900DA00A1 /* TMDBViewModel.swift in Sources */,
 				E86F56802A6143C50086B429 /* DataPersistenceManager.swift in Sources */,
 				E8C4B07A2A345E4C00D77F9D /* SceneDelegate.swift in Sources */,
 				E858C91B2A5801E800BA0EF8 /* SearchResultsViewController.swift in Sources */,
@@ -600,7 +607,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E80325622A430263006AE4C5 /* XCRemoteSwiftPackageReference "SDWebImage.git" */ = {
+		E80325622A430263006AE4C5 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
 			requirement = {
@@ -613,12 +620,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		E80325632A430263006AE4C5 /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E80325622A430263006AE4C5 /* XCRemoteSwiftPackageReference "SDWebImage.git" */;
+			package = E80325622A430263006AE4C5 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
 		};
 		E80325652A430263006AE4C5 /* SDWebImageMapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E80325622A430263006AE4C5 /* XCRemoteSwiftPackageReference "SDWebImage.git" */;
+			package = E80325622A430263006AE4C5 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImageMapKit;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -7,6 +7,9 @@
 
 import Foundation
 import UIKit
+import Alamofire
+import RxSwift
+import RxCocoa
 
 protocol fetchDataWithCompletionHandler {
     
@@ -26,7 +29,19 @@ protocol fetchDataWithConcurrency {
     func fetchDiscoverMovies() async throws -> TMDBMoviesResponse
 }
 
-final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency {
+protocol fetchDataWithAF_RX {
+    
+    // MARK: - Function ProtoTypes
+    func fetchTrendingMoviesWithAF_RX() -> Observable<TMDBMoviesResponse>
+    func fetchTrendingTVsWithAF_RX() -> Observable<TMDBTVsResponse>
+    func fetchPopularWithAF_RX() -> Observable<TMDBMoviesResponse>
+    func fetchUpcomingMoviesWithAF_RX() -> Observable<TMDBMoviesResponse>
+    func fetchTopRatedWithAF_RX() -> Observable<TMDBMoviesResponse>
+    func fetchDiscoverMoviesWithAF_RX() -> Observable<TMDBMoviesResponse>
+    func searchWithAF_RX(with query: String) -> Observable<TMDBMoviesResponse>
+}
+
+final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency, fetchDataWithAF_RX {
     
     enum APIError: String, Error {
         case invalidQueryEncoding = "INVALID QUERY ENCODING ERROR"
@@ -37,6 +52,10 @@ final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency 
     
     // MARK: - Stored-Props
     static let shared: APICaller = APICaller()  //  -> Singleton Object
+    public static let headers: HTTPHeaders = [
+        "accept": "application/json",
+        "Authorization": "Bearer \(Bundle.main.object(forInfoDictionaryKey: "TMDB_ACCESS_TOKEN") as? String ?? "")"
+    ]
     public static let tmdb_baseURL: String = "https://api.themoviedb.org"
     public static let youtube_baseURL: String = "https://www.googleapis.com/youtube/v3/search?"
 }

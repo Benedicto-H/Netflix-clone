@@ -23,7 +23,7 @@ extension fetchDataWithCompletionHandler {
                 case .success(let data):
                     if let safeData: Data = data {
                         let symbolImage: UIImage? = UIImage(data: safeData)
-
+                        
                         DispatchQueue.main.async {
                             completionHandler(symbolImage ?? UIImage())
                         }
@@ -54,27 +54,6 @@ extension fetchDataWithCompletionHandler {
                 }
             } catch {
                 fatalError(error.localizedDescription)
-            }
-        }.resume()
-    }
-    
-    // MARK: - Trending Movies
-    /// ver. Used API_KEY
-    func fetchTrendingMovies(completionHandler: @escaping (Result<[TMDBMoviesResponse.TMDBMovie], Error>) -> Void) -> Void {
-        
-        guard let url: URL = URL(string: "\(APICaller.tmdb_baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "TMDB_API_KEY") as? String ?? "")") else { return } //  API_KEY 값의 경우 .xcconfig 파일로 관리
-        
-        URLSession.shared.dataTask(with: URLRequest(url: url)) { data, urlResponse, error in
-            
-            guard (urlResponse as? HTTPURLResponse)?.statusCode == 200 else { return }
-            
-            do {
-                guard let safeData: Data = data else { return }
-                let decodedData: TMDBMoviesResponse = try JSONDecoder().decode(TMDBMoviesResponse.self, from: safeData)
-                
-                completionHandler(.success(decodedData.results))
-            } catch {
-                completionHandler(.failure(error))
             }
         }.resume()
     }
