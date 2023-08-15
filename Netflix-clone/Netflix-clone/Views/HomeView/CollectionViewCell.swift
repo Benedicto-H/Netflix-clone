@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import SDWebImage
+import Alamofire
 
 class CollectionViewCell: UICollectionViewCell {
     
@@ -49,6 +49,21 @@ class CollectionViewCell: UICollectionViewCell {
         
         guard let url: URL = URL(string: "\(baseImageURL)\(model)") else { return }
         
-        posterImageView.sd_setImage(with: url)
+        AF.request(url)
+            .validate(statusCode: 200 ..< 300)
+            .response { response in
+                switch response.result {
+                case .success(let data):
+                    if let safeData: Data = data {
+                        DispatchQueue.main.async { [weak self] in
+                            self?.posterImageView.image = UIImage(data: safeData)
+                        }
+                    }
+                    break;
+                case .failure(let error):
+                    print("error: \(error.localizedDescription)")
+                    break;
+                }
+            }
     }
 }

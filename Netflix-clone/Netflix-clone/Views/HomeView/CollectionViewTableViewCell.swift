@@ -10,7 +10,7 @@ import UIKit
 protocol CollectionViewTableViewCellDelegate: AnyObject {
     
     // MARK: - Function ProtoType
-    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: PreviewViewModel) -> Void
+    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: Any) -> Void
 }
 
 class CollectionViewTableViewCell: UITableViewCell {

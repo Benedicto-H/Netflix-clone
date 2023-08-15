@@ -18,8 +18,8 @@ extension fetchDataWithCompletionHandler {
         
         AF.request(url)
             .validate(statusCode: 200 ..< 300)
-            .response { afDataResponse in
-                switch afDataResponse.result {
+            .response { response in
+                switch response.result {
                 case .success(let data):
                     if let safeData: Data = data {
                         let symbolImage: UIImage? = UIImage(data: safeData)
@@ -29,7 +29,9 @@ extension fetchDataWithCompletionHandler {
                         }
                     }
                     break;
-                case .failure(let error): fatalError(error.localizedDescription); break;
+                case .failure(let error):
+                    print("error: \(error.localizedDescription)")
+                    break;
                 }
             }
     }

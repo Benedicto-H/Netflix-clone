@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class HomeViewController: UIViewController {
     
@@ -19,7 +21,11 @@ class HomeViewController: UIViewController {
     
     // MARK: - Stored-Props
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
+    
+    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
     private var randomTrendingMovie: TMDBMoviesResponse.TMDBMovie?
+    private var bag: DisposeBag = DisposeBag()
+    
     private var heroHeaderView: HeroHeaderUIView?
     
     // MARK: - Custom View
@@ -50,6 +56,8 @@ class HomeViewController: UIViewController {
         
         configureNavBar()   //  ->  Pr fetchDataWithCompletionHandler
         configureHeroHeaderView()
+        
+        bind()
     }
     
     override func viewDidLayoutSubviews() {
@@ -62,11 +70,11 @@ class HomeViewController: UIViewController {
         
         var image: UIImage = UIImage()
         
-        APICaller.shared.fetchNetflixSymbol { symbolImage in
+        APICaller.shared.fetchNetflixSymbol { [weak self] symbolImage in
             
             image = symbolImage
             image = image.withRenderingMode(.alwaysOriginal)
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
+            self?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
         }
         
         navigationItem.rightBarButtonItems = [
@@ -79,16 +87,69 @@ class HomeViewController: UIViewController {
     
     private func configureHeroHeaderView() -> Void {
         
-        Task {
-            do {
-                let movies: [TMDBMoviesResponse.TMDBMovie] = try await APICaller.shared.fetchTrendingMovies().results
-                
-                self.randomTrendingMovie = movies.randomElement()
-                self.heroHeaderView?.configure(with: MovieViewModel(titleName: movies.randomElement()?.original_title ?? "", posterURL: movies.randomElement()?.poster_path ?? ""))
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        /*
+        self.tmdbViewModel.trendingMovies
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] movies in
+                self?.randomTrendingMovie = movies.randomElement()
+
+                if let poster_path: String = self?.randomTrendingMovie?.poster_path {
+                    self?.heroHeaderView?.configure(with: poster_path)
+                }
+            }.disposed(by: bag)
+         */
+        
+        /// 위의 방식으로 사용해도 큰 문제는 없지만,
+        /// 아래의 방식을 이용하면 가독성과 유지보수면에서 향상됨
+        /// +) `.map()`과 `.bind()`를 분리하여 `SOLID의 SRP (Single Responsibility Principle, 단일 책임 원칙)을 준수함!`
+        /// .map()  ->  데이터 가공 (변환)에 집중
+        /// .bind() ->  UI 업데이트에 집중
+        self.tmdbViewModel.trendingMovies
+            .observe(on: MainScheduler.instance)
+            .map { movies -> String? in
+                return movies.randomElement()?.poster_path
+            }   //  재사용성, 유지보수성 향상을 위해
+            .compactMap { $0 }
+            .bind { [weak self] poster_path in
+                self?.heroHeaderView?.configure(with: poster_path)
+            }.disposed(by: bag)
+    }
+    
+    private func bind() -> Void {
+        
+        /// .subscribe()    ->  Observable의 이벤트를 감지하고 처리하는데 사용
+        /// .bind() ->  Observable의 값을 UI에 바인딩하고, 값이 변경될 때 마다 UI를 업데이트
+        /// (즉, `.subscribe()`는 UI 업데이트와 관련된 작업에 사용하는 것은 권장되지 않는다.)
+        
+        self.tmdbViewModel.trendingMovies
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] movies in
+                self?.homeFeedTableView.reloadData()
+            }.disposed(by: bag)
+        
+        self.tmdbViewModel.trendingTVs
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] tvs in
+                self?.homeFeedTableView.reloadData()
+            }.disposed(by: bag)
+
+        self.tmdbViewModel.popular
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] movies in
+                self?.homeFeedTableView.reloadData()
+            }.disposed(by: bag)
+
+        self.tmdbViewModel.upcomingMovies
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] movies in
+                self?.homeFeedTableView.reloadData()
+            }.disposed(by: bag)
+
+        self.tmdbViewModel.topRated
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] movies in
+                self?.homeFeedTableView.reloadData()
+            }.disposed(by: bag)
     }
 }
 
@@ -108,52 +169,29 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         
         cell.delegate = self
         
-        Task {
-            do {
-                switch indexPath.section {
-                case Sections.TrendingMovies.rawValue:
-                    
-                    let trendingMovies: TMDBMoviesResponse = try await APICaller.shared.fetchTrendingMovies()
-                    
-                    cell.configure(withTMDBMovies: trendingMovies.results, withTMDBTVs: nil)
-                    break;
-                    
-                case Sections.TrendingTV.rawValue:
-                    
-                    let trendingTVs: TMDBTVsResponse = try await APICaller.shared.fetchTrendingTVs()
-                    
-                    cell.configure(withTMDBMovies: nil, withTMDBTVs: trendingTVs.results)
-                    break;
-                    
-                case Sections.Popular.rawValue:
-                    
-                    let popular: TMDBMoviesResponse = try await APICaller.shared.fetchPopular()
-                    
-                    cell.configure(withTMDBMovies: popular.results, withTMDBTVs: nil)
-                    break;
-                    
-                case Sections.UpcomingMovies.rawValue:
-                    
-                    let upComingMovies: TMDBMoviesResponse = try await APICaller.shared.fetchUpcomingMovies()
-                    
-                    cell.configure(withTMDBMovies: upComingMovies.results, withTMDBTVs: nil)
-                    break;
-                    
-                case Sections.TopRated.rawValue:
-                    
-                    let topRated: TMDBMoviesResponse = try await APICaller.shared.fetchTopRated()
-                    
-                    cell.configure(withTMDBMovies: topRated.results, withTMDBTVs: nil)
-                    break;
-                    
-                default:
-                    break;
-                }
-            } catch {
-                fatalError(error.localizedDescription)
+        do {
+            switch indexPath.section {
+            case Sections.TrendingMovies.rawValue:
+                try cell.configure(withTMDBMovies: self.tmdbViewModel.trendingMovies.value(), withTMDBTVs: nil)
+                break;
+            case Sections.TrendingTV.rawValue:
+                try cell.configure(withTMDBMovies: nil, withTMDBTVs: self.tmdbViewModel.trendingTVs.value())
+                break;
+            case Sections.Popular.rawValue:
+                try cell.configure(withTMDBMovies: self.tmdbViewModel.popular.value(), withTMDBTVs: nil)
+                break;
+            case Sections.UpcomingMovies.rawValue:
+                try cell.configure(withTMDBMovies: self.tmdbViewModel.upcomingMovies.value(), withTMDBTVs: nil)
+                break;
+            case Sections.TopRated.rawValue:
+                try cell.configure(withTMDBMovies: self.tmdbViewModel.topRated.value(), withTMDBTVs: nil)
+                break;
+            default:
+                break;
             }
-            
-            return UITableViewCell()
+        } catch {
+            print("error: \(error.localizedDescription)")
+            fatalError(error.localizedDescription)
         }
         
         return cell
@@ -202,11 +240,11 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
     }
     
     // MARK: - CollectionViewTableViewCellDelegate - (Required) Method  ->  Implementation
-    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: PreviewViewModel) {
+    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: Any) {
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        previewVC.configure(with: viewModel)
+        previewVC.configure(with: viewModel as! PreviewViewModel)
         
         self.navigationController?.pushViewController(previewVC, animated: true)
     }
@@ -217,23 +255,23 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
 import SwiftUI
 
 struct HomeViewControllerRepresentable: UIViewControllerRepresentable {
-    
+
     // MARK: - UIViewControllerRepresentable - (Required) Methods
     @available(iOS 15.0, *)
     func makeUIViewController(context: Context) -> some UIViewController {
-        
+
         HomeViewController()
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-        
+
     }
 }
 
 struct HomeViewControllerRepresentable_PreviewProvider: PreviewProvider {
-    
+
     static var previews: some View {
-        
+
         Group {
             HomeViewControllerRepresentable()
                 .ignoresSafeArea()

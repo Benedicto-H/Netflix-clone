@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Alamofire
 
 class HeroHeaderUIView: UIView {
 
@@ -95,8 +96,8 @@ class HeroHeaderUIView: UIView {
             make.width.equalTo(100)
             make.leading.equalToSuperview().inset(70)
             make.bottom.equalToSuperview().inset(50)
-            /// .inset(_ amount:)   =>  상대적 위치
-            /// .offset(_ amount:)  =>  절대적 위치
+            /// .inset(_ amount:)   =>  padding
+            /// .offset(_ amount:)  =>  margin
         }
         
         downloadButton.snp.makeConstraints { make in
@@ -106,12 +107,27 @@ class HeroHeaderUIView: UIView {
         }
     }
     
-    public func configure(with model: MovieViewModel) -> Void {
+    public func configure(with posterURL: String) -> Void {
         
         let baseImageURL: String = "https://image.tmdb.org/t/p/w500"
         
-        guard let url: URL = URL(string: "\(baseImageURL)\(model.posterURL)") else { return }
-        
-        heroImageView.sd_setImage(with: url)
+        guard let url: URL = URL(string: "\(baseImageURL)\(posterURL)") else { return }
+
+        AF.request(url)
+            .validate(statusCode: 200 ..< 300)
+            .response { response in
+                switch response.result {
+                case .success(let data):
+                    if let safeData: Data = data {
+                        DispatchQueue.main.async { [weak self] in
+                            self?.heroImageView.image = UIImage(data: safeData)
+                        }
+                    }
+                    break;
+                case .failure(let error):
+                    print("error: \(error.localizedDescription)")
+                    break;
+                }
+            }
     }
 }

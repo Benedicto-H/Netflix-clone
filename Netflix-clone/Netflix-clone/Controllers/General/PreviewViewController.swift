@@ -7,6 +7,7 @@
 
 import UIKit
 import WebKit
+import SnapKit
 
 class PreviewViewController: UIViewController {
 
@@ -15,7 +16,7 @@ class PreviewViewController: UIViewController {
        
         let webView: WKWebView = WKWebView()
         
-        webView.translatesAutoresizingMaskIntoConstraints = false
+        //  webView.translatesAutoresizingMaskIntoConstraints = false
         
         return webView
     }()
@@ -24,7 +25,7 @@ class PreviewViewController: UIViewController {
        
         let label: UILabel = UILabel()
         
-        label.translatesAutoresizingMaskIntoConstraints = false
+        //  label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 20, weight: .bold)
         label.text = "Movie Title"
         
@@ -35,7 +36,7 @@ class PreviewViewController: UIViewController {
        
         let label: UILabel = UILabel()
         
-        label.translatesAutoresizingMaskIntoConstraints = false
+        //  label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 15, weight: .regular)
         label.numberOfLines = 0
         label.text = "Movie Overview"
@@ -47,7 +48,7 @@ class PreviewViewController: UIViewController {
        
         let button: UIButton = UIButton()
         
-        button.translatesAutoresizingMaskIntoConstraints = false
+        //  button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .red
         button.setTitle("Download", for: .normal)
         button.setTitleColor(.label, for: .normal)
@@ -74,36 +75,30 @@ class PreviewViewController: UIViewController {
     
     private func applyConstraints() -> Void {
         
-        let webViewConstraints: [NSLayoutConstraint] = [
-            //  webView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor), 
-            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            webView.heightAnchor.constraint(equalToConstant: 300)
-        ]
+        webView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.equalTo(view.snp.leading)
+            make.trailing.equalTo(view.snp.trailing)
+            make.height.equalTo(view.frame.size.height / 3)
+        }
         
-        let titleLabelConstraints: [NSLayoutConstraint] = [
-            titleLabel.topAnchor.constraint(equalTo: webView.bottomAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)
-        ]
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(webView.snp.bottom).offset(20)
+            make.leading.equalTo(view.snp.leading).offset(20)
+        }
         
-        let overviewLabelConstraints: [NSLayoutConstraint] = [
-            overviewLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
-            overviewLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            overviewLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ]
+        overviewLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(15)
+            make.leading.equalTo(view.snp.leading).offset(20)
+            make.trailing.equalTo(view.snp.trailing)
+        }
         
-        let downloadButtonConstraints: [NSLayoutConstraint] = [
-            downloadButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            downloadButton.topAnchor.constraint(equalTo: overviewLabel.bottomAnchor, constant: 25),
-            downloadButton.widthAnchor.constraint(equalToConstant: 150),
-            downloadButton.heightAnchor.constraint(equalToConstant: 40)
-        ]
-        
-        NSLayoutConstraint.activate(webViewConstraints)
-        NSLayoutConstraint.activate(titleLabelConstraints)
-        NSLayoutConstraint.activate(overviewLabelConstraints)
-        NSLayoutConstraint.activate(downloadButtonConstraints)
+        downloadButton.snp.makeConstraints { make in
+            make.centerX.equalTo(view.snp.centerX)
+            make.top.equalTo(overviewLabel.snp.bottom).offset(25)
+            make.width.equalTo(150)
+            make.height.equalTo(40)
+        }
     }
     
     func configure(with model: PreviewViewModel) -> Void {
@@ -118,3 +113,36 @@ class PreviewViewController: UIViewController {
         webView.load(URLRequest(url: url))
     }
 }
+
+// MARK: - Live Preview
+#if DEBUG
+import SwiftUI
+
+struct PreviewViewControllerRepresentable: UIViewControllerRepresentable {
+
+    // MARK: - UIViewControllerRepresentable - (Required) Methods
+    @available(iOS 15.0, *)
+    func makeUIViewController(context: Context) -> some UIViewController {
+
+        PreviewViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+
+    }
+}
+
+struct PreviewViewControllerRepresentable_PreviewProvider: PreviewProvider {
+
+    static var previews: some View {
+
+        Group {
+            PreviewViewControllerRepresentable()
+                .ignoresSafeArea()
+                .previewDisplayName("Preview")
+                .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
+                .preferredColorScheme(.dark)
+        }
+    }
+}
+#endif

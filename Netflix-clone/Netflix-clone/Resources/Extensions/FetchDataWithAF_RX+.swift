@@ -15,186 +15,214 @@ extension fetchDataWithAF_RX {
     // MARK: - Trending Movies
     func fetchTrendingMoviesWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
-        //  guard let url: URL = URL(string: "\(APICaller.tmdb_baseURL)/3/trending/movie/day?api_key=\(Bundle.main.object(forInfoDictionaryKey: "TMDB_API_KEY") as? String ?? "")") else { return }
-        
-        let url: String = "\(APICaller.tmdb_baseURL)/3/trending/movie/day?language=en-US"
-        
+        /// Observable<Element>는 Publisher ( or AnyPublisher)와 유사
         return Observable.create { observer in
-            AF.request(url,
-                       method: .get,
-                       headers: APICaller.headers)
-            .validate(statusCode: 200 ..< 300)
-            .responseDecodable(of: TMDBMoviesResponse.self) { response in
-                switch response.result {
-                case .success(let tmdbMovieResponse):
-                    observer.onNext(tmdbMovieResponse)
-                    break;
-                case .failure(let error):
-                    print("error: \(error.localizedDescription)")
-                    observer.onError(error)
-                    break;
+            let url: String = "https://api.themoviedb.org/3/trending/movie/day?language=en-US"
+            
+            guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
+            
+            AF.request(url, method: .get, headers: APICaller.headers)
+                .validate(statusCode: 200 ..< 300)  //  200 ~ 300 사이의 상태코드만 허용
+                .validate(contentType: ["application/json"])    //  JSON 포맷형식만 허용
+                .responseDecodable(of: TMDBMoviesResponse.self) { response in
+                    switch response.result {
+                    case .success(let movieResponse):
+                        observer.onNext(movieResponse)
+                        observer.onCompleted()
+                        break;
+                    case .failure(let error):
+                        print("error: \(error.localizedDescription)")
+                        observer.onError(error)
+                        break;
+                    }
                 }
-            }
             
             return Disposables.create()
-        }.observe(on: MainScheduler.instance)
+        }
+        .observe(on: MainScheduler.instance)    //  ->  .receive(on: DispatchQueue.main)
+        .asObservable() //  ->  .eraseToAnyPublisher()
     }
     
     // MARK: - Trending TVs
     func fetchTrendingTVsWithAF_RX() -> Observable<TMDBTVsResponse> {
         
-        let url: String = "\(APICaller.tmdb_baseURL)/3/trending/tv/day?language=en-US"
-        
-        return Observable.create { observser in
-            AF.request(url,
-                       method: .get,
-                       headers: APICaller.headers)
-            .validate(statusCode: 200 ..< 300)
-            .responseDecodable(of: TMDBTVsResponse.self) { response in
-                switch response.result {
-                case .success(let tmdbTVResponse):
-                    observser.onNext(tmdbTVResponse)
-                    break;
-                case .failure(let error):
-                    print("error: \(error.localizedDescription)")
-                    observser.onError(error)
-                    break;
+        return Observable.create { observer in
+            let url: String = "https://api.themoviedb.org/3/trending/tv/day?language=en-US"
+            
+            guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
+            
+            AF.request(url, method: .get, headers: APICaller.headers)
+                .validate(statusCode: 200 ..< 300)
+                .validate(contentType: ["application/json"])
+                .responseDecodable(of: TMDBTVsResponse.self) { response in
+                    switch response.result {
+                    case .success(let tvResponse):
+                        observer.onNext(tvResponse)
+                        observer.onCompleted()
+                        break;
+                    case .failure(let error):
+                        print("error: \(error.localizedDescription)")
+                        observer.onError(error)
+                        break;
+                    }
                 }
-            }
             
             return Disposables.create()
-        }.observe(on: MainScheduler.instance)
+        }
+        .observe(on: MainScheduler.instance)
+        .asObservable()
     }
     
     // MARK: - Popular
     func fetchPopularWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
-        let url: String = "\(APICaller.tmdb_baseURL)/3/movie/popular?language=en-US&page=1"
-        
         return Observable.create { observer in
-            AF.request(url,
-                       method: .get,
-                       headers: APICaller.headers)
-            .validate(statusCode: 200 ..< 300)
-            .responseDecodable(of: TMDBMoviesResponse.self) { response in
-                switch response.result {
-                case .success(let tmdbMovieResponse):
-                    observer.onNext(tmdbMovieResponse)
-                    break;
-                case .failure(let error):
-                    print("error: \(error.localizedDescription)")
-                    observer.onError(error)
-                    break;
+            let url: String = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1"
+            
+            guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
+            
+            AF.request(url, method: .get, headers: APICaller.headers)
+                .validate(statusCode: 200 ..< 300)
+                .validate(contentType: ["application/json"])
+                .responseDecodable(of: TMDBMoviesResponse.self) { response in
+                    switch response.result {
+                    case .success(let movieResponse):
+                        observer.onNext(movieResponse)
+                        observer.onCompleted()
+                        break;
+                    case .failure(let error):
+                        print("error: \(error.localizedDescription)")
+                        observer.onError(error)
+                        break;
+                    }
                 }
-            }
             
             return Disposables.create()
-        }.observe(on: MainScheduler.instance)
+        }
+        .observe(on: MainScheduler.instance)
+        .asObservable()
     }
     
     // MARK: - Upcoming Movies
     func fetchUpcomingMoviesWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
-        let url: String = "\(APICaller.tmdb_baseURL)/3/movie/upcoming?anguage=en-US&page=1"
-        
         return Observable.create { observer in
-            AF.request(url,
-                       method: .get,
-                       headers: APICaller.headers)
-            .validate(statusCode: 200 ..< 300)
-            .responseDecodable(of: TMDBMoviesResponse.self) { response in
-                switch response.result {
-                case .success(let tmdbMovieResponse):
-                    observer.onNext(tmdbMovieResponse)
-                    break;
-                case .failure(let error):
-                    print("error: \(error.localizedDescription)")
-                    observer.onError(error)
-                    break;
+            let url: String = "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1"
+            
+            guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
+            
+            AF.request(url, method: .get, headers: APICaller.headers)
+                .validate(statusCode: 200 ..< 300)
+                .validate(contentType: ["application/json"])
+                .responseDecodable(of: TMDBMoviesResponse.self) { response in
+                    switch response.result {
+                    case .success(let movieResponse):
+                        observer.onNext(movieResponse)
+                        observer.onCompleted()
+                        break;
+                    case .failure(let error):
+                        print("error: \(error.localizedDescription)")
+                        observer.onError(error)
+                        break;
+                    }
                 }
-            }
             
             return Disposables.create()
-        }.observe(on: MainScheduler.instance)
+        }
+        .observe(on: MainScheduler.instance)
+        .asObservable()
     }
     
     // MARK: - Top Rated
     func fetchTopRatedWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
-        let url: String = "\(APICaller.tmdb_baseURL)/3/movie/top_rated?language=en-US&page=1"
-        
         return Observable.create { observer in
-            AF.request(url,
-                       method: .get,
-                       headers: APICaller.headers)
-            .validate(statusCode: 200 ..< 300)
-            .responseDecodable(of: TMDBMoviesResponse.self) { response in
-                switch response.result {
-                case .success(let tmdbMoviesResponse):
-                    observer.onNext(tmdbMoviesResponse)
-                    break;
-                case .failure(let error):
-                    print("error: \(error.localizedDescription)")
-                    observer.onError(error)
-                    break;
+            let url: String = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1"
+            
+            guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
+            
+            AF.request(url, method: .get, headers: APICaller.headers)
+                .validate(statusCode: 200 ..< 300)
+                .validate(contentType: ["application/json"])
+                .responseDecodable(of: TMDBMoviesResponse.self) { response in
+                    switch response.result {
+                    case .success(let movieResponse):
+                        observer.onNext(movieResponse)
+                        observer.onCompleted()
+                        break;
+                    case .failure(let error):
+                        print("error: \(error.localizedDescription)")
+                        observer.onError(error)
+                        break;
+                    }
                 }
-            }
             
             return Disposables.create()
-        }.observe(on: MainScheduler.instance)
+        }
+        .observe(on: MainScheduler.instance)
+        .asObservable()
     }
     
     // MARK: - Discover Movies
     func fetchDiscoverMoviesWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
-        let url: String = "\(APICaller.tmdb_baseURL)/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc"
-        
         return Observable.create { observer in
-            AF.request(url,
-                       method: .get,
-                       headers: APICaller.headers)
-            .validate(statusCode: 200 ..< 300)
-            .responseDecodable(of: TMDBMoviesResponse.self) { response in
-                switch response.result {
-                case .success(let tmdbMoviesResponse):
-                    observer.onNext(tmdbMoviesResponse)
-                    break;
-                case .failure(let error):
-                    print("error: \(error.localizedDescription)")
-                    observer.onError(error)
-                    break;
+            let url: String = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc"
+            
+            guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
+            
+            AF.request(url, method: .get, headers: APICaller.headers)
+                .validate(statusCode: 200 ..< 300)
+                .validate(contentType: ["application/json"])
+                .responseDecodable(of: TMDBMoviesResponse.self) { response in
+                    switch response.result {
+                    case .success(let movieResponse):
+                        observer.onNext(movieResponse)
+                        observer.onCompleted()
+                        break;
+                    case .failure(let error):
+                        print("error: \(error.localizedDescription)")
+                        observer.onError(error)
+                        break;
+                    }
                 }
-            }
             
             return Disposables.create()
-        }.observe(on: MainScheduler.instance)
+        }
+        .observe(on: MainScheduler.instance)
+        .asObservable()
     }
+    
     
     // MARK: - Search & Query For Details
     func searchWithAF_RX(with query: String) -> Observable<TMDBMoviesResponse> {
         
-        guard let query: String = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return Observable.error(APICaller.APIError.invalidQueryEncoding) }
-        
-        let url: String = "\(APICaller.tmdb_baseURL)/3/search/movie?query=\(query)"
-        
         return Observable.create { observer in
-            AF.request(url,
-                       method: .get,
-                       headers: APICaller.headers)
-            .validate(statusCode: 200 ..< 300)
-            .responseDecodable(of: TMDBMoviesResponse.self) { response in
-                switch response.result {
-                case .success(let tmdbMoviesResponse):
-                    observer.onNext(tmdbMoviesResponse)
-                    break;
-                case .failure(let error):
-                    print("error: \(error.localizedDescription)")
-                    observer.onError(error)
-                    break;
+            guard let query: String = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { observer.onError(APICaller.APIError.invalidQueryEncoding); return Disposables.create() }
+            
+            let url: String = "https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1"
+            
+            guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
+            
+            AF.request(url, method: .get, headers: APICaller.headers)
+                .validate(statusCode: 200 ..< 300)
+                .validate(contentType: ["application/json"])
+                .responseDecodable(of: TMDBMoviesResponse.self) { response in
+                    switch response.result {
+                    case .success(let movieResponse):
+                        observer.onNext(movieResponse)
+                        observer.onCompleted()
+                        break;
+                    case .failure(let error):
+                        print("error: \(error.localizedDescription)")
+                        observer.onError(error)
+                        break;
+                    }
                 }
-            }
             
             return Disposables.create()
-        }.observe(on: MainScheduler.instance)
+        }
+        .observe(on: MainScheduler.instance)
+        .asObservable()
     }
 }
