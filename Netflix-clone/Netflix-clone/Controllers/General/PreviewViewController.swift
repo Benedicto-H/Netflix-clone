@@ -76,12 +76,6 @@ class PreviewViewController: UIViewController {
         applyConstraints()
     }
     
-    private func bind() -> Void {
-        
-        self.youTubeViewModel.youTubeView
-            .receive(on: DispatchQueue.main)
-    }
-    
     private func applyConstraints() -> Void {
         
         let webViewConstraints: [NSLayoutConstraint] = [

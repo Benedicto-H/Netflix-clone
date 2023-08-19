@@ -51,7 +51,7 @@ extension fetchDataWithCombine {
                 return element.data
             }
             .decode(type: TMDBMoviesResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .eraseToAnyPublisher()
         
         /// `.receive(on:)` 연산자 순서가 중요!
@@ -97,7 +97,7 @@ extension fetchDataWithCombine {
                 return output.data
             })
             .decode(type: TMDBTVsResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .eraseToAnyPublisher()
     }
     
@@ -117,7 +117,7 @@ extension fetchDataWithCombine {
                 return output.data
             })
             .decode(type: TMDBMoviesResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .eraseToAnyPublisher()
     }
     
@@ -137,7 +137,7 @@ extension fetchDataWithCombine {
                 return output.data
             })
             .decode(type: TMDBMoviesResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .eraseToAnyPublisher()
     }
     
@@ -157,7 +157,7 @@ extension fetchDataWithCombine {
                 return output.data
             })
             .decode(type: TMDBMoviesResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .eraseToAnyPublisher()
     }
     
@@ -177,7 +177,7 @@ extension fetchDataWithCombine {
                 return output.data
             })
             .decode(type: TMDBMoviesResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .eraseToAnyPublisher()
     }
     
@@ -199,7 +199,7 @@ extension fetchDataWithCombine {
                 return output.data
             })
             .decode(type: TMDBMoviesResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .eraseToAnyPublisher()
     }
     
@@ -221,7 +221,7 @@ extension fetchDataWithCombine {
                 return output.data
             })
             .decode(type: YouTubeDataResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .eraseToAnyPublisher()
     }
 }

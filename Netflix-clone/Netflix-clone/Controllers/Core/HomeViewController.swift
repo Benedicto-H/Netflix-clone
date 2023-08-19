@@ -230,14 +230,16 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         addSubscriptionToYouTubeVMProp(value: title ?? "")
         
         self.youTubeViewModel.youTubeView
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .background))
             .sink { completion in
                 switch completion {
                 case .finished: break;
                 case .failure(let error): print("error: \(error.localizedDescription)"); break;
                 }
             } receiveValue: { [weak self] video in
-                previewVC.configurePreview(with: viewModel, video: video)
+                DispatchQueue.main.async {
+                    previewVC.configurePreview(with: viewModel, video: video)
+                }
             }.store(in: &cancellables)
         
         self.navigationController?.pushViewController(previewVC, animated: true)
