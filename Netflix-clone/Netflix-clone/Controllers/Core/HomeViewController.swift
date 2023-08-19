@@ -25,6 +25,7 @@ class HomeViewController: UIViewController {
     private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var randomTrendingMovie: AnyPublisher<TMDBMoviesResponse.TMDBMovie?, Never>.Output = nil
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    private var cancellable: AnyCancellable?
     
     private var heroHeaderView: HeroHeaderUIView?
     
@@ -227,9 +228,11 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         
         let previewVC: PreviewViewController = PreviewViewController()
         
+        cancellable?.cancel()
+        
         addSubscriptionToYouTubeVMProp(value: title ?? "")
         
-        self.youTubeViewModel.youTubeView
+        cancellable = self.youTubeViewModel.youTubeView
             .receive(on: DispatchQueue.global(qos: .background))
             .sink { completion in
                 switch completion {
@@ -240,7 +243,7 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
                 DispatchQueue.main.async {
                     previewVC.configurePreview(with: viewModel, video: video)
                 }
-            }.store(in: &cancellables)
+            }
         
         self.navigationController?.pushViewController(previewVC, animated: true)
     }
