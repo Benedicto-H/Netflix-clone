@@ -31,7 +31,6 @@
 		E8C4B0932A348FB000D77F9D /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4B0922A348FB000D77F9D /* DownloadsViewController.swift */; };
 		E8D8C83A2A3F120E002DED3F /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D8C8392A3F120E002DED3F /* APICaller.swift */; };
 		E8DCC53C2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */; };
-		E8DCC53E2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DCC53D2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift */; };
 		E8E573E32A35D5AE0088130C /* CollectionViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E573E22A35D5AE0088130C /* CollectionViewTableViewCell.swift */; };
 		E8FA7BB62A80E8BD0044F84E /* TMDBViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8FA7BB52A80E8BD0044F84E /* TMDBViewModel.swift */; };
 		E8FA7BB82A80E8E40044F84E /* YouTubeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8FA7BB72A80E8E40044F84E /* YouTubeViewModel.swift */; };
@@ -64,7 +63,6 @@
 		E8D8C8392A3F120E002DED3F /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		E8D8C83C2A3F2AF0002DED3F /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchDataWithCompletionHandler+.swift"; sourceTree = "<group>"; };
-		E8DCC53D2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchDataWithConcurrency+.swift"; sourceTree = "<group>"; };
 		E8E573E22A35D5AE0088130C /* CollectionViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewTableViewCell.swift; sourceTree = "<group>"; };
 		E8FA7BB52A80E8BD0044F84E /* TMDBViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBViewModel.swift; sourceTree = "<group>"; };
 		E8FA7BB72A80E8E40044F84E /* YouTubeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeViewModel.swift; sourceTree = "<group>"; };
@@ -115,7 +113,6 @@
 			children = (
 				E845A5682A41A71500F809C6 /* String+.swift */,
 				E8DCC53B2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift */,
-				E8DCC53D2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift */,
 				E8FA7BB92A80E99B0044F84E /* FetchDataWithCombine+.swift */,
 			);
 			path = Extensions;
@@ -321,7 +318,6 @@
 				E84BA9C02A5D50C50013A962 /* PreviewViewController.swift in Sources */,
 				E8FA7BBA2A80E99B0044F84E /* FetchDataWithCombine+.swift in Sources */,
 				E8885D292A407681006D9D04 /* TMDBMovie.swift in Sources */,
-				E8DCC53E2A56D47C004E85C5 /* FetchDataWithConcurrency+.swift in Sources */,
 				E86F567E2A613DC80086B429 /* NetflixCloneModel.xcdatamodeld in Sources */,
 				E8DCC53C2A56CD35004E85C5 /* FetchDataWithCompletionHandler+.swift in Sources */,
 				E845A5692A41A71500F809C6 /* String+.swift in Sources */,

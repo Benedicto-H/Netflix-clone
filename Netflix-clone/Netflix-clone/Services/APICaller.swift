@@ -10,21 +10,10 @@ import UIKit
 import Combine
 
 protocol fetchDataWithCompletionHandler {
-    
+
     // MARK: - Function ProtoTypes
     func fetchNetflixSymbol(completionHandler: @escaping (UIImage) -> Void) -> Void
     func fetchHeroImage(completionHandler: @escaping (UIImage) -> Void) -> Void
-}
-
-protocol fetchDataWithConcurrency {
-    
-    // MARK: - Function ProtoTypes
-    func fetchTrendingMovies() async throws -> TMDBMoviesResponse
-    func fetchTrendingTVs() async throws -> TMDBTVsResponse
-    func fetchPopular() async throws -> TMDBMoviesResponse
-    func fetchUpcomingMovies() async throws -> TMDBMoviesResponse
-    func fetchTopRated() async throws -> TMDBMoviesResponse
-    func fetchDiscoverMovies() async throws -> TMDBMoviesResponse
 }
 
 protocol fetchDataWithCombine {
@@ -40,7 +29,7 @@ protocol fetchDataWithCombine {
     func fetchVideoFromYouTubeWithCombine(with query: String) -> AnyPublisher<YouTubeDataResponse, Error>
 }
 
-final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency, fetchDataWithCombine {
+final class APICaller: fetchDataWithCompletionHandler, fetchDataWithCombine {
     
     enum APIError: String, Error {
         case invalidQueryEncoding = "INVALID QUERY ENCODING ERROR"

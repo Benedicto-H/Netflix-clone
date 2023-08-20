@@ -42,7 +42,7 @@ class HomeViewController: UIViewController {
     // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         
         view.backgroundColor = .systemBackground
@@ -91,11 +91,11 @@ class HomeViewController: UIViewController {
         self.tmdbViewModel.trendingMovies
             .receive(on: DispatchQueue.main)
             .sink { [weak self] movies in
-            self?.randomTrendingMovie = movies.randomElement()
+                self?.randomTrendingMovie = movies.randomElement()
                 if let posterPath: String = self?.randomTrendingMovie?.poster_path {
                     self?.heroHeaderView?.configureHeroHeaderImageView(with: posterPath)
                 }
-        }.store(in: &cancellables)
+            }.store(in: &cancellables)
     }
     
     // MARK: - Subscribe
@@ -145,34 +145,34 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         
         guard let cell: CollectionViewTableViewCell =
                 tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier,
-                                                       for: indexPath) as? CollectionViewTableViewCell else { return UITableViewCell() }
+                                              for: indexPath) as? CollectionViewTableViewCell else { return UITableViewCell() }
         
         cell.delegate = self
         
         switch indexPath.section {
         case Sections.TrendingMovies.rawValue:
             cell.configureCollectionViewTableViewCell(withTMDBMovies: tmdbViewModel.trendingMovies.value,
-                           withTMDBTVs: nil)
+                                                      withTMDBTVs: nil)
             break;
             
         case Sections.TrendingTVs.rawValue:
             cell.configureCollectionViewTableViewCell(withTMDBMovies: nil,
-                           withTMDBTVs: tmdbViewModel.trendingTVs.value)
+                                                      withTMDBTVs: tmdbViewModel.trendingTVs.value)
             break;
             
         case Sections.Popular.rawValue:
             cell.configureCollectionViewTableViewCell(withTMDBMovies: tmdbViewModel.popular.value,
-                           withTMDBTVs: nil)
+                                                      withTMDBTVs: nil)
             break;
             
         case Sections.UpcomingMovies.rawValue:
             cell.configureCollectionViewTableViewCell(withTMDBMovies: tmdbViewModel.upcomingMovies.value,
-                           withTMDBTVs: nil)
+                                                      withTMDBTVs: nil)
             break;
             
         case Sections.TopRated.rawValue:
             cell.configureCollectionViewTableViewCell(withTMDBMovies: tmdbViewModel.topRated.value,
-                           withTMDBTVs: nil)
+                                                      withTMDBTVs: nil)
             break;
         default:
             break;
@@ -233,16 +233,14 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         addSubscriptionToYouTubeVMProp(value: title ?? "")
         
         cancellable = self.youTubeViewModel.youTubeView
-            .receive(on: DispatchQueue.global(qos: .background))
+            .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
                 case .finished: break;
                 case .failure(let error): print("error: \(error.localizedDescription)"); break;
                 }
             } receiveValue: { [weak self] video in
-                DispatchQueue.main.async {
-                    previewVC.configurePreview(with: viewModel, video: video)
-                }
+                previewVC.configurePreview(with: viewModel, video: video)
             }
         
         self.navigationController?.pushViewController(previewVC, animated: true)
