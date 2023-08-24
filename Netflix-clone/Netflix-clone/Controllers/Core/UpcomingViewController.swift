@@ -6,11 +6,15 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class UpcomingViewController: UIViewController {
     
-    // MARK: - Stored-Prop
+    // MARK: - Stored-Props
     private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
+    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private var bag: DisposeBag = DisposeBag()
     
     // MARK: - Custom View
     private let upcomingTableView: UITableView = {
@@ -39,7 +43,7 @@ class UpcomingViewController: UIViewController {
         upcomingTableView.dataSource = self
         upcomingTableView.delegate = self
         
-        fetchUpcomingMoviesData()
+        //bind()
     }
     
     override func viewDidLayoutSubviews() {
@@ -49,19 +53,17 @@ class UpcomingViewController: UIViewController {
         upcomingTableView.frame = view.bounds
     }
     
-    @MainActor
-    private func fetchUpcomingMoviesData() -> Void {
+    /*
+    private func bind() -> Void {
         
-        Task {
-            do {
-                tmdbMovies = try await APICaller.shared.fetchUpcomingMovies().results
-                
-                self.upcomingTableView.reloadData()
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        self.tmdbViewModel.trendingMovies
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] movies in
+                self?.tmdbMovies = movies
+                self?.upcomingTableView.reloadData()
+            }.disposed(by: bag)
     }
+     */
 }
 
 extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
@@ -96,17 +98,19 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let movieName: String = movie.original_title else { return }
         
+        /*
         Task {
             do {
                 let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
                 let previewVC: PreviewViewController = PreviewViewController()
                 
-                previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
+                //previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
                 
                 self.navigationController?.pushViewController(previewVC, animated: true)
             } catch {
                 fatalError(error.localizedDescription)
             }
         }
+         */
     }
 }

@@ -10,7 +10,7 @@ import UIKit
 protocol CollectionViewTableViewCellDelegate: AnyObject {
     
     // MARK: - Function ProtoType
-    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: Any) -> Void
+    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, model: Any, title: String) -> Void
 }
 
 class CollectionViewTableViewCell: UITableViewCell {
@@ -63,8 +63,7 @@ class CollectionViewTableViewCell: UITableViewCell {
         collectionView.frame = contentView.bounds
     }
     
-    
-    public func configure(withTMDBMovies movies: [TMDBMoviesResponse.TMDBMovie]?, withTMDBTVs tvs: [TMDBTVsResponse.TMDBTV]?) -> Void {
+    public func configureCollectionViewTableViewCell(withTMDBMovies movies: [TMDBMoviesResponse.TMDBMovie]?, withTMDBTVs tvs: [TMDBTVsResponse.TMDBTV]?) -> Void {
         
         self.tmdbMovies = movies ?? []
         self.tmdbTvs = tvs ?? []
@@ -120,32 +119,40 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         if (indexPath.row < tmdbMovies.count) {
             guard let tmdbMovieName: String = tmdbMovies[indexPath.row].original_title else { return }
             
+            self.delegate?.collectionViewTableViewCellDidTapCell(self, model: tmdbMovies[indexPath.row], title: tmdbMovieName)
+            
+            /*
             Task {
                 do {
                     let responseData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovieName + " trailer")
                     
-                    self.delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbMovieName, youTubeView: responseData.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
+                    //self.delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbMovieName, youTubeView: responseData.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
                 } catch {
                     fatalError(error.localizedDescription)
                 }
             }
+             */
         }
         
         //  TVs
         if (indexPath.row < tmdbTvs.count) {
             guard let tmdbTVName: String = tmdbTvs[indexPath.row].original_name else { return }
             
+            self.delegate?.collectionViewTableViewCellDidTapCell(self, model: tmdbTvs[indexPath.row], title: tmdbTVName)
+            
+            /*
             Task {
                 do {
                     let responseData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbTVName + " trailer")
                     
                     print("responseData: \(responseData.items[0].id) \n")
                     
-                    delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbTVName, youTubeView: responseData.items[0], overview: tmdbTvs[indexPath.row].overview ?? ""))
+                    //delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbTVName, youTubeView: responseData.items[0], overview: tmdbTvs[indexPath.row].overview ?? ""))
                 } catch {
                     fatalError(error.localizedDescription)
                 }
             }
+             */
         }
     }
     
@@ -186,11 +193,11 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
         cell.backgroundColor = .systemBackground
         
         if (indexPath.row < tmdbMovies.count) {
-            cell.configure(with: tmdbMovies[indexPath.row].poster_path ?? "")
+            cell.configureCollectionViewCell(with: tmdbMovies[indexPath.row].poster_path ?? "")
         }
         
         if (indexPath.row < tmdbTvs.count) {
-            cell.configure(with: tmdbTvs[indexPath.row].poster_path ?? "")
+            cell.configureCollectionViewCell(with: tmdbTvs[indexPath.row].poster_path ?? "")
         }
         
         return cell

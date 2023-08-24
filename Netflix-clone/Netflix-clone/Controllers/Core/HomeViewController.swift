@@ -23,8 +23,10 @@ class HomeViewController: UIViewController {
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular", "Upcoming Movies", "Top Rated"]
     
     private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var randomTrendingMovie: TMDBMoviesResponse.TMDBMovie?
     private var bag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
     
     private var heroHeaderView: HeroHeaderUIView?
     
@@ -172,19 +174,19 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         do {
             switch indexPath.section {
             case Sections.TrendingMovies.rawValue:
-                try cell.configure(withTMDBMovies: self.tmdbViewModel.trendingMovies.value(), withTMDBTVs: nil)
+                try cell.configureCollectionViewTableViewCell(withTMDBMovies: self.tmdbViewModel.trendingMovies.value(), withTMDBTVs: nil)
                 break;
             case Sections.TrendingTV.rawValue:
-                try cell.configure(withTMDBMovies: nil, withTMDBTVs: self.tmdbViewModel.trendingTVs.value())
+                try cell.configureCollectionViewTableViewCell(withTMDBMovies: nil, withTMDBTVs: self.tmdbViewModel.trendingTVs.value())
                 break;
             case Sections.Popular.rawValue:
-                try cell.configure(withTMDBMovies: self.tmdbViewModel.popular.value(), withTMDBTVs: nil)
+                try cell.configureCollectionViewTableViewCell(withTMDBMovies: self.tmdbViewModel.popular.value(), withTMDBTVs: nil)
                 break;
             case Sections.UpcomingMovies.rawValue:
-                try cell.configure(withTMDBMovies: self.tmdbViewModel.upcomingMovies.value(), withTMDBTVs: nil)
+                try cell.configureCollectionViewTableViewCell(withTMDBMovies: self.tmdbViewModel.upcomingMovies.value(), withTMDBTVs: nil)
                 break;
             case Sections.TopRated.rawValue:
-                try cell.configure(withTMDBMovies: self.tmdbViewModel.topRated.value(), withTMDBTVs: nil)
+                try cell.configureCollectionViewTableViewCell(withTMDBMovies: self.tmdbViewModel.topRated.value(), withTMDBTVs: nil)
                 break;
             default:
                 break;
@@ -240,13 +242,34 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
     }
     
     // MARK: - CollectionViewTableViewCellDelegate - (Required) Method  ->  Implementation
-    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: Any) {
+    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, model: Any, title: String) {
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        previewVC.configure(with: viewModel as! PreviewViewModel)
+        disposeBag = DisposeBag()
+        
+        addObserver(with: title)
+        
+        self.youTubeViewModel.youTubeView
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] videoElement in
+                previewVC.configurePreviewVC(model: model, video: videoElement)
+            }.disposed(by: disposeBag)
         
         self.navigationController?.pushViewController(previewVC, animated: true)
+    }
+    
+    // MARK: - Add Observer to PublishSubject (-> YouTubeViewModel Prop)
+    private func addObserver(with title: String) -> Void {
+        
+        APICaller.shared.fetchVideoFromYouTubeWithAF_RX(with: title + " trailer")
+            .subscribe { [weak self] response in
+                self?.youTubeViewModel.youTubeView.onNext(response.items[0])
+            } onError: { error in
+                self.youTubeViewModel.youTubeView.onError(error)
+            } onCompleted: {
+                print("(youTubeViewModel.youTubeView) - onCompleted")
+            }.disposed(by: bag)
     }
 }
 

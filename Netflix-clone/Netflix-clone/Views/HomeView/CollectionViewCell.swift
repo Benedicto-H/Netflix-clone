@@ -43,7 +43,7 @@ class CollectionViewCell: UICollectionViewCell {
         posterImageView.frame = contentView.bounds
     }
     
-    public func configure(with model: String) -> Void {
+    public func configureCollectionViewCell(with model: String) -> Void {
         
         let baseImageURL: String = "https://image.tmdb.org/t/p/w500"
         

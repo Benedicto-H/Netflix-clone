@@ -8,24 +8,27 @@
 import UIKit
 import WebKit
 import SnapKit
+import Alamofire
 
 class PreviewViewController: UIViewController {
-
+    
+    // MARK: - Stored-Prop
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
+    
     // MARK: - Custom Views
     private let webView: WKWebView = {
-       
+        
         let webView: WKWebView = WKWebView()
         
-        //  webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.contentMode = .scaleAspectFit
         
         return webView
     }()
     
     private let titleLabel: UILabel = {
-       
+        
         let label: UILabel = UILabel()
         
-        //  label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 20, weight: .bold)
         label.text = "Movie Title"
         
@@ -33,10 +36,9 @@ class PreviewViewController: UIViewController {
     }()
     
     private let overviewLabel: UILabel = {
-       
+        
         let label: UILabel = UILabel()
         
-        //  label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 15, weight: .regular)
         label.numberOfLines = 0
         label.text = "Movie Overview"
@@ -45,10 +47,9 @@ class PreviewViewController: UIViewController {
     }()
     
     private let downloadButton: UIButton = {
-       
+        
         let button: UIButton = UIButton()
         
-        //  button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .red
         button.setTitle("Download", for: .normal)
         button.setTitleColor(.label, for: .normal)
@@ -60,7 +61,7 @@ class PreviewViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         
         view.backgroundColor = .systemBackground
@@ -101,16 +102,40 @@ class PreviewViewController: UIViewController {
         }
     }
     
-    func configure(with model: PreviewViewModel) -> Void {
-        
-        titleLabel.text = model.title
-        overviewLabel.text = model.overview
+    func configurePreviewVC(model: Any, video: YouTubeDataResponse.VideoElement?) -> Void {
         
         let baseURL: String = "https://www.youtube.com/embed/"
-
-        guard let url: URL = URL(string: "\(baseURL)\(model.youTubeView.id.videoId ?? "")") else { return }
         
-        webView.load(URLRequest(url: url))
+        if let movie: TMDBMoviesResponse.TMDBMovie = model as? TMDBMoviesResponse.TMDBMovie {
+            titleLabel.text = movie.title
+            overviewLabel.text = movie.overview
+        } else if let tv: TMDBTVsResponse.TMDBTV = model as? TMDBTVsResponse.TMDBTV {
+            titleLabel.text = tv.name
+            overviewLabel.text = tv.overview
+        }
+        
+        if let videoElement: YouTubeDataResponse.VideoElement = video {
+            guard let url: URL = URL(string: "\(baseURL)\(videoElement.id.videoId ?? "")") else { return }
+            
+            AF.request(url)
+                .validate(statusCode: 200 ..< 300)
+                .response { response in
+                    if let safeData: Data = response.data {
+                        let videoHTML: String = """
+                        <html>
+                            <body style="margin: 0;">
+                                <iframe width="100%" height="100%" src="\(url)" frameborder="0" allowfullscreen></iframe>
+                            </body>
+                        </html>
+                        """
+
+                        self.webView.loadHTMLString(videoHTML, baseURL: url)
+                    }
+                }
+            
+            // MARK: - URLRequest
+            //  webView.load(URLRequest(url: url))
+        }
     }
 }
 
@@ -119,23 +144,23 @@ class PreviewViewController: UIViewController {
 import SwiftUI
 
 struct PreviewViewControllerRepresentable: UIViewControllerRepresentable {
-
+    
     // MARK: - UIViewControllerRepresentable - (Required) Methods
     @available(iOS 15.0, *)
     func makeUIViewController(context: Context) -> some UIViewController {
-
+        
         PreviewViewController()
     }
-
+    
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-
+        
     }
 }
 
 struct PreviewViewControllerRepresentable_PreviewProvider: PreviewProvider {
-
+    
     static var previews: some View {
-
+        
         Group {
             PreviewViewControllerRepresentable()
                 .ignoresSafeArea()

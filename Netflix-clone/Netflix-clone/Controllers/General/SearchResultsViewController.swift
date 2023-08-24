@@ -10,7 +10,7 @@ import UIKit
 protocol SearchResultsViewControllerDelegate: AnyObject {
     
     // MARK: - Function ProtoType
-    func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel)
+    //func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel)
 }
 
 class SearchResultsViewController: UIViewController {
@@ -71,14 +71,12 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
         Task {
             do {
                 let videoResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovies[indexPath.row].original_title ?? "")
-                
-                /*
+
                 let vc: PreviewViewController = PreviewViewController()
                 
                 vc.configure(with: PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
                 
                 self.navigationController?.pushViewController(vc, animated: true)
-                 */
                 
                 self.delegate?.searchResultsViewControllerDidTapItem(PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
             } catch {
@@ -99,7 +97,7 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
         
         //  cell.backgroundColor = .systemBackground
         
-        cell.configure(with: tmdbMovies[indexPath.row].poster_path ?? "")
+        cell.configureCollectionViewCell(with: tmdbMovies[indexPath.row].poster_path ?? "")
         
         return cell
     }

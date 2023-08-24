@@ -27,6 +27,8 @@ protocol fetchDataWithConcurrency {
     func fetchUpcomingMovies() async throws -> TMDBMoviesResponse
     func fetchTopRated() async throws -> TMDBMoviesResponse
     func fetchDiscoverMovies() async throws -> TMDBMoviesResponse
+    func search(with query: String) async throws -> TMDBMoviesResponse
+    func fetchVideoFromYouTube(with query: String) async throws -> YouTubeDataResponse
 }
 
 protocol fetchDataWithAF_RX {
@@ -39,6 +41,7 @@ protocol fetchDataWithAF_RX {
     func fetchTopRatedWithAF_RX() -> Observable<TMDBMoviesResponse>
     func fetchDiscoverMoviesWithAF_RX() -> Observable<TMDBMoviesResponse>
     func searchWithAF_RX(with query: String) -> Observable<TMDBMoviesResponse>
+    func fetchVideoFromYouTubeWithAF_RX(with query: String) -> Observable<YouTubeDataResponse>
 }
 
 final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency, fetchDataWithAF_RX {

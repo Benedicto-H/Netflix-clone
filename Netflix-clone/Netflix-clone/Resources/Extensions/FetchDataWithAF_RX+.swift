@@ -39,7 +39,7 @@ extension fetchDataWithAF_RX {
             
             return Disposables.create()
         }
-        .observe(on: MainScheduler.instance)    //  ->  .receive(on: DispatchQueue.main)
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))    //  ->  .receive(on: DispatchQueue.global(qos: .background))
         .asObservable() //  ->  .eraseToAnyPublisher()
     }
     
@@ -69,7 +69,7 @@ extension fetchDataWithAF_RX {
             
             return Disposables.create()
         }
-        .observe(on: MainScheduler.instance)
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
         .asObservable()
     }
     
@@ -99,7 +99,7 @@ extension fetchDataWithAF_RX {
             
             return Disposables.create()
         }
-        .observe(on: MainScheduler.instance)
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
         .asObservable()
     }
     
@@ -129,7 +129,7 @@ extension fetchDataWithAF_RX {
             
             return Disposables.create()
         }
-        .observe(on: MainScheduler.instance)
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
         .asObservable()
     }
     
@@ -159,7 +159,7 @@ extension fetchDataWithAF_RX {
             
             return Disposables.create()
         }
-        .observe(on: MainScheduler.instance)
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
         .asObservable()
     }
     
@@ -189,10 +189,9 @@ extension fetchDataWithAF_RX {
             
             return Disposables.create()
         }
-        .observe(on: MainScheduler.instance)
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
         .asObservable()
     }
-    
     
     // MARK: - Search & Query For Details
     func searchWithAF_RX(with query: String) -> Observable<TMDBMoviesResponse> {
@@ -222,7 +221,39 @@ extension fetchDataWithAF_RX {
             
             return Disposables.create()
         }
-        .observe(on: MainScheduler.instance)
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+        .asObservable()
+    }
+    
+    // MARK: - Fetch Movie
+    func fetchVideoFromYouTubeWithAF_RX(with query: String) -> Observable<YouTubeDataResponse> {
+        
+        return Observable.create { observer in
+            guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { observer.onError(APICaller.APIError.invalidQueryEncoding); return Disposables.create() }
+            
+            let url: String = "\(APICaller.youtube_baseURL)q=\(query)&key=\(Bundle.main.object(forInfoDictionaryKey: "GOOGLE_DEVELOPER_API_KEY") as? String ?? "")"
+            
+            guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
+            
+            AF.request(url)
+                .validate(statusCode: 200 ..< 300)
+                .validate(contentType: ["application/json"])
+                .responseDecodable(of: YouTubeDataResponse.self) { response in
+                    switch response.result {
+                    case .success(let youTubeResponse):
+                        observer.onNext(youTubeResponse)
+                        observer.onCompleted()
+                        break;
+                    case .failure(let error):
+                        print("error: \(error.localizedDescription)")
+                        observer.onError(error)
+                        break;
+                    }
+                }
+            
+            return Disposables.create()
+        }
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
         .asObservable()
     }
 }
