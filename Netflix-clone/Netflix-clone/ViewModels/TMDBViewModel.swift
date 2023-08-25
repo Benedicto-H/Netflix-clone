@@ -17,7 +17,7 @@ final class TMDBViewModel {
     var popular: BehaviorSubject<[TMDBMoviesResponse.TMDBMovie]> = BehaviorSubject(value: [])
     var upcomingMovies: BehaviorSubject<[TMDBMoviesResponse.TMDBMovie]> = BehaviorSubject(value: [])
     var topRated: BehaviorSubject<[TMDBMoviesResponse.TMDBMovie]> = BehaviorSubject(value: [])
-    //  var discoverMovies: BehaviorSubject<[TMDBMoviesResponse.TMDBMovie]> = BehaviorSubject(value: [])
+    var discoverMovies: BehaviorSubject<[TMDBMoviesResponse.TMDBMovie]> = BehaviorSubject(value: [])
     var searchMovies: PublishSubject<[TMDBMoviesResponse.TMDBMovie]> = PublishSubject()
     
     private var bag: DisposeBag = DisposeBag()
@@ -39,8 +39,6 @@ final class TMDBViewModel {
                 self?.trendingMovies.onNext(movieResponse.results)
             } onError: { error in
                 self.trendingMovies.onError(error)
-            } onCompleted: {
-                print("(trendingMovies) - onCompleted")
             }.disposed(by: bag)
         
         APICaller.shared.fetchTrendingTVsWithAF_RX()
@@ -48,8 +46,6 @@ final class TMDBViewModel {
                 self?.trendingTVs.onNext(tvResponse.results)
             } onError: { error in
                 self.trendingTVs.onError(error)
-            } onCompleted: {
-                print("(trendingTVs) - onCompleted")
             }.disposed(by: bag)
         
         APICaller.shared.fetchPopularWithAF_RX()
@@ -57,8 +53,6 @@ final class TMDBViewModel {
                 self?.popular.onNext(movieResponse.results)
             } onError: { error in
                 self.popular.onError(error)
-            } onCompleted: {
-                print("(popular) - onCompleted")
             }.disposed(by: bag)
         
         APICaller.shared.fetchUpcomingMoviesWithAF_RX()
@@ -66,8 +60,6 @@ final class TMDBViewModel {
                 self?.upcomingMovies.onNext(movieResponse.results)
             } onError: { error in
                 self.upcomingMovies.onError(error)
-            } onCompleted: {
-                print("(upcomingMovies) - onCompleted")
             }.disposed(by: bag)
         
         APICaller.shared.fetchTopRatedWithAF_RX()
@@ -75,17 +67,13 @@ final class TMDBViewModel {
                 self?.topRated.onNext(movieResponse.results)
             } onError: { error in
                 self.topRated.onError(error)
-            } onCompleted: {
-                print("(topRated) - onCompleted")
             }.disposed(by: bag)
         
-//        APICaller.shared.fetchDiscoverMoviesWithAF_RX()
-//            .subscribe { [weak self] movieResponse in
-//                self?.discoverMovies.onNext(movieResponse.results)
-//            } onError: { error in
-//                self.discoverMovies.onError(error)
-//            } onCompleted: {
-//                print("(discoverMovies) - onCompleted")
-//            }.disposed(by: bag)
+        APICaller.shared.fetchDiscoverMoviesWithAF_RX()
+            .subscribe { [weak self] movieResponse in
+                self?.discoverMovies.onNext(movieResponse.results)
+            } onError: { error in
+                self.discoverMovies.onError(error)
+            }.disposed(by: bag)
     }
 }

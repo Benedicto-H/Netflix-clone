@@ -26,7 +26,6 @@ class HomeViewController: UIViewController {
     private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var randomTrendingMovie: TMDBMoviesResponse.TMDBMovie?
     private var bag: DisposeBag = DisposeBag()
-    private var disposeBag: DisposeBag = DisposeBag()
     
     private var heroHeaderView: HeroHeaderUIView?
     
@@ -246,7 +245,7 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        disposeBag = DisposeBag()
+        bag = DisposeBag()
         
         addObserver(with: title)
         
@@ -254,7 +253,7 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
             .observe(on: MainScheduler.instance)
             .bind { [weak self] videoElement in
                 previewVC.configurePreviewVC(model: model, video: videoElement)
-            }.disposed(by: disposeBag)
+            }.disposed(by: bag)
         
         self.navigationController?.pushViewController(previewVC, animated: true)
     }
@@ -267,8 +266,6 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
                 self?.youTubeViewModel.youTubeView.onNext(response.items[0])
             } onError: { error in
                 self.youTubeViewModel.youTubeView.onError(error)
-            } onCompleted: {
-                print("(youTubeViewModel.youTubeView) - onCompleted")
             }.disposed(by: bag)
     }
 }

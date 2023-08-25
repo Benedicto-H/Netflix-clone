@@ -106,35 +106,37 @@ class PreviewViewController: UIViewController {
         
         let baseURL: String = "https://www.youtube.com/embed/"
         
-        if let movie: TMDBMoviesResponse.TMDBMovie = model as? TMDBMoviesResponse.TMDBMovie {
-            titleLabel.text = movie.title
-            overviewLabel.text = movie.overview
-        } else if let tv: TMDBTVsResponse.TMDBTV = model as? TMDBTVsResponse.TMDBTV {
-            titleLabel.text = tv.name
-            overviewLabel.text = tv.overview
-        }
-        
-        if let videoElement: YouTubeDataResponse.VideoElement = video {
-            guard let url: URL = URL(string: "\(baseURL)\(videoElement.id.videoId ?? "")") else { return }
+        DispatchQueue.main.async { [weak self] in
+            if let movie: TMDBMoviesResponse.TMDBMovie = model as? TMDBMoviesResponse.TMDBMovie {
+                self?.titleLabel.text = movie.title
+                self?.overviewLabel.text = movie.overview
+            } else if let tv: TMDBTVsResponse.TMDBTV = model as? TMDBTVsResponse.TMDBTV {
+                self?.titleLabel.text = tv.name
+                self?.overviewLabel.text = tv.overview
+            }
             
-            AF.request(url)
-                .validate(statusCode: 200 ..< 300)
-                .response { response in
-                    if let safeData: Data = response.data {
-                        let videoHTML: String = """
-                        <html>
-                            <body style="margin: 0;">
-                                <iframe width="100%" height="100%" src="\(url)" frameborder="0" allowfullscreen></iframe>
-                            </body>
-                        </html>
-                        """
-
-                        self.webView.loadHTMLString(videoHTML, baseURL: url)
+            if let videoElement: YouTubeDataResponse.VideoElement = video {
+                guard let url: URL = URL(string: "\(baseURL)\(videoElement.id.videoId ?? "")") else { return }
+                
+                AF.request(url)
+                    .validate(statusCode: 200 ..< 300)
+                    .response { response in
+                        if let _: Data = response.data {
+                            let videoHTML: String = """
+                            <html>
+                                <body style="margin: 0;">
+                                    <iframe width="100%" height="100%" src="\(url)" frameborder="0" allowfullscreen></iframe>
+                                </body>
+                            </html>
+                            """
+                            
+                            self?.webView.loadHTMLString(videoHTML, baseURL: url)
+                        }
                     }
-                }
-            
-            // MARK: - URLRequest
-            //  webView.load(URLRequest(url: url))
+                
+                // MARK: - URLRequest
+                //  webView.load(URLRequest(url: url))
+            }
         }
     }
 }

@@ -74,11 +74,11 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
 
                 let vc: PreviewViewController = PreviewViewController()
                 
-                vc.configure(with: PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
+                //  vc.configure(with: PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
                 
                 self.navigationController?.pushViewController(vc, animated: true)
                 
-                self.delegate?.searchResultsViewControllerDidTapItem(PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
+                //  self.delegate?.searchResultsViewControllerDidTapItem(PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
             } catch {
                 fatalError(error.localizedDescription)
             }

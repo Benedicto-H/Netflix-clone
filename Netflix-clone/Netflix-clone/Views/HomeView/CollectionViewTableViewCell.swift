@@ -120,18 +120,6 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
             guard let tmdbMovieName: String = tmdbMovies[indexPath.row].original_title else { return }
             
             self.delegate?.collectionViewTableViewCellDidTapCell(self, model: tmdbMovies[indexPath.row], title: tmdbMovieName)
-            
-            /*
-            Task {
-                do {
-                    let responseData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovieName + " trailer")
-                    
-                    //self.delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbMovieName, youTubeView: responseData.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
-                } catch {
-                    fatalError(error.localizedDescription)
-                }
-            }
-             */
         }
         
         //  TVs
@@ -139,20 +127,6 @@ extension CollectionViewTableViewCell: UICollectionViewDelegateFlowLayout, UICol
             guard let tmdbTVName: String = tmdbTvs[indexPath.row].original_name else { return }
             
             self.delegate?.collectionViewTableViewCellDidTapCell(self, model: tmdbTvs[indexPath.row], title: tmdbTVName)
-            
-            /*
-            Task {
-                do {
-                    let responseData: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbTVName + " trailer")
-                    
-                    print("responseData: \(responseData.items[0].id) \n")
-                    
-                    //delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: PreviewViewModel(title: tmdbTVName, youTubeView: responseData.items[0], overview: tmdbTvs[indexPath.row].overview ?? ""))
-                } catch {
-                    fatalError(error.localizedDescription)
-                }
-            }
-             */
         }
     }
     

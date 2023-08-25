@@ -89,7 +89,7 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
-        cell.configure(with: MovieViewModel(titleName: tmdbMovieItems[indexPath.row].original_title ?? "UNKOWN original_title", posterURL: tmdbMovieItems[indexPath.row].poster_path ?? "UNKOWN poster_path"))
+        //cell.configure(with: MovieViewModel(titleName: tmdbMovieItems[indexPath.row].original_title ?? "UNKOWN original_title", posterURL: tmdbMovieItems[indexPath.row].poster_path ?? "UNKOWN poster_path"))
         
         return cell
     }
@@ -144,7 +144,7 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
                 let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
                 let previewVC: PreviewViewController = PreviewViewController()
                 
-                previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
+                //  previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
                 
                 self.navigationController?.pushViewController(previewVC, animated: true)
             } catch {

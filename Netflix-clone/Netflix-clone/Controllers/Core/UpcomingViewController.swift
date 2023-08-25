@@ -14,6 +14,7 @@ class UpcomingViewController: UIViewController {
     // MARK: - Stored-Props
     private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var bag: DisposeBag = DisposeBag()
     
     // MARK: - Custom View
@@ -43,7 +44,7 @@ class UpcomingViewController: UIViewController {
         upcomingTableView.dataSource = self
         upcomingTableView.delegate = self
         
-        //bind()
+        bind()
     }
     
     override func viewDidLayoutSubviews() {
@@ -53,7 +54,6 @@ class UpcomingViewController: UIViewController {
         upcomingTableView.frame = view.bounds
     }
     
-    /*
     private func bind() -> Void {
         
         self.tmdbViewModel.trendingMovies
@@ -63,7 +63,6 @@ class UpcomingViewController: UIViewController {
                 self?.upcomingTableView.reloadData()
             }.disposed(by: bag)
     }
-     */
 }
 
 extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
@@ -78,9 +77,7 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
-        cell.configure(with: MovieViewModel(
-            titleName: tmdbMovies[indexPath.row].original_title ?? "UNKOWN original_title",
-             posterURL: tmdbMovies[indexPath.row].poster_path ?? "UNKOWN poster_path"))
+        cell.configure(with: tmdbMovies[indexPath.row])
         
         return cell
     }
@@ -98,19 +95,62 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let movieName: String = movie.original_title else { return }
         
-        /*
-        Task {
-            do {
-                let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
-                let previewVC: PreviewViewController = PreviewViewController()
-                
-                //previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
-                
-                self.navigationController?.pushViewController(previewVC, animated: true)
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
-         */
+        let previewVC: PreviewViewController = PreviewViewController()
+        
+        bag = DisposeBag()
+        
+        addObserver(with: movieName)
+        
+        self.youTubeViewModel.youTubeView
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] videoElement in
+                previewVC.configurePreviewVC(model: movie, video: videoElement)
+            }.disposed(by: bag)
+        
+        self.navigationController?.pushViewController(previewVC, animated: true)
+    }
+    
+    // MARK: - Add Observer to PublishSubject (-> YouTubeViewModel Prop)
+    private func addObserver(with title: String) -> Void {
+        
+        APICaller.shared.fetchVideoFromYouTubeWithAF_RX(with: title + " trailer")
+            .subscribe { [weak self] response in
+                self?.youTubeViewModel.youTubeView.onNext(response.items[0])
+            } onError: { error in
+                self.youTubeViewModel.youTubeView.onError(error)
+            }.disposed(by: bag)
     }
 }
+
+// MARK: - Live Preview
+#if DEBUG
+import SwiftUI
+
+struct UpcomingViewControllerRepresentable: UIViewControllerRepresentable {
+
+    // MARK: - UIViewControllerRepresentable - (Required) Methods
+    @available(iOS 15.0, *)
+    func makeUIViewController(context: Context) -> some UIViewController {
+
+        UpcomingViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+
+    }
+}
+
+struct UpcomingViewControllerRepresentable_PreviewProvider: PreviewProvider {
+
+    static var previews: some View {
+
+        Group {
+            UpcomingViewControllerRepresentable()
+                .ignoresSafeArea()
+                .previewDisplayName("Preview")
+                .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
+                .preferredColorScheme(.dark)
+        }
+    }
+}
+#endif
