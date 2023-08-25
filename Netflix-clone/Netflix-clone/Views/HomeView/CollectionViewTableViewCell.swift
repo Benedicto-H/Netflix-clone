@@ -83,12 +83,10 @@ class CollectionViewTableViewCell: UITableViewCell {
                     
                     NotificationCenter.default.post(name: NSNotification.Name("Downloaded"), object: nil)
                     break;
-                    
                 case .failure(let error):
                     print("error: \(error.localizedDescription)")
                     fatalError(error.localizedDescription)
-                    break;
-                    
+                    break; 
                 default:
                     break;
                 }

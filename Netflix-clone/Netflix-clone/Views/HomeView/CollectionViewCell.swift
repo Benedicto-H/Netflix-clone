@@ -49,6 +49,8 @@ class CollectionViewCell: UICollectionViewCell {
         
         guard let url: URL = URL(string: "\(baseImageURL)\(model)") else { return }
         
-        posterImageView.sd_setImage(with: url)
+        DispatchQueue.main.async { [weak self] in
+            self?.posterImageView.sd_setImage(with: url)
+        }
     }
 }

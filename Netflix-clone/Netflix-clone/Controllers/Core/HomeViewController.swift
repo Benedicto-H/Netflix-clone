@@ -228,9 +228,9 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        cancellable?.cancel()
+        cancellable?.cancel()   //  중복 구독이 되는것을 방지하기 위해 이전의 구독을 먼저 취소 후
         
-        addSubscriptionToYouTubeVMProp(value: title ?? "")
+        addSubscriptionToYouTubeVMProp(value: title ?? "")  //  Data fetch
         
         cancellable = self.youTubeViewModel.youTubeView
             .receive(on: DispatchQueue.main)

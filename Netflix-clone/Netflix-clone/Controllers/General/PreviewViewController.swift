@@ -113,21 +113,23 @@ class PreviewViewController: UIViewController {
         
         let baseURL: String = "https://www.youtube.com/embed/"
         
-        if let movie: TMDBMoviesResponse.TMDBMovie = model as? TMDBMoviesResponse.TMDBMovie {
-            titleLabel.text = movie.original_title ?? "Default Title"
-            overviewLabel.text = movie.overview ?? "Default Overview"
-        } else if let tv: TMDBTVsResponse.TMDBTV = model as? TMDBTVsResponse.TMDBTV {
-            titleLabel.text = tv.original_name ?? "Default Name"
-            overviewLabel.text = tv.overview ?? "Default Overview"
-        } else if let movieItem: TMDBMovieItem = model as? TMDBMovieItem {
-            titleLabel.text = movieItem.title ?? "Default Title"
-            overviewLabel.text = movieItem.overview ?? "Default Overview"
-        }
-        
-        if let videoElement: YouTubeDataResponse.VideoElement = video as? YouTubeDataResponse.VideoElement {
-            guard let url: URL = URL(string: "\(baseURL)\(videoElement.id.videoId ?? "")") else { return }
-            
-            webView.load(URLRequest(url: url))
+        DispatchQueue.main.async { [weak self] in
+            if let movie: TMDBMoviesResponse.TMDBMovie = model as? TMDBMoviesResponse.TMDBMovie {
+                self?.titleLabel.text = movie.original_title ?? "Default Title"
+                self?.overviewLabel.text = movie.overview ?? "Default Overview"
+            } else if let tv: TMDBTVsResponse.TMDBTV = model as? TMDBTVsResponse.TMDBTV {
+                self?.titleLabel.text = tv.original_name ?? "Default Name"
+                self?.overviewLabel.text = tv.overview ?? "Default Overview"
+            } else if let movieItem: TMDBMovieItem = model as? TMDBMovieItem {
+                self?.titleLabel.text = movieItem.title ?? "Default Title"
+                self?.overviewLabel.text = movieItem.overview ?? "Default Overview"
+            }
+
+            if let videoElement: YouTubeDataResponse.VideoElement = video as? YouTubeDataResponse.VideoElement {
+                guard let url: URL = URL(string: "\(baseURL)\(videoElement.id.videoId ?? "")") else { return }
+
+                self?.webView.load(URLRequest(url: url))
+            }
         }
     }
 }

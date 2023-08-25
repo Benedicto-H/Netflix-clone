@@ -84,11 +84,6 @@ extension fetchDataWithCombine {
         guard let url: URL = URL(string: url) else { return Fail(error: URLError(.badURL)).eraseToAnyPublisher() }
         
         return URLSession.shared.dataTaskPublisher(for: url)
-        /*
-            .compactMap({ output -> Data in
-                return output.data
-            })
-         */
             .tryMap({ output in
                 guard (output.response as? HTTPURLResponse)?.statusCode == 200 else {
                     throw URLError(.badServerResponse)

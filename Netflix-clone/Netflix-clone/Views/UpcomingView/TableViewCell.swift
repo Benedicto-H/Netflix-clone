@@ -96,7 +96,9 @@ class TableViewCell: UITableViewCell {
         
         guard let url: URL = URL(string: "\(baseImageURL)\(model.poster_path ?? "")") else { return }
         
-        posterImageView.sd_setImage(with: url)
-        titleLabel.text = model.original_title ?? ""
+        DispatchQueue.main.async { [weak self] in
+            self?.posterImageView.sd_setImage(with: url)
+            self?.titleLabel.text = model.original_title ?? ""
+        }
     }
 }

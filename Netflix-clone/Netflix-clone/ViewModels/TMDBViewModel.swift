@@ -19,6 +19,7 @@ final class TMDBViewModel {
     var discoverMovies: CurrentValueSubject<[TMDBMoviesResponse.TMDBMovie], Never> = .init([])
     var searchMovies: PassthroughSubject<[TMDBMoviesResponse.TMDBMovie], Never> = .init()
     var downloadsmovies: PassthroughSubject<[TMDBMoviesResponse.TMDBMovie], Never> = .init()
+    
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Init

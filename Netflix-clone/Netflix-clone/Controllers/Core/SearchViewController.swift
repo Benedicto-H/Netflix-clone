@@ -15,6 +15,7 @@ class SearchViewController: UIViewController {
     private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
     private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    private var cancellable: AnyCancellable?
     
     // MARK: - Custom Views
     private let searchTableView: UITableView = {
@@ -53,12 +54,12 @@ class SearchViewController: UIViewController {
         searchTableView.dataSource = self
         searchTableView.delegate = self
         
-        bind()
-        
         navigationItem.searchController = searchController
         navigationController?.navigationBar.tintColor = .white
         
         searchController.searchResultsUpdater = self
+        
+        bind()
     }
     
     override func viewDidLayoutSubviews() {
@@ -136,13 +137,15 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         
         let previewVC: PreviewViewController = PreviewViewController()
         
+        cancellable?.cancel()
+        
         addSubscriptionToYouTubeVMProp(with: movieName)
         
-        self.youTubeViewModel.youTubeView
+        cancellable = self.youTubeViewModel.youTubeView
             .receive(on: DispatchQueue.main)
             .sink { [weak self] video in
                 previewVC.configurePreview(with: movie, video: video)
-            }.store(in: &cancellables)
+            }
         
         self.navigationController?.pushViewController(previewVC, animated: true)
     }
@@ -152,17 +155,17 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         
         let previewVC: PreviewViewController = PreviewViewController()
         
+        cancellable?.cancel()
+        
         addSubscriptionToYouTubeVMProp(with: title ?? "")
         
-        self.youTubeViewModel.youTubeView
+        cancellable = self.youTubeViewModel.youTubeView
             .receive(on: DispatchQueue.main)
             .sink { [weak self] video in
                 previewVC.configurePreview(with: viewModel, video: video)
-            }.store(in: &cancellables)
+            }
         
-        previewVC.configurePreview(with: viewModel, video: nil)
-        
-        navigationController?.pushViewController(previewVC, animated: true)
+        self.navigationController?.pushViewController(previewVC, animated: true)
     }
     
     // MARK: - Add Subscription To PassthroughSubject (-> TMDBViewModel Prop)

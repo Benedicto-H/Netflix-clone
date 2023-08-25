@@ -15,6 +15,7 @@ class UpcomingViewController: UIViewController {
     private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
     private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    private var cancellable: AnyCancellable?
     
     // MARK: - Custom View
     private let upcomingTableView: UITableView = {
@@ -97,13 +98,15 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         let previewVC: PreviewViewController =  PreviewViewController()
         
+        cancellable?.cancel()
+        
         addSubscriptionToYouTubeVMProp(value: movieName)
         
-        self.youTubeViewModel.youTubeView
+        cancellable = self.youTubeViewModel.youTubeView
             .receive(on: DispatchQueue.main)
             .sink { [weak self] video in
                 previewVC.configurePreview(with: movie, video: video)
-            }.store(in: &cancellables)
+            }
         
         self.navigationController?.pushViewController(previewVC, animated: true)
     }

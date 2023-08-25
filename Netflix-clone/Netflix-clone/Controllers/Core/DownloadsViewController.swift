@@ -15,6 +15,7 @@ class DownloadsViewController: UIViewController {
     private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
     private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    private var cancellable: AnyCancellable?
 
     // MARK: - Custom View
     private let downloadedTableView: UITableView = {
@@ -59,7 +60,6 @@ class DownloadsViewController: UIViewController {
     private func fetchMovieForDownload() -> Void {
         
         DataPersistenceManager.shared.fetchMovieFromContext { [weak self] result in
-            
             switch result {
             case .success(let movies):
                 self?.tmdbMovieItems = movies
@@ -67,7 +67,6 @@ class DownloadsViewController: UIViewController {
                     self?.downloadedTableView.reloadData()
                 }
                 break;
-                
             case .failure(let error):
                 print("error: \(error.localizedDescription)")
                 fatalError(error.localizedDescription)
@@ -115,18 +114,15 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
         
         switch editingStyle {
         case .delete:
-            
             DataPersistenceManager.shared.deleteMovieWith(model: tmdbMovieItems[indexPath.row]) { [weak self] result in
                 switch result {
                 case .success(()):
                     print("Deleted from the Context")
                     break;
-                    
                 case .failure(let error):
                     print("error: \(error.localizedDescription)")
                     fatalError(error.localizedDescription)
                     break;
-                    
                 default:
                     break;
                 }
@@ -134,7 +130,6 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
                 self?.tmdbMovieItems.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             }
-            
         default:
             break;
         }
@@ -156,13 +151,15 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
         
         let previewVC: PreviewViewController = PreviewViewController()
         
+        cancellable?.cancel()
+        
         addSubscriptionToYouTubeVMProp(value: movieName)
         
-        self.youTubeViewModel.youTubeView
+        cancellable = self.youTubeViewModel.youTubeView
             .receive(on: DispatchQueue.main)
             .sink { [weak self] video in
                 previewVC.configurePreview(with: movie, video: video)
-            }.store(in: &cancellables)
+            }
         
         self.navigationController?.pushViewController(previewVC, animated: true)
     }
