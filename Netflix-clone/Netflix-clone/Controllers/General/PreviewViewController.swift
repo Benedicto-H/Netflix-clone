@@ -10,9 +10,6 @@ import WebKit
 import Combine
 
 class PreviewViewController: UIViewController {
-    
-    // MARK: - Stored-Prop
-    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
 
     // MARK: - Custom Views
     private let webView: WKWebView = {

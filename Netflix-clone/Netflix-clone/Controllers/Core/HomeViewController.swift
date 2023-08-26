@@ -230,17 +230,12 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         
         cancellable?.cancel()   //  중복 구독이 되는것을 방지하기 위해 이전의 구독을 먼저 취소 후
         
-        addSubscriptionToYouTubeVMProp(value: title ?? "")  //  Data fetch
+        addSubscriptionToYouTubeVMProp(value: title ?? "")  //  Fetch Data
         
         cancellable = self.youTubeViewModel.youTubeView
             .receive(on: DispatchQueue.main)
-            .sink { completion in
-                switch completion {
-                case .finished: break;
-                case .failure(let error): print("error: \(error.localizedDescription)"); break;
-                }
-            } receiveValue: { [weak self] video in
-                previewVC.configurePreview(with: viewModel, video: video)
+            .sink { [weak self] videoElement in
+                previewVC.configurePreview(with: viewModel, video: videoElement)
             }
         
         self.navigationController?.pushViewController(previewVC, animated: true)
