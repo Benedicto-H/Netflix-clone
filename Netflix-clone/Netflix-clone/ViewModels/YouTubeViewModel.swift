@@ -12,6 +12,7 @@ final class YouTubeViewModel {
     
     // MARK: - Stored-Prop
     var youTubeView: PassthroughSubject<YouTubeDataResponse.VideoElement, Never>
+    var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Init
     init() {

@@ -103,31 +103,31 @@ class HomeViewController: UIViewController {
         
         self.tmdbViewModel.trendingMovies
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] movies in
+            .sink { [weak self] _ in
                 self?.homeFeedTableView.reloadData()    //  CurrentValueSubject타입의 trendingMovies 변수가 APICaller에 의해 값 변경이 생기면 그 데이터를 통해 새로운 tableView UI를 fetch
             }.store(in: &cancellables)
         
         self.tmdbViewModel.trendingTVs
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] tvs in
+            .sink { [weak self] _ in
                 self?.homeFeedTableView.reloadData()
             }.store(in: &cancellables)
         
         self.tmdbViewModel.popular
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] movies in
+            .sink { [weak self] _ in
                 self?.homeFeedTableView.reloadData()
             }.store(in: &cancellables)
         
         self.tmdbViewModel.upcomingMovies
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] movies in
+            .sink { [weak self] _ in
                 self?.homeFeedTableView.reloadData()
             }.store(in: &cancellables)
         
         self.tmdbViewModel.topRated
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] movies in
+            .sink { [weak self] _ in
                 self?.homeFeedTableView.reloadData()
             }.store(in: &cancellables)
     }
@@ -223,14 +223,15 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
         navigationController?.navigationBar.transform = .init(translationX: 0, y: min(0, -offset))
     }
     
+    
     // MARK: - CollectionViewTableViewCellDelegate - (Required) Method  ->  Implementation
     func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: Any, title: String?) -> Void {
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        cancellable?.cancel()   //  중복 구독이 되는것을 방지하기 위해 이전의 구독을 먼저 취소 후
+        cancellable?.cancel()   //  중복 구독이 되는것을 방지하기 위해 이전의 구독을 먼저 취소
         
-        addSubscriptionToYouTubeVMProp(value: title ?? "")  //  Fetch Data
+        addSubscriptionToYouTubeVMProp(value: title ?? "")
         
         cancellable = self.youTubeViewModel.youTubeView
             .receive(on: DispatchQueue.main)
@@ -252,6 +253,6 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
                 }
             } receiveValue: { [weak self] youTubeDataResponse in
                 self?.youTubeViewModel.youTubeView.send(youTubeDataResponse.items[0])
-            }.store(in: &cancellables)
+            }.store(in: &self.youTubeViewModel.cancellables)
     }
 }

@@ -179,7 +179,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
                 }
             } receiveValue: { [weak self] tmdbMovieResponse in
                 self?.tmdbViewModel.searchMovies.send(tmdbMovieResponse.results)
-            }.store(in: &cancellables)
+            }.store(in: &self.tmdbViewModel.cancellables)
     }
     
     // MARK: - Add Subscription To PassthroughSubject (-> YouTubeViewModel Prop)
@@ -193,6 +193,6 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
                 }
             } receiveValue: { [weak self] youTubeDataResponse in
                 self?.youTubeViewModel.youTubeView.send(youTubeDataResponse.items[0])
-            }.store(in: &cancellables)
+            }.store(in: &self.youTubeViewModel.cancellables)
     }
 }

@@ -122,6 +122,6 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
                 }
             } receiveValue: { [weak self] youTubeDataResponse in
                 self?.youTubeViewModel.youTubeView.send(youTubeDataResponse.items[0])
-            }.store(in: &cancellables)
+            }.store(in: &self.youTubeViewModel.cancellables)
     }
 }

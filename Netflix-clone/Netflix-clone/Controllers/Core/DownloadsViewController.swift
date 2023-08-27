@@ -123,8 +123,6 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
                     print("error: \(error.localizedDescription)")
                     fatalError(error.localizedDescription)
                     break;
-                default:
-                    break;
                 }
                 
                 self?.tmdbMovieItems.remove(at: indexPath.row)
@@ -175,6 +173,6 @@ extension DownloadsViewController: UITableViewDataSource, UITableViewDelegate {
                 }
             } receiveValue: { [weak self] youTubeDataResponse in
                 self?.youTubeViewModel.youTubeView.send(youTubeDataResponse.items[0])
-            }.store(in: &cancellables)
+            }.store(in: &self.youTubeViewModel.cancellables)
     }
 }
