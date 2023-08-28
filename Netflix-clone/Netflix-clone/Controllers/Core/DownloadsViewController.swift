@@ -12,14 +12,13 @@ class DownloadsViewController: UIViewController {
     
     // MARK: - Stored-Props
     private var tmdbMovieItems: [TMDBMovieItem] = [TMDBMovieItem]()
-    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
     private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     private var cancellable: AnyCancellable?
-
+    
     // MARK: - Custom View
     private let downloadedTableView: UITableView = {
-       
+        
         let tableView: UITableView = UITableView()
         
         tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
@@ -30,7 +29,7 @@ class DownloadsViewController: UIViewController {
     // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         
         view.backgroundColor = .systemBackground
