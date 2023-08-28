@@ -20,7 +20,6 @@ class SearchResultsViewController: UIViewController {
     public var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     private var tmdbTvs: [TMDBTVsResponse.TMDBTV] = [TMDBTVsResponse.TMDBTV]()
     private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
-    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public weak var delegate: SearchResultsViewControllerDelegate?
@@ -84,10 +83,6 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         collectionView.deselectItem(at: indexPath, animated: true)
-        
-        let previewVC: PreviewViewController = PreviewViewController()
-        
-        self.navigationController?.pushViewController(previewVC, animated: true)
         
         self.delegate?.searchResultsViewControllerDidTapItem(tmdbMovies[indexPath.row], title: tmdbMovies[indexPath.row].original_title ?? "")
     }
