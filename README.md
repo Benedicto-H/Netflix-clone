@@ -9,11 +9,12 @@
 - Swift (version 5.8.1)
 - Xcode (version 14.3.1)
 - UIKit Framework
-- Swift Concurrency
 - Core Data Framework
 - TMDB API
 - YouTube Data API
-- SDWebImage Library (version 5.16.0)
+- RxSwift, RxCocoa (version 6.5.0)
+- SnapKit (version 5.6.0)
+- Alamofire
 
 <br>
 
@@ -21,20 +22,22 @@
 ```
 # Clone this project
 
-$ git clone https://github.com/jphong1005/Netflix-clone.git
+$ git clone -b develop_CocoaPods https://github.com/jphong1005/Netflix-clone.git
 ```
 
 > ⚠️ Target은 `iOS 15.0+`이며, 다크모드 환경에서 앱을 이용해주세요.
 
 `API_KEY 및 ACCESS_TOKEN 등 민감한 정보는 별도의 .xcconfig파일로 분리시켰으나 .gitignore 파일에 저장해두었기에 따로 올리지는 않습니다.`
 
+> .xcconfig 파일이 필요하시다면 wlsvy1005@gmail.com 으로 파일을 요청해주세요 😇
+
 - `main`: Swift Concurrency 사용 버전
 - `develop_Combine`: Combine Framework 사용 버전
-- `develop_CocoaPods`: Cocoa Pods의 3rd-party Library 사용 버전
+- `develop_CocoaPods`: Cocoa Pods 사용 버전 (-> RxSwift, SnapKit, Alamofire)
 
 <br>
 
 ## 📱 Results
-|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/3bdcad81-3b14-4108-b7e4-79b0f7c336a2"></img>|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/20b03c65-7dae-4e82-8e42-cdfb5c79090f"></img>|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/3cfa9b0a-8f49-41b1-ab89-5f32ade0eeeb"></img>|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/63fc4f59-9920-4191-aee0-0f72d04e1acb"></img>|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/7557f9e0-9a6c-47fe-a4a1-bd685aff9465"></img>|
+|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/08d271a5-615d-495f-b1ad-c886e798aeb0"></img>|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/15988b37-1fef-4bfa-a1b7-e2d7f608376a"></img>|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/d2174568-2c74-42d2-acde-ccfee7f0f167"></img>|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/5df79263-50db-4c47-a943-682c2204513a"></img>|<img src="https://github.com/jphong1005/Netflix-clone/assets/52193695/625a5aa5-ea14-48c2-ace0-79e124fdc9cd"></img>|
 |:---:|:---:|:---:|:---:|:---:|
 |`Home`|`Preview`|`Upcoming`|`Search`|`Downloads`|
