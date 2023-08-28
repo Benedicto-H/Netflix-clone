@@ -28,6 +28,10 @@ $ git clone https://github.com/jphong1005/Netflix-clone.git
 
 `API_KEY 및 ACCESS_TOKEN 등 민감한 정보는 별도의 .xcconfig파일로 분리시켰으나 .gitignore 파일에 저장해두었기에 따로 올리지는 않습니다.`
 
+제일 안쪽, Netflix-clone 폴더로 이동하여 `.xcconfig` 파일을 넣어주세요. <br>
+↪ `.xcconfig` 파일은 wlsvy1005@gmail.com 으로 요청해주세요 😇
+<br>
+
 - `main`: Swift Concurrency 사용 버전
 - `develop_Combine`: Combine Framework 사용 버전
 - `develop_CocoaPods`: Cocoa Pods의 3rd-party Library 사용 버전
