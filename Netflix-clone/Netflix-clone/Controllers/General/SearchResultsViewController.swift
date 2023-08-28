@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 protocol SearchResultsViewControllerDelegate: AnyObject {
     
     // MARK: - Function ProtoType
-    //func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel)
+    func searchResultsViewControllerDidTapItem(_ viewModel: Any)
 }
 
 class SearchResultsViewController: UIViewController {
@@ -18,6 +20,9 @@ class SearchResultsViewController: UIViewController {
     // MARK: - Stored-Props
     public var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     private var tmdbTvs: [TMDBTVsResponse.TMDBTV] = [TMDBTVsResponse.TMDBTV]()
+    private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private var bag: DisposeBag = DisposeBag()
+    
     public weak var delegate: SearchResultsViewControllerDelegate?
 
     // MARK: - Custom View
@@ -45,6 +50,8 @@ class SearchResultsViewController: UIViewController {
         
         searchResultsCollectionView.delegate = self
         searchResultsCollectionView.dataSource = self
+        
+        bind()
     }
     
     override func viewDidLayoutSubviews() {
@@ -52,6 +59,17 @@ class SearchResultsViewController: UIViewController {
         super.viewDidLayoutSubviews()
         
         searchResultsCollectionView.frame = view.bounds
+    }
+    
+    private func bind() -> Void {
+        
+        self.tmdbViewModel.searchMovies
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] movies in
+                //  self?.tmdbMovies = movies
+                print("movies: \(movies) \n")
+                print("m.ele: \(movies.element)")
+            }.disposed(by: bag)
     }
 }
 
@@ -68,27 +86,13 @@ extension SearchResultsViewController: UICollectionViewDelegateFlowLayout , UICo
         
         collectionView.deselectItem(at: indexPath, animated: true)
         
-        Task {
-            do {
-                let videoResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: tmdbMovies[indexPath.row].original_title ?? "")
-
-                let vc: PreviewViewController = PreviewViewController()
-                
-                //  vc.configure(with: PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
-                
-                self.navigationController?.pushViewController(vc, animated: true)
-                
-                //  self.delegate?.searchResultsViewControllerDidTapItem(PreviewViewModel(title: tmdbMovies[indexPath.row].original_title ?? "", youTubeView: videoResponse.items[0], overview: tmdbMovies[indexPath.row].overview ?? ""))
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+        self.delegate?.searchResultsViewControllerDidTapItem(tmdbMovies[indexPath.row])
     }
     
     // MARK: - UICollectionViewDataSource - (Required) Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return max(tmdbMovies.count, tmdbTvs.count)
+        return tmdbMovies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

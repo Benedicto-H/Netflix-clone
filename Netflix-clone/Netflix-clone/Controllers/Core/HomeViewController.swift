@@ -26,6 +26,7 @@ class HomeViewController: UIViewController {
     private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var randomTrendingMovie: TMDBMoviesResponse.TMDBMovie?
     private var bag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag? = nil
     
     private var heroHeaderView: HeroHeaderUIView?
     
@@ -242,19 +243,19 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
     
     // MARK: - CollectionViewTableViewCellDelegate - (Required) Method  ->  Implementation
     func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, model: Any, title: String) {
-        
+
         let previewVC: PreviewViewController = PreviewViewController()
-        
-        bag = DisposeBag()
-        
+
+        disposeBag = DisposeBag()
+
         addObserver(with: title)
-        
+
         self.youTubeViewModel.youTubeView
             .observe(on: MainScheduler.instance)
             .bind { [weak self] videoElement in
                 previewVC.configurePreviewVC(model: model, video: videoElement)
-            }.disposed(by: bag)
-        
+            }.disposed(by: disposeBag ?? DisposeBag())
+
         self.navigationController?.pushViewController(previewVC, animated: true)
     }
     
@@ -266,7 +267,7 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate, Collec
                 self?.youTubeViewModel.youTubeView.onNext(response.items[0])
             } onError: { error in
                 self.youTubeViewModel.youTubeView.onError(error)
-            }.disposed(by: bag)
+            }.disposed(by: self.youTubeViewModel.bag)
     }
 }
 

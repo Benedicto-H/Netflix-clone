@@ -14,7 +14,9 @@ class SearchViewController: UIViewController {
     // MARK: - Stored-Props
     private var tmdbMovies: [TMDBMoviesResponse.TMDBMovie] = [TMDBMoviesResponse.TMDBMovie]()
     private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
+    private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var bag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag? = nil
     
     // MARK: - Custom Views
     private let searchTableView: UITableView = {
@@ -91,13 +93,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
-        /*
-        cell.configure(with: MovieViewModel(
-            titleName: tmdbMovies[indexPath.row].original_title ?? "UNKOWN original_title",
-             posterURL: tmdbMovies[indexPath.row].poster_path ?? "UNKOWN poster_path"))
-         */
-        
-        cell.configure(with: tmdbMovies[indexPath.row])
+        cell.configureTableViewCell(with: tmdbMovies[indexPath.row])
         
         return cell
     }
@@ -120,14 +116,25 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         
         resultsController.delegate = self
         
-        Task {
-            do {
-                resultsController.tmdbMovies = try await APICaller.shared.search(with: query).results
+        addObserverToTMDBVMProp(with: query)
+        
+        self.tmdbViewModel.searchMovies
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] movies in
+                resultsController.tmdbMovies = movies
                 resultsController.searchResultsCollectionView.reloadData()
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-        }
+            }.disposed(by: bag)
+    }
+    
+    // MARK: - Add Observer to PublishSubject (-> TMDBViewModel Prop)
+    private func addObserverToTMDBVMProp(with query: String) -> Void {
+        
+        APICaller.shared.searchWithAF_RX(with: query)
+            .subscribe { [weak self] response in
+                self?.tmdbViewModel.searchMovies.onNext(response.results)
+            } onError: { error in
+                self.tmdbViewModel.searchMovies.onError(error)
+            }.disposed(by: self.tmdbViewModel.bag)
     }
     
     // MARK: - UITableViewDelegate - (Optional) Method
@@ -136,33 +143,49 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         tableView.deselectRow(at: indexPath, animated: true)
         
         let movie: TMDBMoviesResponse.TMDBMovie = tmdbMovies[indexPath.row]
+        let previewVC: PreviewViewController = PreviewViewController()
         
-        guard let movieName: String = movie.original_title else { return }
+        disposeBag = DisposeBag()
         
-        Task {
-            do {
-                let youTubeDataResponse: YouTubeDataResponse = try await APICaller.shared.fetchVideoFromYouTube(with: movieName)
-                let previewVC: PreviewViewController = PreviewViewController()
-                
-                //  previewVC.configure(with: PreviewViewModel(title: movieName, youTubeView: youTubeDataResponse.items[0], overview: movie.overview ?? ""))
-                
-                self.navigationController?.pushViewController(previewVC, animated: true)
-            } catch {
-                
-                fatalError(error.localizedDescription)
+        addObserverToYouTubeVMProp(title: movie.original_title ?? "")
+        
+        self.youTubeViewModel.youTubeView
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] videoElement in
+                previewVC.configurePreviewVC(model: movie, video: videoElement)
             }
-        }
+        
+        self.navigationController?.pushViewController(previewVC, animated: true)
     }
     
     // MARK: - SearchResultsViewControllerDelegate - (required) Method  ->  Implementation
-    /*
-    func searchResultsViewControllerDidTapItem(_ viewModel: PreviewViewModel) {
+    func searchResultsViewControllerDidTapItem(_ viewModel: Any) {
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        previewVC.configure(with: viewModel)
+        disposeBag = DisposeBag()
         
-        navigationController?.pushViewController(previewVC, animated: true)
+        if let movie: TMDBMoviesResponse.TMDBMovie = viewModel as? TMDBMoviesResponse.TMDBMovie {
+            addObserverToYouTubeVMProp(title: movie.original_title ?? "")
+            
+            self.youTubeViewModel.youTubeView
+                .observe(on: MainScheduler.instance)
+                .bind { [weak self] videoElement in
+                    previewVC.configurePreviewVC(model: viewModel, video: videoElement)
+                }.disposed(by: disposeBag ?? DisposeBag())
+        }
+        
+        self.navigationController?.pushViewController(previewVC, animated: true)
     }
-     */
+    
+    // MARK: - Add Observer to PublishSubject (-> YouTubeViewModel Prop)
+    private func addObserverToYouTubeVMProp(title: String) -> Void {
+        
+        APICaller.shared.fetchVideoFromYouTubeWithAF_RX(with: title)
+            .subscribe { [weak self] response in
+                self?.youTubeViewModel.youTubeView.onNext(response.items[0])
+            } onError: { error in
+                self.youTubeViewModel.youTubeView.onError(error)
+            }.disposed(by: self.youTubeViewModel.bag)
+    }
 }

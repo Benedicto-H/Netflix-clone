@@ -13,6 +13,7 @@ final class YouTubeViewModel {
     
     // MARK: - Stored-Prop
     var youTubeView: PublishSubject<YouTubeDataResponse.VideoElement>
+    var bag: DisposeBag = DisposeBag()
     
     // MARK: - Init
     init() {

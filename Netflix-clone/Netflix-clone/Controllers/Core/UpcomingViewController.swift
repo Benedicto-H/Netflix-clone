@@ -16,6 +16,7 @@ class UpcomingViewController: UIViewController {
     private let tmdbViewModel: TMDBViewModel = TMDBViewModel()
     private let youTubeViewModel: YouTubeViewModel = YouTubeViewModel()
     private var bag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag? = nil
     
     // MARK: - Custom View
     private let upcomingTableView: UITableView = {
@@ -77,7 +78,7 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else { return UITableViewCell() }
         
-        cell.configure(with: tmdbMovies[indexPath.row])
+        cell.configureTableViewCell(with: tmdbMovies[indexPath.row])
         
         return cell
     }
@@ -97,7 +98,7 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
         
         let previewVC: PreviewViewController = PreviewViewController()
         
-        bag = DisposeBag()
+        disposeBag = DisposeBag()
         
         addObserver(with: movieName)
         
@@ -105,7 +106,7 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
             .observe(on: MainScheduler.instance)
             .bind { [weak self] videoElement in
                 previewVC.configurePreviewVC(model: movie, video: videoElement)
-            }.disposed(by: bag)
+            }.disposed(by: disposeBag ?? DisposeBag())
         
         self.navigationController?.pushViewController(previewVC, animated: true)
     }
@@ -118,7 +119,7 @@ extension UpcomingViewController: UITableViewDataSource, UITableViewDelegate {
                 self?.youTubeViewModel.youTubeView.onNext(response.items[0])
             } onError: { error in
                 self.youTubeViewModel.youTubeView.onError(error)
-            }.disposed(by: bag)
+            }.disposed(by: self.youTubeViewModel.bag)
     }
 }
 

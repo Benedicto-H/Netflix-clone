@@ -19,7 +19,6 @@ class TableViewCell: UITableViewCell {
 
         let imageView: UIImageView = UIImageView()
         
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
 
@@ -30,7 +29,6 @@ class TableViewCell: UITableViewCell {
 
         let label: UILabel = UILabel()
         
-        label.translatesAutoresizingMaskIntoConstraints = false
         //  label.lineBreakMode = .byWordWrapping
         //  label.numberOfLines = 0
 
@@ -42,7 +40,6 @@ class TableViewCell: UITableViewCell {
         let button: UIButton = UIButton()
         let image = UIImage(systemName: "play.circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30))
         
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(image, for: .normal)
         button.tintColor = .white
 
@@ -87,7 +84,7 @@ class TableViewCell: UITableViewCell {
         }
     }
 
-    public func configure(with model: TMDBMoviesResponse.TMDBMovie) -> Void {
+    public func configureTableViewCell(with model: TMDBMoviesResponse.TMDBMovie) -> Void {
 
         let baseImageURL: String = "https://image.tmdb.org/t/p/w500"
 

@@ -17,7 +17,7 @@ extension fetchDataWithAF_RX {
         
         /// Observable<Element>는 Publisher ( or AnyPublisher)와 유사
         return Observable.create { observer in
-            let url: String = "https://api.themoviedb.org/3/trending/movie/day?language=en-US"
+            let url: String = "\(APICaller.tmdb_baseURL)/3/trending/movie/day?language=en-US"
             
             guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
             
@@ -47,7 +47,7 @@ extension fetchDataWithAF_RX {
     func fetchTrendingTVsWithAF_RX() -> Observable<TMDBTVsResponse> {
         
         return Observable.create { observer in
-            let url: String = "https://api.themoviedb.org/3/trending/tv/day?language=en-US"
+            let url: String = "\(APICaller.tmdb_baseURL)/3/trending/tv/day?language=en-US"
             
             guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
             
@@ -77,7 +77,7 @@ extension fetchDataWithAF_RX {
     func fetchPopularWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
         return Observable.create { observer in
-            let url: String = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1"
+            let url: String = "\(APICaller.tmdb_baseURL)/3/movie/popular?language=en-US&page=1"
             
             guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
             
@@ -107,7 +107,7 @@ extension fetchDataWithAF_RX {
     func fetchUpcomingMoviesWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
         return Observable.create { observer in
-            let url: String = "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1"
+            let url: String = "\(APICaller.tmdb_baseURL)/3/movie/upcoming?language=en-US&page=1"
             
             guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
             
@@ -137,7 +137,7 @@ extension fetchDataWithAF_RX {
     func fetchTopRatedWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
         return Observable.create { observer in
-            let url: String = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1"
+            let url: String = "\(APICaller.tmdb_baseURL)/3/movie/top_rated?language=en-US&page=1"
             
             guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
             
@@ -167,7 +167,7 @@ extension fetchDataWithAF_RX {
     func fetchDiscoverMoviesWithAF_RX() -> Observable<TMDBMoviesResponse> {
         
         return Observable.create { observer in
-            let url: String = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc"
+            let url: String = "\(APICaller.tmdb_baseURL)/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc"
             
             guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
             
@@ -199,7 +199,7 @@ extension fetchDataWithAF_RX {
         return Observable.create { observer in
             guard let query: String = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { observer.onError(APICaller.APIError.invalidQueryEncoding); return Disposables.create() }
             
-            let url: String = "https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1"
+            let url: String = "\(APICaller.tmdb_baseURL)/3/search/movie?query=\(query)&include_adult=false&language=en-US&page=1"
             
             guard let url: URL = URL(string: url) else { observer.onError(URLError(.badURL)); return Disposables.create() }
             
