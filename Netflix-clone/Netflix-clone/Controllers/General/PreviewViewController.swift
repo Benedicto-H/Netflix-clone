@@ -112,6 +112,9 @@ class PreviewViewController: UIViewController {
         } else if let tv: TMDBTVsResponse.TMDBTV = model as? TMDBTVsResponse.TMDBTV {
             self.titleLabel.text = tv.name
             self.overviewLabel.text = tv.overview
+        } else if let movieItem: TMDBMovieItem = model as? TMDBMovieItem {
+            self.titleLabel.text = movieItem.title
+            self.overviewLabel.text = movieItem.overview
         }
         
         if let videoElement: YouTubeDataResponse.VideoElement = video {
