@@ -15,7 +15,13 @@
 - YouTube Data API
 - SDWebImage Library (version 5.16.0)
 
-(Tech는 브랜치 별로 상이합니다.)
+> **⚠️ Tech는 브랜치 별로 상이하며, 각 브랜치에 설치 및 다양한 설명이 기재되어 있습니다.**
+
+<br>
+
+- `main`: Swift Concurrency 사용 버전
+- `develop_Combine`: Combine Framework 사용 버전
+- `develop_CocoaPods`: Cocoa Pods의 3rd-party Library 사용 버전
 
 <br>
 
@@ -32,11 +38,6 @@ $ git clone https://github.com/jphong1005/Netflix-clone.git
 
 제일 안쪽, Netflix-clone 폴더로 이동하여 `.xcconfig` 파일을 넣어주세요. <br>
 ↪ `.xcconfig` 파일은 wlsvy1005@gmail.com 으로 요청해주세요 😇
-<br>
-
-- `main`: Swift Concurrency 사용 버전
-- `develop_Combine`: Combine Framework 사용 버전
-- `develop_CocoaPods`: Cocoa Pods의 3rd-party Library 사용 버전
 
 <br>
 
