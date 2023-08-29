@@ -15,6 +15,8 @@
 - YouTube Data API
 - SDWebImage Library (version 5.16.0)
 
+(Tech는 브랜치 별로 상이합니다.)
+
 <br>
 
 ## ✅ Requirements
