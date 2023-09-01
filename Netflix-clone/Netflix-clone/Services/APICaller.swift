@@ -18,19 +18,6 @@ protocol fetchDataWithCompletionHandler {
     func fetchHeroImage(completionHandler: @escaping (UIImage) -> Void) -> Void
 }
 
-protocol fetchDataWithConcurrency {
-    
-    // MARK: - Function ProtoTypes
-    func fetchTrendingMovies() async throws -> TMDBMoviesResponse
-    func fetchTrendingTVs() async throws -> TMDBTVsResponse
-    func fetchPopular() async throws -> TMDBMoviesResponse
-    func fetchUpcomingMovies() async throws -> TMDBMoviesResponse
-    func fetchTopRated() async throws -> TMDBMoviesResponse
-    func fetchDiscoverMovies() async throws -> TMDBMoviesResponse
-    func search(with query: String) async throws -> TMDBMoviesResponse
-    func fetchVideoFromYouTube(with query: String) async throws -> YouTubeDataResponse
-}
-
 protocol fetchDataWithAF_RX {
     
     // MARK: - Function ProtoTypes
@@ -44,7 +31,7 @@ protocol fetchDataWithAF_RX {
     func fetchVideoFromYouTubeWithAF_RX(with query: String) -> Observable<YouTubeDataResponse>
 }
 
-final class APICaller: fetchDataWithCompletionHandler, fetchDataWithConcurrency, fetchDataWithAF_RX {
+final class APICaller: fetchDataWithCompletionHandler, fetchDataWithAF_RX {
     
     enum APIError: String, Error {
         case invalidQueryEncoding = "INVALID QUERY ENCODING ERROR"
