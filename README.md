@@ -9,6 +9,7 @@
 - Swift (version 5.8.1)
 - Xcode (version 14.3.1)
 - UIKit Framework
+- AutoLayout
 - Swift Concurrency
 - Core Data Framework
 - TMDB API
